@@ -1,5 +1,5 @@
 module.exports = {
-  "extends": "standard",
+  "extends": "airbnb",
   "plugins": [
     "react"
   ],
@@ -13,5 +13,6 @@ module.exports = {
   'rules': {
     // Recognizes JSX components vars used.
     "react/jsx-uses-vars": "error",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
   }
 };
