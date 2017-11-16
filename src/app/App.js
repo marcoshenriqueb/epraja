@@ -2,15 +2,8 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  Link,
 } from 'react-router-dom';
-import './App.css';
-
-const Home = () => (
-  <div>
-    <h2>Home</h2>
-  </div>
-);
+import Login from './pages/login/login';
 
 const About = () => (
   <div>
@@ -22,14 +15,7 @@ const About = () => (
 const App = () => (
   <Router>
     <div>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/about">About</Link></li>
-      </ul>
-
-      <hr />
-
-      <Route exact path="/" component={Home} />
+      <Route path="/login" component={Login} />
       <Route path="/about" component={About} />
     </div>
   </Router>
