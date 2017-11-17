@@ -23,6 +23,25 @@ PrivateRoute.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
 };
 
+const GuestRoute = ({ component: Component, isAuthenticated, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => (
+      !isAuthenticated ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to={{ pathname: '/about' }} />
+      )
+    )}
+  />
+);
+
+GuestRoute.propTypes = {
+  component: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+};
+
 export default {
   PrivateRoute,
+  GuestRoute,
 };

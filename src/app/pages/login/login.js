@@ -3,11 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import './login.styl';
 
-const Login = connect(state => (
-  {
-    auth: state.auth.authenticated,
-  }
-))(({ auth }) => (
+const Login = ({ auth }) => (
   <div className="full-w flex justify-center guest-wrapper">
     <div className="login-container flex-column">
       <h2>Login</h2>
@@ -17,10 +13,16 @@ const Login = connect(state => (
       <button>Entrar</button>
     </div>
   </div>
-));
+);
 
 Login.propTypes = {
   auth: PropTypes.bool.isRequired,
 };
 
-export default Login;
+const LoginConnector = connect(state => (
+  {
+    auth: state.auth.authenticated,
+  }
+))(Login);
+
+export default LoginConnector;
