@@ -15,6 +15,7 @@ const auth = (state = { user: {}, authenticated: false, token: '' }, action) => 
     case 'SET_TOKEN':
       return Object.assign({}, state, {
         token: action.token,
+        authenticated: action.auth,
       });
 
     default:

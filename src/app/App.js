@@ -6,8 +6,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import routeComponents from './router';
 import Login from './pages/login/login';
+import actions from './store/actions';
 
 const { PrivateRoute, GuestRoute } = routeComponents;
+const { checkToken: checkTokenAction } = actions;
 
 const About = () => (
   <div>
@@ -16,9 +18,10 @@ const About = () => (
 );
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
-const App = ({ token, auth }) => {
-  if (token.length) {
-    expression
+const App = ({ token, auth, checkToken }) => {
+  if (token.length && !auth) {
+    checkToken(token);
+    return <p>Loading</p>;
   }
 
   return (
@@ -35,12 +38,19 @@ const App = ({ token, auth }) => {
 App.propTypes = {
   token: PropTypes.string.isRequired,
   auth: PropTypes.bool.isRequired,
+  checkToken: PropTypes.func.isRequired,
 };
 
 const AppConnector = connect(state => (
   {
     token: state.auth.token,
     auth: state.auth.authenticated,
+  }
+), dispatch => (
+  {
+    checkToken: (token) => {
+      dispatch(checkTokenAction(token));
+    },
   }
 ))(App);
 
