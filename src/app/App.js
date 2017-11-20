@@ -9,7 +9,7 @@ import Login from './pages/login/login';
 import actions from './store/actions';
 
 const { PrivateRoute, GuestRoute } = routeComponents;
-const { checkToken: checkTokenAction } = actions;
+const { fetchUserAction } = actions;
 
 const About = () => (
   <div>
@@ -18,9 +18,9 @@ const About = () => (
 );
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
-const App = ({ token, auth, checkToken }) => {
-  if (token.length && !auth) {
-    checkToken(token);
+const App = ({ auth, fetchUser }) => {
+  if (false) {
+    fetchUser();
     return <p>Loading</p>;
   }
 
@@ -36,20 +36,18 @@ const App = ({ token, auth, checkToken }) => {
 /* eslint-enable jsx-a11y/anchor-is-valid */
 
 App.propTypes = {
-  token: PropTypes.string.isRequired,
   auth: PropTypes.bool.isRequired,
-  checkToken: PropTypes.func.isRequired,
+  fetchUser: PropTypes.func.isRequired,
 };
 
 const AppConnector = connect(state => (
   {
-    token: state.auth.token,
     auth: state.auth.authenticated,
   }
 ), dispatch => (
   {
-    checkToken: (token) => {
-      dispatch(checkTokenAction(token));
+    fetchUser: () => {
+      dispatch(fetchUserAction());
     },
   }
 ))(App);
