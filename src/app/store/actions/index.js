@@ -1,8 +1,4 @@
-const fetch = () => (
-  new Promise((resolve) => {
-    resolve('osnianfoisanfnafnafao');
-  })
-);
+import api from './../../api';
 
 const requestToken = () => (
   {
@@ -15,20 +11,6 @@ const receiveToken = (token, auth) => (
     type: 'RECEIVE_TOKEN',
     token,
     auth,
-  }
-);
-
-const login = () => (
-  (dispatch) => {
-    dispatch(requestToken());
-
-    return fetch()
-      .then((response) => {
-        dispatch(receiveToken(response, true));
-      }, (error) => {
-        console.log(error);
-        dispatch(receiveToken('', false));
-      });
   }
 );
 
@@ -49,13 +31,31 @@ const fetchUser = () => (
   (dispatch) => {
     dispatch(requestUser());
 
-    return fetch()
+    return api.users.find({ email: 'marcos@gmail.com' })
       .then((response) => {
-        dispatch(receiveUser(response));
+        dispatch(receiveUser(response.data[0]));
       }, (error) => {
         console.log(error);
         dispatch(receiveUser({}));
       });
+  }
+);
+
+const login = () => (
+  (dispatch) => {
+    dispatch(requestToken());
+
+    return api.auth({
+      strategy: 'local',
+      email: 'marcos@gmail.com',
+      password: '123456',
+    }).then((response) => {
+      dispatch(receiveToken(response.accessToken, true));
+      fetchUser()(dispatch);
+    }, (error) => {
+      console.log(error);
+      dispatch(receiveToken('', false));
+    });
   }
 );
 
