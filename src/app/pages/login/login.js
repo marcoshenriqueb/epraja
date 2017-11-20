@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import './login.styl';
 
 import TextInput from './../../components/textInput/textInput';
+import Button from './../../components/button/button';
 import actions from './../../store/actions';
 
 const { login: loginAction } = actions;
@@ -30,7 +31,7 @@ class Login extends React.Component {
     return (
       <div className="full-w flex justify-center guest-wrapper">
         <div className="login-container flex-column">
-          <h2>Login</h2>
+          <h2>Tapster</h2>
           <TextInput
             placeholder="Email"
             name="email"
@@ -44,7 +45,10 @@ class Login extends React.Component {
             value={this.state.password}
             onChange={this.handleChange}
           />
-          <button onClick={this.props.login}>Entrar</button>
+          <Button
+            text="Entrar"
+            onClick={this.props.login}
+          />
           {
             this.state.error.length ?
             (
