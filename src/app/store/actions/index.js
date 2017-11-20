@@ -41,6 +41,22 @@ const fetchUser = () => (
   }
 );
 
+const checkToken = token => (
+  (dispatch) => {
+    dispatch(requestToken());
+
+    return api.auth({
+      strategy: 'jwt',
+      accessToken: token,
+    }).then((response) => {
+      dispatch(receiveToken(response.accessToken, true));
+    }, (error) => {
+      console.log(error);
+      dispatch(receiveToken('', false));
+    });
+  }
+);
+
 const login = () => (
   (dispatch) => {
     dispatch(requestToken());
@@ -64,4 +80,5 @@ export default {
   requestToken,
   login,
   fetchUser,
+  checkToken,
 };

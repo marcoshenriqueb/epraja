@@ -1,0 +1,1 @@
+Tratar tokens invalidas com hook after request do feathers

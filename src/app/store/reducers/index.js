@@ -1,14 +1,14 @@
 const initialState = {
-  user: {
-    isFetching: false,
-    lastUpdated: '',
-    data: {},
-  },
   authenticated: false,
   token: {
     isFetching: false,
     lastUpdated: '',
     data: '',
+  },
+  user: {
+    isFetching: false,
+    lastUpdated: '',
+    data: {},
   },
 };
 
