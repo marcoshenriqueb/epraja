@@ -30,7 +30,7 @@ const GuestRoute = ({ component: Component, isAuthenticated, ...rest }) => (
       !isAuthenticated ? (
         <Component {...props} />
       ) : (
-        <Redirect to={{ pathname: '/about' }} />
+        <Redirect to={{ pathname: '/' }} />
       )
     )}
   />

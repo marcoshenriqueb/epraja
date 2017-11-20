@@ -20,8 +20,8 @@ const App = ({ auth }) => (
   (
     <Router>
       <div>
+        <PrivateRoute exact path="/" component={About} isAuthenticated={auth} />
         <GuestRoute path="/login" component={Login} isAuthenticated={auth} />
-        <PrivateRoute path="/about" component={About} isAuthenticated={auth} />
       </div>
     </Router>
   )
