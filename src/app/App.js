@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import routeComponents from './router';
 import Login from './pages/login/login';
+import Auth from './layouts/auth/auth';
 
 const { PrivateRoute, GuestRoute } = routeComponents;
 
@@ -20,7 +21,9 @@ const App = ({ auth }) => (
   (
     <Router>
       <div>
-        <PrivateRoute exact path="/" component={About} isAuthenticated={auth} />
+        <Auth>
+          <PrivateRoute exact path="/" component={About} isAuthenticated={auth} />
+        </Auth>
         <GuestRoute path="/login" component={Login} isAuthenticated={auth} />
       </div>
     </Router>

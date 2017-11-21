@@ -8,6 +8,7 @@ import { persistStore, persistCombineReducers } from 'redux-persist';
 import storage from 'redux-persist/es/storage';
 import { PersistGate } from 'redux-persist/es/integration/react';
 
+import 'normalize.css';
 import './assets/stylus/index.styl';
 import App from './app/App';
 import reducers from './app/store/reducers';
