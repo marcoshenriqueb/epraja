@@ -34,9 +34,10 @@ const fetchUser = () => (
     return api.users.find({ email: 'marcos@gmail.com' })
       .then((response) => {
         dispatch(receiveUser(response.data[0]));
+        return response;
       }, (error) => {
-        console.log(error);
         dispatch(receiveUser({}));
+        return error;
       });
   }
 );
