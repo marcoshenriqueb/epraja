@@ -50,27 +50,28 @@ const checkToken = token => (
       accessToken: token,
     }).then((response) => {
       dispatch(receiveToken(response.accessToken, true));
+      return response;
     }, (error) => {
-      console.log(error);
       dispatch(receiveToken('', false));
+      return error;
     });
   }
 );
 
-const login = () => (
+const login = credentials => (
   (dispatch) => {
     dispatch(requestToken());
 
     return api.auth({
       strategy: 'local',
-      email: 'marcos@gmail.com',
-      password: '123456',
+      ...credentials,
     }).then((response) => {
       dispatch(receiveToken(response.accessToken, true));
       fetchUser()(dispatch);
+      return response;
     }, (error) => {
-      console.log(error);
       dispatch(receiveToken('', false));
+      return error;
     });
   }
 );

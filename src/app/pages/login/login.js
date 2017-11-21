@@ -19,11 +19,28 @@ class Login extends React.Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
   }
 
   handleChange(e) {
     this.setState({
       [e.target.name]: e.target.value,
+    });
+  }
+
+  handleLogin() {
+    this.setState({
+      error: '',
+    });
+    this.props.login({
+      email: this.state.email,
+      password: this.state.password,
+    }).then((response) => {
+      if (response.message && response.code.toString().startsWith('4')) {
+        this.setState({
+          error: response.message,
+        });
+      }
     });
   }
 
@@ -40,19 +57,19 @@ class Login extends React.Component {
           />
           <TextInput
             type="password"
-            placeholder="Password"
+            placeholder="Senha"
             name="password"
             value={this.state.password}
             onChange={this.handleChange}
           />
           <Button
             text="Entrar"
-            onClick={this.props.login}
+            onClick={this.handleLogin}
           />
           {
             this.state.error.length ?
             (
-              <p>Invalid credentials.</p>
+              <span className="text-danger">{ this.state.error }</span>
             ) : null
           }
         </div>
@@ -71,9 +88,9 @@ const LoginConnector = connect(state => (
   }
 ), dispatch => (
   {
-    login: () => {
-      dispatch(loginAction());
-    },
+    login: credentials => (
+      dispatch(loginAction(credentials))
+    ),
   }
 ))(Login);
 
