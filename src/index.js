@@ -1,29 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
-import { createLogger } from 'redux-logger';
-import { persistStore, persistCombineReducers } from 'redux-persist';
-import storage from 'redux-persist/es/storage';
+import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/es/integration/react';
 
 import 'normalize.css';
+import store from './app/store';
 import './assets/stylus/index.styl';
 import App from './app/App';
-import reducers from './app/store/reducers';
 // import registerServiceWorker from './registerServiceWorker';
 
-const persistConfig = {
-  key: 'root',
-  storage,
-};
-
-const reducer = persistCombineReducers(persistConfig, reducers);
-
-const loggerMiddleware = createLogger();
-
-const store = createStore(reducer, applyMiddleware(thunkMiddleware, loggerMiddleware));
 const persistor = persistStore(store);
 
 ReactDOM.render(

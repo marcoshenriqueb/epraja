@@ -15,7 +15,16 @@ const feathersClient = feathers()
     storage: window.localStorage, // eslint-disable-line
   }));
 
+feathersClient.hooks({
+  error(hook) {
+    if (hook.error.className === 'not-authenticated') {
+      console.log('not-authenticated');
+    }
+  },
+});
+
 export default {
   auth: feathersClient.authenticate,
   users: feathersClient.service('users'),
+  bills: feathersClient.service('bills'),
 };
