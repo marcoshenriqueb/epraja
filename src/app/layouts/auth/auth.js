@@ -47,7 +47,6 @@ class Auth extends React.Component {
   render() {
     if (this.state.loading) return <div>Loading</div>;
 
-    console.log('On render', this.props.authenticated, this.state);
     const returnRoutes = () => [
       <PrivateRoute
         key={0}
