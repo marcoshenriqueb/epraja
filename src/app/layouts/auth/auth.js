@@ -5,11 +5,12 @@ import './auth.styl';
 
 import routeComponents from './../../router';
 import Login from './../../pages/login/login';
-import Table from './../../pages/table/table';
-
-import api from './../../api';
-import actions from './../../store/actions';
+import Tables from './../../pages/tables/tables';
 import Button from './../../components/button/button';
+
+import actions from './../../store/actions';
+
+const { checkToken: checkTokenAction } = actions;
 
 const { PrivateRoute, GuestRoute } = routeComponents;
 
@@ -27,40 +28,37 @@ class Auth extends React.Component {
       return;
     }
 
-    api.auth({
-      strategy: 'jwt',
-      accessToken: this.props.token,
-    }).then((response) => {
-      console.log('Token checked');
-      actions.receiveToken(response.accessToken, true);
-      this.setState({
-        loading: false,
+    this.props.checkToken(this.props.token)
+      .then(() => {
+        console.log('Token checked');
+        this.setState({
+          loading: false,
+        });
+      }).catch(() => {
+        console.log('Token invalid');
+        this.setState({
+          loading: false,
+        });
       });
-    }).catch(() => {
-      console.log('Token invalid');
-      actions.receiveToken('', false);
-      this.setState({
-        loading: false,
-      });
-    });
   }
 
   render() {
     if (this.state.loading) return <div>Loading</div>;
 
+    console.log('On render', this.props.authenticated, this.state);
     const returnRoutes = () => [
       <PrivateRoute
         key={0}
         exact
         path="/"
-        component={Table}
+        component={Tables}
         isAuthenticated={this.props.authenticated}
       />,
       <PrivateRoute
         key={1}
         exact
         path="/caixa"
-        component={Table}
+        component={Tables}
         isAuthenticated={this.props.authenticated}
       />,
       <GuestRoute
@@ -117,6 +115,7 @@ Auth.propTypes = {
   }).isRequired,
   authenticated: PropTypes.bool.isRequired,
   token: PropTypes.string.isRequired,
+  checkToken: PropTypes.func.isRequired,
 };
 
 const AuthConnector = connect(state => (
@@ -124,6 +123,12 @@ const AuthConnector = connect(state => (
     user: state.auth.user.data,
     authenticated: state.auth.authenticated,
     token: state.auth.token.data,
+  }
+), dispatch => (
+  {
+    checkToken: token => (
+      dispatch(checkTokenAction(token))
+    ),
   }
 ))(Auth);
 

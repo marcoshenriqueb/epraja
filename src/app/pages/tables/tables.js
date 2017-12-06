@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import './table.styl';
+import './tables.styl';
 
 import actions from './../../store/actions';
 
@@ -14,8 +14,12 @@ class Table extends React.Component {
 
   render() {
     return (
-      <div className="full-w flex justify-center guest-wrapper">
-        {this.props.bills.data}
+      <div className="full-w flex justify-center">
+        {
+          this.props.bills.data.map(o => (
+            <span>{ o.table }</span>
+          ))
+        }
       </div>
     );
   }
