@@ -17,6 +17,7 @@ module.exports = {
     "jsx-a11y/anchor-is-valid": [ "error", {
       "components": [ "Link" ],
       "specialLink": [ "to" ]
-    }]
+    }],
+    "no-underscore-dangle": [2, { "allow": [ '_id' ] }]
   }
 };

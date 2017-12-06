@@ -10,6 +10,8 @@ import Button from './../../components/button/button';
 
 import actions from './../../store/actions';
 
+const Home = () => <div className="">Home</div>;
+
 const { checkToken: checkTokenAction } = actions;
 
 const { PrivateRoute, GuestRoute } = routeComponents;
@@ -51,7 +53,7 @@ class Auth extends React.Component {
         key={0}
         exact
         path="/"
-        component={Tables}
+        component={Home}
         isAuthenticated={this.props.authenticated}
       />,
       <PrivateRoute
