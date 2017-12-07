@@ -84,30 +84,45 @@ class Items extends React.Component {
           <span className={`button-o ${this.state.category === 'bebida' ? 'active' : ''}`}>Bebidas</span>
           <span className={`button-o ${this.state.category === 'geral' ? 'active' : ''}`}>Geral</span>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Ordem/Hora</th>
-              <th>Quant.</th>
-              <th>Nome do Prato</th>
-              <th>Mesa</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              this.getItems().map((i, k) => (
-                <tr key={i._id}>
-                  <th>{k + 1}</th>
-                  <th>{i.quantity}</th>
-                  <th>{i.menuItem.name}</th>
-                  <th>{i.table}</th>
-                  <th>{i.status}</th>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
+        <div className="full-w flex-column">
+          <table>
+            <thead>
+              <tr>
+                <th>Ordem/Hora</th>
+                <th>Quant.</th>
+                <th>Nome do Prato</th>
+                <th>Mesa</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                this.getItems().map((i, k) => (
+                  <tr key={i._id}>
+                    <th>{k + 1}</th>
+                    <th>{i.quantity}</th>
+                    <th>{i.menuItem.name}</th>
+                    <th>{i.table}</th>
+                    <th className="flex items--table--statuses">
+                      <span className={i.status === 'entregue' ? 'green' : ''}>
+                        <input type="radio" checked={i.status === 'entregue'} />
+                        &nbsp;&nbsp;Entregue
+                      </span>
+                      <span className={i.status === 'encaminhado' ? 'blue' : ''}>
+                        <input type="radio" checked={i.status === 'encaminhado'} />
+                        &nbsp;&nbsp;Encaminhado
+                      </span>
+                      <span className={i.status === 'pendente' ? 'red' : ''}>
+                        <input type="radio" checked={i.status === 'pendente'} />
+                        &nbsp;&nbsp;Pendente
+                      </span>
+                    </th>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
