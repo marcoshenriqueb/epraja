@@ -90,10 +90,6 @@ class Auth extends React.Component {
               text="Pedidos"
             />
             <Button
-              size="big"
-              text="Cardápio"
-            />
-            <Button
               link="/caixa"
               size="big"
               text="Caixa"

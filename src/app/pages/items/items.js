@@ -62,7 +62,7 @@ class Items extends React.Component {
 
     const items = [];
     this.props.bills.data.forEach((b) => {
-      if (this.getStatusName(b.billStatus) !== 'Fechada') {
+      if (this.getStatusName(b.billStatus) !== 'fechada') {
         b.menuItems.forEach((i) => {
           items.push(Object.assign({}, i, {
             menuItem: this.getItem(i.menuItem),
