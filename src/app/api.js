@@ -28,4 +28,5 @@ export default {
   users: feathersClient.service('users'),
   bills: feathersClient.service('bills'),
   billStatuses: feathersClient.service('bill-statuses'),
+  menuItems: feathersClient.service('menu-items'),
 };

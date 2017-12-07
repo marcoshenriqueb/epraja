@@ -12,17 +12,21 @@ const {
   resetBills: resetBillsAction,
   fetchBillStatuses: fetchBillStatusesAction,
   resetBillStatuses: resetBillStatusesAction,
+  fetchMenuItems: fetchMenuItemsAction,
+  resetMenuItems: resetMenuItemsAction,
 } = actions;
 
 class Table extends React.Component {
   componentDidMount() {
     this.props.fetchBills();
     this.props.fetchBillStatuses();
+    this.props.fetchMenuItems();
   }
 
   componentWillUnmount() {
     this.props.resetBills();
     this.props.resetBillStatuses();
+    this.props.resetMenuItems();
   }
 
   getStatusName(id) {
@@ -33,6 +37,12 @@ class Table extends React.Component {
 
   getTable() {
     const result = this.props.bills.data.filter(b => b._id === this.props.match.params.id);
+
+    return result.length ? result[0] : {};
+  }
+
+  getItem(id) {
+    const result = this.props.menuItems.data.filter(i => i._id === id);
 
     return result.length ? result[0] : {};
   }
@@ -56,9 +66,12 @@ class Table extends React.Component {
           </div>
           <div className="table-details--content full-w">
             {
-              !Object.keys(this.getTable()).length ? null : this.getTable().menuItems.map(i => (
-                <div className="flex full-w table-details--item">
-                  {i.menuItem}
+              !Object.keys(this.getTable()).length ? null : this.getTable().menuItems
+              .map((i, k) => (
+                <div className="flex space-between full-w table-details--item">
+                  <span>{k + 1}</span>
+                  <span>{this.getItem(i.menuItem).name}</span>
+                  <span>R$ {this.getItem(i.menuItem).price}</span>
                 </div>
               ))
             }
@@ -79,16 +92,22 @@ Table.propTypes = {
   billStatuses: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
+  menuItems: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+  }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchBillStatuses: PropTypes.func.isRequired,
   resetBillStatuses: PropTypes.func.isRequired,
+  fetchMenuItems: PropTypes.func.isRequired,
+  resetMenuItems: PropTypes.func.isRequired,
 };
 
 const TableConnector = connect(state => (
   {
     bills: state.bill.bills,
     billStatuses: state.billStatus.billStatuses,
+    menuItems: state.menuItem.menuItems,
   }
 ), dispatch => (
   {
@@ -103,6 +122,12 @@ const TableConnector = connect(state => (
     ),
     resetBillStatuses: () => (
       dispatch(resetBillStatusesAction())
+    ),
+    fetchMenuItems: () => (
+      dispatch(fetchMenuItemsAction())
+    ),
+    resetMenuItems: () => (
+      dispatch(resetMenuItemsAction())
     ),
   }
 ))(Table);
