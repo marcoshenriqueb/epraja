@@ -12,6 +12,8 @@ const {
   resetBillStatuses: resetBillStatusesAction,
   fetchMenuItems: fetchMenuItemsAction,
   resetMenuItems: resetMenuItemsAction,
+  fetchMenuItemStatuses: fetchMenuItemStatusesAction,
+  resetMenuItemStatuses: resetMenuItemStatusesAction,
 } = actions;
 
 class Items extends React.Component {
@@ -27,12 +29,20 @@ class Items extends React.Component {
     this.props.fetchBills();
     this.props.fetchBillStatuses();
     this.props.fetchMenuItems();
+    this.props.fetchMenuItemStatuses();
   }
 
   componentWillUnmount() {
     this.props.resetBills();
     this.props.resetBillStatuses();
     this.props.resetMenuItems();
+    this.props.resetMenuItemStatuses();
+  }
+
+  getItemStatusName(id) {
+    const result = this.props.menuItemStatuses.data.filter(s => s._id === id);
+
+    return result.length ? result[0].name.toLowerCase() : '';
   }
 
   getStatusName(id) {
@@ -57,7 +67,7 @@ class Items extends React.Component {
           items.push(Object.assign({}, i, {
             menuItem: this.getItem(i.menuItem),
             table: b.table,
-            status: this.getStatusName(i.itemStatus),
+            status: this.getItemStatusName(i.itemStatus),
           }));
         });
       }
@@ -115,12 +125,17 @@ Items.propTypes = {
   menuItems: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
+  menuItemStatuses: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+  }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchBillStatuses: PropTypes.func.isRequired,
   resetBillStatuses: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
   resetMenuItems: PropTypes.func.isRequired,
+  fetchMenuItemStatuses: PropTypes.func.isRequired,
+  resetMenuItemStatuses: PropTypes.func.isRequired,
 };
 
 const ItemsConnector = connect(state => (
@@ -128,6 +143,7 @@ const ItemsConnector = connect(state => (
     bills: state.bill.bills,
     billStatuses: state.billStatus.billStatuses,
     menuItems: state.menuItem.menuItems,
+    menuItemStatuses: state.menuItemStatus.menuItemStatuses,
   }
 ), dispatch => (
   {
@@ -148,6 +164,12 @@ const ItemsConnector = connect(state => (
     ),
     resetMenuItems: () => (
       dispatch(resetMenuItemsAction())
+    ),
+    fetchMenuItemStatuses: () => (
+      dispatch(fetchMenuItemStatusesAction())
+    ),
+    resetMenuItemStatuses: () => (
+      dispatch(resetMenuItemStatusesAction())
     ),
   }
 ))(Items);
