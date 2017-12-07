@@ -82,9 +82,11 @@ const updateBillItemStatus = (id, statusId) => (
     api.bills.patch(null, {
       'menuItems.$.itemStatus': statusId,
     }, {
-      'menuItems._id': id,
+      query: {
+        'menuItems._id': id,
+      },
     }).then((response) => {
-      dispatch(updateBill(response.data));
+      dispatch(updateBill(response[0] || {}));
       return response;
     }, error => error)
   )
