@@ -27,4 +27,5 @@ export default {
   auth: feathersClient.authenticate,
   users: feathersClient.service('users'),
   bills: feathersClient.service('bills'),
+  billStatuses: feathersClient.service('bill-statuses'),
 };
