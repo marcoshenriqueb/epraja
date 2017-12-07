@@ -23,6 +23,8 @@ class Items extends React.Component {
     this.state = {
       category: 'geral',
     };
+
+    this.changeCategory = this.changeCategory.bind(this);
   }
 
   componentDidMount() {
@@ -39,10 +41,10 @@ class Items extends React.Component {
     this.props.resetMenuItemStatuses();
   }
 
-  getItemStatusName(id) {
+  getItemStatus(id) {
     const result = this.props.menuItemStatuses.data.filter(s => s._id === id);
 
-    return result.length ? result[0].name.toLowerCase() : '';
+    return result.length ? result[0] : {};
   }
 
   getStatusName(id) {
@@ -67,7 +69,7 @@ class Items extends React.Component {
           items.push(Object.assign({}, i, {
             menuItem: this.getItem(i.menuItem),
             table: b.table,
-            status: this.getItemStatusName(i.itemStatus),
+            status: this.getItemStatus(i.itemStatus),
           }));
         });
       }
@@ -76,13 +78,19 @@ class Items extends React.Component {
     return items;
   }
 
+  changeCategory(e) {
+    this.setState({
+      category: e.target.innerHTML.toLowerCase(),
+    });
+  }
+
   render() {
     return (
       <div className="full-w flex-column start items-container">
         <div className="flex justify-center full-w items--categories">
-          <span className={`button-o ${this.state.category === 'comida' ? 'active' : ''}`}>Comidas</span>
-          <span className={`button-o ${this.state.category === 'bebida' ? 'active' : ''}`}>Bebidas</span>
-          <span className={`button-o ${this.state.category === 'geral' ? 'active' : ''}`}>Geral</span>
+          <span onClick={this.changeCategory} className={`button-o ${this.state.category === 'comidas' ? 'active' : ''}`}>Comidas</span>
+          <span onClick={this.changeCategory} className={`button-o ${this.state.category === 'bebidas' ? 'active' : ''}`}>Bebidas</span>
+          <span onClick={this.changeCategory} className={`button-o ${this.state.category === 'geral' ? 'active' : ''}`}>Geral</span>
         </div>
         <div className="full-w flex-column">
           <table>
@@ -104,16 +112,16 @@ class Items extends React.Component {
                     <th>{i.menuItem.name}</th>
                     <th>{i.table}</th>
                     <th className="flex items--table--statuses">
-                      <span className={i.status === 'entregue' ? 'green' : ''}>
-                        <input type="radio" checked={i.status === 'entregue'} />
+                      <span className={i.status.name === 'Entregue' ? 'green' : ''}>
+                        <input type="radio" checked={i.status.name === 'Entregue'} />
                         &nbsp;&nbsp;Entregue
                       </span>
-                      <span className={i.status === 'encaminhado' ? 'blue' : ''}>
-                        <input type="radio" checked={i.status === 'encaminhado'} />
+                      <span className={i.status.name === 'Encaminhado' ? 'blue' : ''}>
+                        <input type="radio" checked={i.status.name === 'Encaminhado'} />
                         &nbsp;&nbsp;Encaminhado
                       </span>
-                      <span className={i.status === 'pendente' ? 'red' : ''}>
-                        <input type="radio" checked={i.status === 'pendente'} />
+                      <span className={i.status.name === 'Pendente' ? 'red' : ''}>
+                        <input type="radio" checked={i.status.name === 'Pendente'} />
                         &nbsp;&nbsp;Pendente
                       </span>
                     </th>
