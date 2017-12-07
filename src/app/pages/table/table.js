@@ -47,6 +47,19 @@ class Table extends React.Component {
     return result.length ? result[0] : {};
   }
 
+  getTotal() {
+    if (!this.props.bills.data.length) return 0;
+    if (!this.props.menuItems.data.length) return 0;
+
+    let total = 0;
+    const items = this.getTable().menuItems;
+    items.forEach((i) => {
+      total += (this.getItem(i.menuItem).price * i.quantity);
+    });
+
+    return total;
+  }
+
   render() {
     return (
       <div className="full-w flex start table-container">
@@ -67,14 +80,18 @@ class Table extends React.Component {
           <div className="table-details--content full-w">
             {
               !Object.keys(this.getTable()).length ? null : this.getTable().menuItems
-              .map((i, k) => (
+              .map(i => (
                 <div className="flex space-between full-w table-details--item">
-                  <span>{k + 1}</span>
+                  <span>{i.quantity}</span>
                   <span>{this.getItem(i.menuItem).name}</span>
                   <span>R$ {this.getItem(i.menuItem).price}</span>
                 </div>
               ))
             }
+          </div>
+          <div className="flex space-between full-w">
+            <span>Total:</span>
+            <span>R$ {this.getTotal()}</span>
           </div>
         </div>
       </div>
@@ -87,7 +104,9 @@ Table.propTypes = {
     params: PropTypes.shape({ id: PropTypes.string.isRequired }).isRequired,
   }).isRequired,
   bills: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+    data: PropTypes.arrayOf(PropTypes.shape({
+      menuItems: PropTypes.arrayOf(PropTypes.shape({})),
+    }).isRequired).isRequired,
   }).isRequired,
   billStatuses: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
