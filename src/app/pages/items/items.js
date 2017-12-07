@@ -14,6 +14,8 @@ const {
   resetMenuItems: resetMenuItemsAction,
   fetchMenuItemStatuses: fetchMenuItemStatusesAction,
   resetMenuItemStatuses: resetMenuItemStatusesAction,
+  fetchMenuCategories: fetchMenuCategoriesAction,
+  resetMenuCategories: resetMenuCategoriesAction,
 } = actions;
 
 class Items extends React.Component {
@@ -32,6 +34,7 @@ class Items extends React.Component {
     this.props.fetchBillStatuses();
     this.props.fetchMenuItems();
     this.props.fetchMenuItemStatuses();
+    this.props.fetchMenuCategories();
   }
 
   componentWillUnmount() {
@@ -39,6 +42,7 @@ class Items extends React.Component {
     this.props.resetBillStatuses();
     this.props.resetMenuItems();
     this.props.resetMenuItemStatuses();
+    this.props.resetMenuCategories();
   }
 
   getItemStatus(id) {
@@ -49,6 +53,12 @@ class Items extends React.Component {
 
   getStatusName(id) {
     const result = this.props.billStatuses.data.filter(s => s._id === id);
+
+    return result.length ? result[0].name.toLowerCase() : '';
+  }
+
+  getCategory(id) {
+    const result = this.props.menuCategories.data.filter(c => c._id === id);
 
     return result.length ? result[0].name.toLowerCase() : '';
   }
@@ -66,16 +76,25 @@ class Items extends React.Component {
     this.props.bills.data.forEach((b) => {
       if (this.getStatusName(b.billStatus) !== 'fechada') {
         b.menuItems.forEach((i) => {
-          items.push(Object.assign({}, i, {
-            menuItem: this.getItem(i.menuItem),
-            table: b.table,
-            status: this.getItemStatus(i.itemStatus),
-          }));
+          if (
+            this.state.category === 'geral' ||
+            this.state.category === this.getCategory(this.getItem(i.menuItem).menuCategory)
+          ) {
+            items.push(Object.assign({}, i, {
+              menuItem: this.getItem(i.menuItem),
+              table: b.table,
+              status: this.getItemStatus(i.itemStatus),
+            }));
+          }
         });
       }
     });
 
     return items;
+  }
+
+  getCategories() {
+    return ['geral', ...this.props.menuCategories.data.map(c => c.name)];
   }
 
   changeCategory(e) {
@@ -88,9 +107,17 @@ class Items extends React.Component {
     return (
       <div className="full-w flex-column start items-container">
         <div className="flex justify-center full-w items--categories">
-          <span onClick={this.changeCategory} className={`button-o ${this.state.category === 'comidas' ? 'active' : ''}`}>Comidas</span>
-          <span onClick={this.changeCategory} className={`button-o ${this.state.category === 'bebidas' ? 'active' : ''}`}>Bebidas</span>
-          <span onClick={this.changeCategory} className={`button-o ${this.state.category === 'geral' ? 'active' : ''}`}>Geral</span>
+          {
+            this.getCategories().map(c => (
+              <span
+                key={c}
+                onClick={this.changeCategory}
+                className={`button-o ${this.state.category === c.toLowerCase() ? 'active' : ''}`}
+              >
+                {c.toLowerCase()}
+              </span>
+            ))
+          }
         </div>
         <div className="full-w flex-column">
           <table>
@@ -151,6 +178,9 @@ Items.propTypes = {
   menuItemStatuses: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
+  menuCategories: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+  }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchBillStatuses: PropTypes.func.isRequired,
@@ -159,6 +189,8 @@ Items.propTypes = {
   resetMenuItems: PropTypes.func.isRequired,
   fetchMenuItemStatuses: PropTypes.func.isRequired,
   resetMenuItemStatuses: PropTypes.func.isRequired,
+  fetchMenuCategories: PropTypes.func.isRequired,
+  resetMenuCategories: PropTypes.func.isRequired,
 };
 
 const ItemsConnector = connect(state => (
@@ -167,6 +199,7 @@ const ItemsConnector = connect(state => (
     billStatuses: state.billStatus.billStatuses,
     menuItems: state.menuItem.menuItems,
     menuItemStatuses: state.menuItemStatus.menuItemStatuses,
+    menuCategories: state.menuCategory.menuCategories,
   }
 ), dispatch => (
   {
@@ -193,6 +226,12 @@ const ItemsConnector = connect(state => (
     ),
     resetMenuItemStatuses: () => (
       dispatch(resetMenuItemStatusesAction())
+    ),
+    fetchMenuCategories: () => (
+      dispatch(fetchMenuCategoriesAction())
+    ),
+    resetMenuCategories: () => (
+      dispatch(resetMenuCategoriesAction())
     ),
   }
 ))(Items);

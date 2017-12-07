@@ -3,6 +3,7 @@ import bill from './bill';
 import billStatus from './billStatus';
 import menuItem from './menuItem';
 import menuItemStatus from './menuItemStatus';
+import menuCategory from './menuCategory';
 
 const store = {
   auth,
@@ -10,6 +11,7 @@ const store = {
   billStatus,
   menuItem,
   menuItemStatus,
+  menuCategory,
 };
 
 export default store;

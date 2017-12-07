@@ -3,6 +3,7 @@ import bill from './bill';
 import billStatus from './billStatus';
 import menuItem from './menuItem';
 import menuItemStatus from './menuItemStatus';
+import menuCategory from './menuCategory';
 
 export default {
   ...auth,
@@ -10,4 +11,5 @@ export default {
   ...billStatus,
   ...menuItem,
   ...menuItemStatus,
+  ...menuCategory,
 };

@@ -30,4 +30,5 @@ export default {
   billStatuses: feathersClient.service('bill-statuses'),
   menuItems: feathersClient.service('menu-items'),
   menuItemStatuses: feathersClient.service('menu-item-statuses'),
+  menuCategories: feathersClient.service('menu-categories'),
 };
