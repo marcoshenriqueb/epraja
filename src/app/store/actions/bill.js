@@ -22,6 +22,8 @@ const addBill = bill => (
 );
 
 const createdCallback = (message) => {
+  if (store.getState().auth.user.data.business !== message.business) return;
+
   store.dispatch(addBill(message));
 };
 
@@ -33,6 +35,8 @@ const updateBill = bill => (
 );
 
 const updatedCallback = (message) => {
+  if (store.getState().auth.user.data.business !== message.business) return;
+
   store.dispatch(updateBill(message));
 };
 
@@ -44,6 +48,8 @@ const removeBill = bill => (
 );
 
 const removedCallback = (message) => {
+  if (store.getState().auth.user.data.business !== message.business) return;
+
   store.dispatch(removeBill(message));
 };
 
@@ -56,7 +62,7 @@ const fetchBills = () => (
     api.bills.on('updated', updatedCallback);
     api.bills.on('removed', removedCallback);
 
-    return api.bills.find({})
+    return api.bills.find({ query: { business: store.getState().auth.user.data.business } })
       .then((response) => {
         dispatch(receiveBills(response.data));
         return response;
