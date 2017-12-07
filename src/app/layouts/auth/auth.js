@@ -6,6 +6,7 @@ import './auth.styl';
 import routeComponents from './../../router';
 import Login from './../../pages/login/login';
 import Tables from './../../pages/tables/tables';
+import Table from './../../pages/table/table';
 import Button from './../../components/button/button';
 
 import actions from './../../store/actions';
@@ -62,8 +63,15 @@ class Auth extends React.Component {
         component={Tables}
         isAuthenticated={this.props.authenticated}
       />,
-      <GuestRoute
+      <PrivateRoute
         key={2}
+        exact
+        path="/caixa/:id"
+        component={Table}
+        isAuthenticated={this.props.authenticated}
+      />,
+      <GuestRoute
+        key={3}
         path="/login"
         component={Login}
         isAuthenticated={this.props.authenticated}

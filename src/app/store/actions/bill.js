@@ -53,7 +53,7 @@ const removedCallback = (message) => {
   store.dispatch(removeBill(message));
 };
 
-const fetchBills = () => (
+const fetchBills = (query = {}) => (
   (dispatch) => {
     dispatch(requestBills());
 
@@ -62,14 +62,18 @@ const fetchBills = () => (
     api.bills.on('updated', updatedCallback);
     api.bills.on('removed', removedCallback);
 
-    return api.bills.find({ query: { business: store.getState().auth.user.data.business } })
-      .then((response) => {
-        dispatch(receiveBills(response.data));
-        return response;
-      }, (error) => {
-        dispatch(receiveBills([]));
-        return error;
-      });
+    return api.bills.find({
+      query: {
+        business: store.getState().auth.user.data.business,
+        ...query,
+      },
+    }).then((response) => {
+      dispatch(receiveBills(response.data));
+      return response;
+    }, (error) => {
+      dispatch(receiveBills([]));
+      return error;
+    });
   }
 );
 

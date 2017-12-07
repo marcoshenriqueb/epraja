@@ -18,6 +18,8 @@ module.exports = {
       "components": [ "Link" ],
       "specialLink": [ "to" ]
     }],
-    "no-underscore-dangle": [2, { "allow": [ '_id' ] }]
+    "no-underscore-dangle": [2, { "allow": [ '_id' ] }],
+    "jsx-a11y/no-static-element-interactions": 0,
+    "jsx-a11y/click-events-have-key-events": 0
   }
 };

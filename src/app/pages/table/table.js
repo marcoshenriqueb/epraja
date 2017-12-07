@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import './tables.styl';
+import './table.styl';
 
 import actions from './../../store/actions';
 
@@ -30,26 +29,29 @@ class Table extends React.Component {
     return result.length ? result[0].name.toLowerCase() : '';
   }
 
+  getTable() {
+    const result = this.props.bills.data.filter(b => b._id === this.props.match.params.id);
+
+    return result.length ? result[0] : {};
+  }
+
   render() {
     return (
-      <div className="full-w flex wrap tables-container">
-        {
-          this.props.bills.data.map(o => (
-            <Link
-              key={o.table}
-              to={`/caixa/${o._id}`}
-              className={`tables-item flex-column ${this.getStatusName(o.billStatus)}`}
-            >
-              Mesa { o.table }
-            </Link>
-          ))
-        }
+      <div className="full-w flex wrap">
+        <div
+          className="tables-item flex-column"
+        >
+          Mesa { this.getTable().table }
+        </div>
       </div>
     );
   }
 }
 
 Table.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({ id: PropTypes.string.isRequired }).isRequired,
+  }).isRequired,
   bills: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
@@ -69,8 +71,8 @@ const TableConnector = connect(state => (
   }
 ), dispatch => (
   {
-    fetchBills: () => (
-      dispatch(fetchBillsAction())
+    fetchBills: query => (
+      dispatch(fetchBillsAction(query))
     ),
     resetBills: () => (
       dispatch(resetBillsAction())
