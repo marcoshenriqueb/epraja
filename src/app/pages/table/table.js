@@ -1,6 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import './table.styl';
 
 import actions from './../../store/actions';
@@ -37,11 +39,30 @@ class Table extends React.Component {
 
   render() {
     return (
-      <div className="full-w flex wrap">
+      <div className="full-w flex start table-container">
+        <Link to="/caixa">Voltar</Link>
         <div
-          className="tables-item flex-column"
+          className="table-item flex-column"
         >
           Mesa { this.getTable().table }
+        </div>
+        <div className="flex-column table-details">
+          <div className="flex start space-between">
+            <h2 className="table-details--title">Fechamento de conta</h2>
+            <div className="flex-column end">
+              <h2>Mesa { this.getTable().table }</h2>
+              <h2>Hora: { moment().format('HH:mm') }</h2>
+            </div>
+          </div>
+          <div className="table-details--content full-w">
+            {
+              !Object.keys(this.getTable()).length ? null : this.getTable().menuItems.map(i => (
+                <div className="flex full-w table-details--item">
+                  {i.menuItem}
+                </div>
+              ))
+            }
+          </div>
         </div>
       </div>
     );
