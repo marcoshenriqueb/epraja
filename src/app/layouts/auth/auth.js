@@ -5,13 +5,12 @@ import './auth.styl';
 
 import routeComponents from './../../router';
 import Login from './../../pages/login/login';
+import Items from './../../pages/items/items';
 import Tables from './../../pages/tables/tables';
 import Table from './../../pages/table/table';
 import Button from './../../components/button/button';
 
 import actions from './../../store/actions';
-
-const Home = () => <div className="">Home</div>;
 
 const { checkToken: checkTokenAction } = actions;
 
@@ -53,7 +52,7 @@ class Auth extends React.Component {
         key={0}
         exact
         path="/"
-        component={Home}
+        component={Items}
         isAuthenticated={this.props.authenticated}
       />,
       <PrivateRoute
