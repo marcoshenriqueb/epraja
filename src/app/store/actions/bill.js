@@ -77,6 +77,19 @@ const fetchBills = (query = {}) => (
   }
 );
 
+const updateBillItemStatus = (id, statusId) => (
+  dispatch => (
+    api.bills.patch(null, {
+      'menuItems.$.itemStatus': statusId,
+    }, {
+      'menuItems._id': id,
+    }).then((response) => {
+      dispatch(updateBill(response.data));
+      return response;
+    }, error => error)
+  )
+);
+
 const resetBillsState = () => (
   {
     type: 'RESET_BILLS',
@@ -97,4 +110,5 @@ const resetBills = () => (
 export default {
   fetchBills,
   resetBills,
+  updateBillItemStatus,
 };

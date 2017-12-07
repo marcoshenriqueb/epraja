@@ -16,6 +16,7 @@ const {
   resetMenuItemStatuses: resetMenuItemStatusesAction,
   fetchMenuCategories: fetchMenuCategoriesAction,
   resetMenuCategories: resetMenuCategoriesAction,
+  updateBillItemStatus: updateBillItemStatusAction,
 } = actions;
 
 class Items extends React.Component {
@@ -103,6 +104,12 @@ class Items extends React.Component {
     });
   }
 
+  updateStatus(id, statusId) {
+    return () => {
+      this.props.updateBillItemStatus(id, statusId);
+    };
+  }
+
   render() {
     return (
       <div className="full-w flex-column start items-container">
@@ -139,18 +146,18 @@ class Items extends React.Component {
                     <th>{i.menuItem.name}</th>
                     <th>{i.table}</th>
                     <th className="flex items--table--statuses">
-                      <span className={i.status.name === 'Entregue' ? 'green' : ''}>
-                        <input type="radio" checked={i.status.name === 'Entregue'} />
-                        &nbsp;&nbsp;Entregue
-                      </span>
-                      <span className={i.status.name === 'Encaminhado' ? 'blue' : ''}>
-                        <input type="radio" checked={i.status.name === 'Encaminhado'} />
-                        &nbsp;&nbsp;Encaminhado
-                      </span>
-                      <span className={i.status.name === 'Pendente' ? 'red' : ''}>
-                        <input type="radio" checked={i.status.name === 'Pendente'} />
-                        &nbsp;&nbsp;Pendente
-                      </span>
+                      {
+                        this.props.menuItemStatuses.data.map(s => (
+                          <span className={i.status.name === s.name ? `${s.name}` : ''}>
+                            <input
+                              onClick={this.updateStatus(i._id, s._id)}
+                              type="radio"
+                              checked={i.status.name === s.name}
+                            />
+                            &nbsp;&nbsp;{s.name}
+                          </span>
+                        ))
+                      }
                     </th>
                   </tr>
                 ))
@@ -191,6 +198,7 @@ Items.propTypes = {
   resetMenuItemStatuses: PropTypes.func.isRequired,
   fetchMenuCategories: PropTypes.func.isRequired,
   resetMenuCategories: PropTypes.func.isRequired,
+  updateBillItemStatus: PropTypes.func.isRequired,
 };
 
 const ItemsConnector = connect(state => (
@@ -232,6 +240,9 @@ const ItemsConnector = connect(state => (
     ),
     resetMenuCategories: () => (
       dispatch(resetMenuCategoriesAction())
+    ),
+    updateBillItemStatus: (id, statusId) => (
+      dispatch(updateBillItemStatusAction(id, statusId))
     ),
   }
 ))(Items);
