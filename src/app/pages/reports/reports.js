@@ -1,6 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import {
+  PieChart,
+  Pie,
+  Tooltip,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
 import './reports.styl';
 
 import actions from './../../store/actions';
@@ -11,6 +22,7 @@ const {
   fetchSurveyRates: fetchSurveyRatesAction,
   resetSurveyRates: resetSurveyRatesAction,
 } = actions;
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 class Reports extends React.Component {
   componentDidMount() {
@@ -29,11 +41,49 @@ class Reports extends React.Component {
     return result.length ? result[0] : {};
   }
 
+  getAggregateSurveys() {
+    return this.props.surveyRates.data.map((r) => {
+      let count = 0;
+      this.props.surveys.data.forEach((s) => {
+        if (s.surveyRate === r._id) {
+          count += 1;
+        }
+      });
+
+      return Object.assign({}, r, { value: count });
+    });
+  }
+
   render() {
-    console.log(this.props.surveys);
     return (
-      <div className="full-w flex start">
-        <h1>Hey</h1>
+      <div className="full-w flex start wrap">
+        <PieChart width={400} height={400}>
+          <Pie
+            isAnimationActive={false}
+            data={this.getAggregateSurveys()}
+            cx={200}
+            cy={200}
+            innerRadius={50}
+            outerRadius={80}
+            fill="red"
+            label
+          >
+            {
+              this.getAggregateSurveys()
+              .map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
+            }
+          </Pie>
+          <Tooltip />
+        </PieChart>
+        <BarChart width={600} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <XAxis dataKey="name"/>
+          <YAxis/>
+          <CartesianGrid strokeDasharray="3 3"/>
+          <Tooltip/>
+          <Legend />
+          <Bar dataKey="pv" fill="#8884d8" />
+          <Bar dataKey="uv" fill="#82ca9d" />
+        </BarChart>
       </div>
     );
   }

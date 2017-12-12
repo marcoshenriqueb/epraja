@@ -1,4 +1,5 @@
 import api from './../../api';
+import store from './../../store';
 
 const requestSurveys = () => (
   {
@@ -17,14 +18,17 @@ const fetchSurveys = () => (
   (dispatch) => {
     dispatch(requestSurveys());
 
-    return api.surveys.find({})
-      .then((response) => {
-        dispatch(receiveSurveys(response.data));
-        return response;
-      }, (error) => {
-        dispatch(receiveSurveys([]));
-        return error;
-      });
+    return api.surveys.find({
+      query: {
+        business: store.getState().auth.user.data.business,
+      },
+    }).then((response) => {
+      dispatch(receiveSurveys(response.data));
+      return response;
+    }, (error) => {
+      dispatch(receiveSurveys([]));
+      return error;
+    });
   }
 );
 
