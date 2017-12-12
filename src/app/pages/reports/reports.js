@@ -11,7 +11,9 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  Legend,
 } from 'recharts';
+import moment from 'moment';
 import './reports.styl';
 
 import actions from './../../store/actions';
@@ -54,6 +56,23 @@ class Reports extends React.Component {
     });
   }
 
+  // getMonthlyAggregateSurveys(month) {
+  //   return this.props.surveys.data.map((s) => {
+  //     let count = 0;
+  //     const data = { name: moment(s.createAt).format('MMM') };
+  //     if (moment(s.createAt).format('MM') === month) {
+  //       this.props.surveys.data.forEach((s) => {
+  //         if (s.surveyRate === r._id) {
+  //           count += 1;
+  //         }
+  //       });
+  //     }
+
+
+  //     return data;
+  //   });
+  // }
+
   render() {
     return (
       <div className="full-w flex start wrap">
@@ -75,11 +94,21 @@ class Reports extends React.Component {
           </Pie>
           <Tooltip />
         </PieChart>
-        <BarChart width={600} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <XAxis dataKey="name"/>
-          <YAxis/>
-          <CartesianGrid strokeDasharray="3 3"/>
-          <Tooltip/>
+        <BarChart
+          width={600}
+          height={300}
+          data={}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
           <Legend />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
