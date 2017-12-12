@@ -31,4 +31,6 @@ export default {
   menuItems: feathersClient.service('menu-items'),
   menuItemStatuses: feathersClient.service('menu-item-statuses'),
   menuCategories: feathersClient.service('menu-categories'),
+  surveyRates: feathersClient.service('survey-rates'),
+  surveys: feathersClient.service('surveys'),
 };

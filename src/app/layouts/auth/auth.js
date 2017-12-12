@@ -8,6 +8,7 @@ import Login from './../../pages/login/login';
 import Items from './../../pages/items/items';
 import Tables from './../../pages/tables/tables';
 import Table from './../../pages/table/table';
+import Reports from './../../pages/reports/reports';
 import Button from './../../components/button/button';
 
 import actions from './../../store/actions';
@@ -69,8 +70,15 @@ class Auth extends React.Component {
         component={Table}
         isAuthenticated={this.props.authenticated}
       />,
-      <GuestRoute
+      <PrivateRoute
         key={3}
+        exact
+        path="/reports"
+        component={Reports}
+        isAuthenticated={this.props.authenticated}
+      />,
+      <GuestRoute
+        key={4}
         path="/login"
         component={Login}
         isAuthenticated={this.props.authenticated}
@@ -95,6 +103,7 @@ class Auth extends React.Component {
               text="Caixa"
             />
             <Button
+              link="/reports"
               size="big"
               text="Relatórios de Satisfação"
             />

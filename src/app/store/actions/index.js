@@ -4,6 +4,8 @@ import billStatus from './billStatus';
 import menuItem from './menuItem';
 import menuItemStatus from './menuItemStatus';
 import menuCategory from './menuCategory';
+import survey from './survey';
+import surveyRate from './surveyRate';
 
 export default {
   ...auth,
@@ -12,4 +14,6 @@ export default {
   ...menuItem,
   ...menuItemStatus,
   ...menuCategory,
+  ...survey,
+  ...surveyRate,
 };
