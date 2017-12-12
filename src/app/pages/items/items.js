@@ -148,10 +148,11 @@ class Items extends React.Component {
                     <th className="flex items--table--statuses">
                       {
                         this.props.menuItemStatuses.data.map(s => (
-                          <span className={i.status.name === s.name ? `${s.name}` : ''}>
+                          <span className={i.status.name === s.name ? `${s.name}` : ''} key={s._id}>
                             <input
-                              onClick={this.updateStatus(i._id, s._id)}
+                              onChange={this.updateStatus(i._id, s._id)}
                               type="radio"
+                              name={`status-${i._id}`}
                               checked={i.status.name === s.name}
                             />
                             &nbsp;&nbsp;{s.name}
