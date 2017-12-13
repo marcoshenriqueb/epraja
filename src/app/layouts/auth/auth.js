@@ -8,7 +8,7 @@ import Login from './../../pages/login/login';
 import Items from './../../pages/items/items';
 import Tables from './../../pages/tables/tables';
 import Table from './../../pages/table/table';
-import Reports from './../../pages/reports/reports';
+import ReportsConnector from './../../pages/reports/reports';
 import Button from './../../components/button/button';
 
 import actions from './../../store/actions';
@@ -74,7 +74,7 @@ class Auth extends React.Component {
         key={3}
         exact
         path="/reports"
-        component={Reports}
+        component={ReportsConnector}
         isAuthenticated={this.props.authenticated}
       />,
       <GuestRoute

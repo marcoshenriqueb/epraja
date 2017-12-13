@@ -25,6 +25,7 @@ const {
   resetSurveyRates: resetSurveyRatesAction,
 } = actions;
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const MONTHS_COUNT = 3;
 
 class Reports extends React.Component {
   componentDidMount() {
@@ -56,30 +57,37 @@ class Reports extends React.Component {
     });
   }
 
-  // getMonthlyAggregateSurveys(month) {
-  //   return this.props.surveys.data.map((s) => {
-  //     let count = 0;
-  //     const data = { name: moment(s.createAt).format('MMM') };
-  //     if (moment(s.createAt).format('MM') === month) {
-  //       this.props.surveys.data.forEach((s) => {
-  //         if (s.surveyRate === r._id) {
-  //           count += 1;
-  //         }
-  //       });
-  //     }
+  getMonthlyAggregateSurveys() {
+    return [...Array(MONTHS_COUNT).keys()].map((key) => {
+      const data = { name: moment().subtract(MONTHS_COUNT - (key + 1), 'months').format('MMMM') };
 
+      this.props.surveyRates.data.forEach((r) => {
+        this.props.surveys.data.forEach((s, i) => {
+          if (i === 0) {
+            data[r.name] = 0;
+          }
 
-  //     return data;
-  //   });
-  // }
+          if (
+            moment(s.createdAt).format('MMMM') !== data.name ||
+            r._id !== s.surveyRate
+          ) return;
+
+          data[r.name] += 1;
+        });
+      });
+
+      return data;
+    });
+  }
 
   render() {
     return (
-      <div className="full-w flex start wrap">
+      <div className="full-w flex start wrap reports-container">
         <PieChart width={400} height={400}>
           <Pie
             isAnimationActive={false}
             data={this.getAggregateSurveys()}
+            dataKey="value"
             cx={200}
             cy={200}
             innerRadius={50}
@@ -89,7 +97,8 @@ class Reports extends React.Component {
           >
             {
               this.getAggregateSurveys()
-              .map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)
+              .map((entry, index) =>
+                <Cell key={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} />)
             }
           </Pie>
           <Tooltip />
@@ -97,7 +106,7 @@ class Reports extends React.Component {
         <BarChart
           width={600}
           height={300}
-          data={}
+          data={this.getMonthlyAggregateSurveys()}
           margin={{
             top: 5,
             right: 30,
@@ -110,8 +119,11 @@ class Reports extends React.Component {
           <CartesianGrid strokeDasharray="3 3" />
           <Tooltip />
           <Legend />
-          <Bar dataKey="pv" fill="#8884d8" />
-          <Bar dataKey="uv" fill="#82ca9d" />
+          {
+            this.props.surveyRates.data.map((r, i) => (
+              <Bar key={r.name} dataKey={r.name} fill={COLORS[i % COLORS.length]} />
+            ))
+          }
         </BarChart>
       </div>
     );
