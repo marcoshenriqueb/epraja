@@ -1,1 +1,3 @@
-Tratar tokens invalidas com hook after request do feathers
+- Validação de mesa repetida
+- Fixar menu do topo
+- Validação formulário de login

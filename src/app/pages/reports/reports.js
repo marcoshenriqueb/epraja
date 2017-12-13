@@ -90,7 +90,6 @@ class Reports extends React.Component {
             dataKey="value"
             cx={200}
             cy={200}
-            innerRadius={50}
             outerRadius={80}
             fill="red"
             label

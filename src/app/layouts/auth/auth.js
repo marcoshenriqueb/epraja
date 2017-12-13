@@ -13,7 +13,7 @@ import Button from './../../components/button/button';
 
 import actions from './../../store/actions';
 
-const { checkToken: checkTokenAction } = actions;
+const { checkToken: checkTokenAction, logout: logoutAction } = actions;
 
 const { PrivateRoute, GuestRoute } = routeComponents;
 
@@ -23,6 +23,8 @@ class Auth extends React.Component {
     this.state = {
       loading: props.token.length,
     };
+
+    this.logout = this.logout.bind(this);
   }
 
   componentDidMount() {
@@ -43,6 +45,10 @@ class Auth extends React.Component {
           loading: false,
         });
       });
+  }
+
+  logout() {
+    this.props.logout();
   }
 
   render() {
@@ -88,8 +94,9 @@ class Auth extends React.Component {
     return this.props.authenticated ?
       (
         <div className="full-w flex-column">
-          <div className="full-w flex header">
-            { this.props.user.email }
+          <div className="full-w flex header space-between">
+            <span>{ this.props.user.email }</span>
+            <span onClick={this.logout} style={{ cursor: 'pointer' }}>Sair</span>
           </div>
           <div className="full-w flex navbar">
             <Button
@@ -129,6 +136,7 @@ Auth.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   token: PropTypes.string.isRequired,
   checkToken: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
 };
 
 const AuthConnector = connect(state => (
@@ -141,6 +149,9 @@ const AuthConnector = connect(state => (
   {
     checkToken: token => (
       dispatch(checkTokenAction(token))
+    ),
+    logout: () => (
+      dispatch(logoutAction())
     ),
   }
 ))(Auth);

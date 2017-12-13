@@ -25,6 +25,7 @@ feathersClient.hooks({
 
 export default {
   auth: feathersClient.authenticate,
+  logout: feathersClient.logout,
   users: feathersClient.service('users'),
   bills: feathersClient.service('bills'),
   billStatuses: feathersClient.service('bill-statuses'),

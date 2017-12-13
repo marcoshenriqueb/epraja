@@ -27,6 +27,12 @@ const receiveUser = user => (
   }
 );
 
+const resetUser = () => (
+  {
+    type: 'RESET_USER',
+  }
+);
+
 const fetchUser = () => (
   (dispatch) => {
     dispatch(requestUser());
@@ -77,10 +83,23 @@ const login = credentials => (
   }
 );
 
+const logout = () => (
+  (dispatch) => {
+    dispatch(requestToken());
+
+    return api.logout().then((response) => {
+      dispatch(receiveToken('', false));
+      dispatch(resetUser());
+      return response;
+    }, error => error);
+  }
+);
+
 export default {
   receiveToken,
   requestToken,
   login,
+  logout,
   fetchUser,
   checkToken,
 };

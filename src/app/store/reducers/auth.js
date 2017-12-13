@@ -32,6 +32,15 @@ const auth = (state = initialState, action) => {
         },
       });
 
+    case 'RESET_USER':
+      return Object.assign({}, state, {
+        user: {
+          isFetching: false,
+          lastUpdated: '',
+          data: {},
+        },
+      });
+
     case 'REQUEST_TOKEN':
       return Object.assign({}, state, {
         token: {
