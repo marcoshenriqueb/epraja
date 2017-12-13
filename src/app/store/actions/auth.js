@@ -73,8 +73,9 @@ const login = credentials => (
       strategy: 'local',
       ...credentials,
     }).then((response) => {
-      dispatch(receiveToken(response.accessToken, true));
-      fetchUser()(dispatch);
+      fetchUser()(dispatch).then(() => {
+        dispatch(receiveToken(response.accessToken, true));
+      });
       return response;
     }, (error) => {
       dispatch(receiveToken('', false));
