@@ -115,7 +115,7 @@ class Auth extends React.Component {
               text="Relatórios de Satisfação"
             />
           </div>
-          <div className="full-w">
+          <div className="full-w main-content">
             { returnRoutes() }
           </div>
         </div>
