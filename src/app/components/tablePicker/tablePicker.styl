@@ -1,0 +1,36 @@
+@import './../../../assets/stylus/_settings'
+
+.table-picker--container
+    margin 0 1rem
+    width 70%
+    
+.table-picker--arrows
+    font-size 30px
+    cursor pointer
+    
+.table-picker--content
+    margin 0 1rem
+    font-size 2rem
+    width 90%
+    color background-medium-color
+
+.table-picker--slider-container
+    overflow hidden
+    
+.table-picker--slider
+    transition all 300ms ease
+
+.table-picker
+    flex-shrink 0
+    height 60px
+    width 60px
+    cursor pointer
+    margin 0 1px
+    background-color background-medium
+    &.primary
+        background-color primary-color
+    &.terciary
+        background-color terciary-color
+    
+.table-picker--first
+    margin-right 1.5rem

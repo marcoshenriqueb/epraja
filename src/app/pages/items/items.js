@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import './items.styl';
 
+import TablePicker from './../../components/tablePicker/tablePicker';
 import actions from './../../store/actions';
 
 const {
@@ -25,9 +26,11 @@ class Items extends React.Component {
 
     this.state = {
       category: 'geral',
+      searchValue: '',
     };
 
     this.changeCategory = this.changeCategory.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
   }
 
   componentDidMount() {
@@ -44,6 +47,10 @@ class Items extends React.Component {
     this.props.resetMenuItems();
     this.props.resetMenuItemStatuses();
     this.props.resetMenuCategories();
+  }
+
+  onSearchChange() {
+    console.log(this.state);
   }
 
   getItemStatus(id) {
@@ -113,6 +120,7 @@ class Items extends React.Component {
   render() {
     return (
       <div className="full-w flex-column start items-container">
+        <TablePicker searchValue={this.state.searchValue} onSearchChange={this.onSearchChange} />
         <div className="flex justify-center full-w items--categories">
           {
             this.getCategories().map(c => (

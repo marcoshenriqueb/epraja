@@ -80,7 +80,7 @@ class Auth extends React.Component {
       <PrivateRoute
         key={3}
         exact
-        path="/reports"
+        path="/relatorios"
         component={ReportsConnector}
         isAuthenticated={this.props.authenticated}
       />,
