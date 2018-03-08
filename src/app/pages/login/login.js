@@ -65,6 +65,7 @@ class Login extends React.Component {
           />
           <Button
             text="Entrar"
+            type="primary"
             onClick={this.handleLogin}
           />
           {

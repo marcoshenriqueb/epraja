@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import './auth.styl';
 
 import routeComponents from './../../router';
@@ -8,8 +9,8 @@ import Login from './../../pages/login/login';
 import Items from './../../pages/items/items';
 import Tables from './../../pages/tables/tables';
 import Table from './../../pages/table/table';
-import ReportsConnector from './../../pages/reports/reports';
 import Button from './../../components/button/button';
+import ReportsConnector from './../../pages/reports/reports';
 
 import actions from './../../store/actions';
 
@@ -91,29 +92,22 @@ class Auth extends React.Component {
       />,
     ];
 
+    const navs = [];
+    if (this.props.location.pathname !== '/') {
+      navs
+        .push(<Link to="/"><Button onClick={() => {}} text="Home" type="primary" key="1" /></Link>);
+    }
+    navs.push(<Button onClick={this.logout} text="Sair" type="primary" key="2" />);
+
     return this.props.authenticated ?
       (
         <div className="full-w flex-column">
           <div className="full-w flex header space-between">
-            <span>{ this.props.user.email }</span>
-            <span onClick={this.logout} style={{ cursor: 'pointer' }}>Sair</span>
-          </div>
-          <div className="full-w flex navbar">
-            <Button
-              link="/"
-              size="big"
-              text="Pedidos"
-            />
-            <Button
-              link="/caixa"
-              size="big"
-              text="Caixa"
-            />
-            <Button
-              link="/reports"
-              size="big"
-              text="Relatórios de Satisfação"
-            />
+            <span>&nbsp;</span>
+            <span>É pra já</span>
+            <div className="flex navs">
+              {navs}
+            </div>
           </div>
           <div className="full-w main-content">
             { returnRoutes() }
@@ -129,19 +123,17 @@ class Auth extends React.Component {
 }
 
 Auth.propTypes = {
-  user: PropTypes.shape({
-    _id: PropTypes.string,
-    email: PropTypes.string,
-  }).isRequired,
   authenticated: PropTypes.bool.isRequired,
   token: PropTypes.string.isRequired,
   checkToken: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const AuthConnector = connect(state => (
   {
-    user: state.auth.user.data,
     authenticated: state.auth.authenticated,
     token: state.auth.token.data,
   }

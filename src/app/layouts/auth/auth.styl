@@ -1,25 +1,16 @@
 @import './../../../assets/stylus/_settings'
 
 header-height = 60px
-navbar-height = 100px
 
 .header
     position fixed
     z-index 100
-    background-color background-light
     height header-height
     padding 1rem
-    
-.navbar
-    position fixed
-    z-index 100
-    margin-top header-height
-    padding 0 main-side-padding
-    height navbar-height
-    background-color white
-    
-    .button
-        margin 0 .5rem
-        
+
+.navs
+    *
+        margin 0 .25rem
+            
 .main-content
-    padding-top header-height + navbar-height
+    padding-top header-height
