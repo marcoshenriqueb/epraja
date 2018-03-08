@@ -13,6 +13,7 @@ class TablePicker extends React.Component {
 
     this.state = {
       slidePage: 0,
+      tables: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     };
 
     this.slide = this.slide.bind(this);
@@ -21,11 +22,15 @@ class TablePicker extends React.Component {
   slide() {
     const page = this.state.slidePage + 1;
     const size = this.picker.clientWidth;
-    console.log(`translateX(-${(size + 2) * page}px)`);
-    this.slider.style.transform = `translateX(-${(size + 2) * page}px)`;
-    this.setState({
-      slidePage: page,
-    });
+    const containerSize = this.sliderContainer.clientWidth;
+    const visiblePickers = Math.floor(containerSize / size);
+    const pageLimit = this.state.tables.length - visiblePickers;
+    if (page <= pageLimit) {
+      this.slider.style.transform = `translateX(-${(size + 2) * page}px)`;
+      this.setState({
+        slidePage: page,
+      });
+    }
   }
 
   render() {
@@ -47,13 +52,16 @@ class TablePicker extends React.Component {
             >
               o
             </div>
-            <div className="table-picker--slider-container">
+            <div
+              className="table-picker--slider-container"
+              ref={(sliderContainer) => { this.sliderContainer = sliderContainer; }}
+            >
               <div
                 className="flex table-picker--slider"
                 ref={(slider) => { this.slider = slider; }}
               >
                 {
-                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(t => (
+                  this.state.tables.map(t => (
                     <div className="table-picker terciary flex justify-center">
                       {t}
                     </div>
