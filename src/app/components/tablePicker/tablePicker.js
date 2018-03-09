@@ -41,7 +41,7 @@ class TablePicker extends React.Component {
 
   render() {
     return (
-      <div className="full-w flex space-between">
+      <div className="full-w flex space-between table-picker--wrapper">
         <TextInput
           placeholder="buscar"
           type="number"

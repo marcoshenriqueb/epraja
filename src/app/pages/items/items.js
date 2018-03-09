@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
+import ItemsFilters from './../../components/itemsFilters/itemsFilters';
 import actions from './../../store/actions';
 
 const {
@@ -113,7 +114,7 @@ class Items extends React.Component {
   }
 
   getCategories() {
-    return ['geral', ...this.props.menuCategories.data.map(c => c.name)];
+    return [...this.props.menuCategories.data.map(c => c.name)];
   }
 
   getAllAvailableTables() {
@@ -182,6 +183,10 @@ class Items extends React.Component {
           activeBills={this.state.activeBills}
           toggleAllBills={this.toggleAllBills}
           toggleBill={this.toggleBill}
+        />
+        <ItemsFilters
+          categories={this.getCategories()}
+          statuses={[...this.props.menuItemStatuses.data.map(s => s.name)]}
         />
         <div className="flex justify-center full-w items--categories">
           {
