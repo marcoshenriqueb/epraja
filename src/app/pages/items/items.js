@@ -33,6 +33,7 @@ class Items extends React.Component {
     this.changeCategory = this.changeCategory.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.toggleAllBills = this.toggleAllBills.bind(this);
+    this.toggleBill = this.toggleBill.bind(this);
   }
 
   componentDidMount() {
@@ -55,8 +56,12 @@ class Items extends React.Component {
     this.props.resetMenuCategories();
   }
 
-  onSearchChange() {
-    console.log(this.state);
+  onSearchChange(e) {
+    const result = this.getAllAvailableTables().filter(t => t.toString() === e.target.value);
+    this.setState({
+      searchValue: e.target.value,
+      activeBills: result,
+    });
   }
 
   getItemStatus(id) {
@@ -123,7 +128,7 @@ class Items extends React.Component {
 
   populateActiveBills() {
     this.setState({
-      activeBills: this.getAllAvailableTables(),
+      activeBills: this.getAllAvailableTables().sort(),
     });
   }
 
@@ -149,6 +154,24 @@ class Items extends React.Component {
     }
   }
 
+  toggleBill(table) {
+    return () => {
+      const index = this.state.activeBills.indexOf(table);
+      const activeBills = [...this.state.activeBills];
+      if (index < 0) {
+        activeBills.push(table);
+        this.setState({
+          activeBills,
+        });
+      } else {
+        activeBills.splice(index, 1);
+        this.setState({
+          activeBills,
+        });
+      }
+    };
+  }
+
   render() {
     return (
       <div className="full-w flex-column start items-container">
@@ -158,6 +181,7 @@ class Items extends React.Component {
           bills={this.props.bills.data}
           activeBills={this.state.activeBills}
           toggleAllBills={this.toggleAllBills}
+          toggleBill={this.toggleBill}
         />
         <div className="flex justify-center full-w items--categories">
           {

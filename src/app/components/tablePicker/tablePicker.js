@@ -72,7 +72,11 @@ class TablePicker extends React.Component {
               >
                 {
                   this.props.bills.map(b => (
-                    <div className={`table-picker ${this.getTableClass(b.table)} flex justify-center`} key={b._id}>
+                    <div
+                      className={`table-picker ${this.getTableClass(b.table)} flex justify-center`}
+                      key={b._id}
+                      onClick={this.props.toggleBill(b.table)}
+                    >
                       {b.table}
                     </div>
                   ))
@@ -99,6 +103,7 @@ TablePicker.propTypes = {
   })).isRequired,
   activeBills: PropTypes.arrayOf(PropTypes.number).isRequired,
   toggleAllBills: PropTypes.func.isRequired,
+  toggleBill: PropTypes.func.isRequired,
 };
 
 export default TablePicker;
