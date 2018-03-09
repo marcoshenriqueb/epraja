@@ -12,25 +12,31 @@ class TablePicker extends React.Component {
     super(props);
 
     this.state = {
-      slidePage: 0,
-      tables: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      sliderPage: 0,
+      sliderTransform: 'translateX(0)',
     };
 
     this.slide = this.slide.bind(this);
   }
 
-  slide() {
-    const page = this.state.slidePage + 1;
-    const size = this.picker.clientWidth;
-    const containerSize = this.sliderContainer.clientWidth;
-    const visiblePickers = Math.floor(containerSize / size);
-    const pageLimit = this.state.tables.length - visiblePickers;
-    if (page <= pageLimit) {
-      this.slider.style.transform = `translateX(-${(size + 2) * page}px)`;
-      this.setState({
-        slidePage: page,
-      });
-    }
+  getTableClass(table) {
+    return this.props.activeBills.indexOf(table) < 0 ? 'terciary' : 'primary';
+  }
+
+  slide(right = true) {
+    return () => {
+      const page = right ? this.state.sliderPage + 1 : this.state.sliderPage - 1;
+      const size = this.picker.clientWidth;
+      const containerSize = this.sliderContainer.clientWidth;
+      const visiblePickers = Math.floor(containerSize / size);
+      const pageLimit = this.props.bills.length - visiblePickers;
+      if (page <= pageLimit && page >= 0) {
+        this.setState({
+          sliderPage: page,
+          sliderTransform: `translateX(-${(size + 2) * page}px)`,
+        });
+      }
+    };
   }
 
   render() {
@@ -44,13 +50,16 @@ class TablePicker extends React.Component {
           onChange={this.props.onSearchChange}
         />
         <div className="flex space-between table-picker--container">
-          <div className="table-picker--arrows flex"><span>&#8592;</span></div>
+          <div onClick={this.slide(false)} className="table-picker--arrows flex">
+            <span>&#8592;</span>
+          </div>
           <div className="flex table-picker--content">
             <div
               className="table-picker table-picker--first flex justify-center"
               ref={(picker) => { this.picker = picker; }}
+              onClick={this.props.toggleAllBills}
             >
-              o
+              0
             </div>
             <div
               className="table-picker--slider-container"
@@ -59,18 +68,21 @@ class TablePicker extends React.Component {
               <div
                 className="flex table-picker--slider"
                 ref={(slider) => { this.slider = slider; }}
+                style={{ transform: this.state.sliderTransform }}
               >
                 {
-                  this.state.tables.map(t => (
-                    <div className="table-picker terciary flex justify-center">
-                      {t}
+                  this.props.bills.map(b => (
+                    <div className={`table-picker ${this.getTableClass(b.table)} flex justify-center`} key={b._id}>
+                      {b.table}
                     </div>
                   ))
                 }
               </div>
             </div>
           </div>
-          <div onClick={this.slide} className="table-picker--arrows flex"><span>&#8594;</span></div>
+          <div onClick={this.slide()} className="table-picker--arrows flex">
+            <span>&#8594;</span>
+          </div>
         </div>
         <Link to="/relatorios"><Button onClick={() => {}} text="Relatórios" type="primary" /></Link>
       </div>
@@ -81,6 +93,12 @@ class TablePicker extends React.Component {
 TablePicker.propTypes = {
   searchValue: PropTypes.string.isRequired,
   onSearchChange: PropTypes.func.isRequired,
+  bills: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    table: PropTypes.number.isRequired,
+  })).isRequired,
+  activeBills: PropTypes.arrayOf(PropTypes.number).isRequired,
+  toggleAllBills: PropTypes.func.isRequired,
 };
 
 export default TablePicker;

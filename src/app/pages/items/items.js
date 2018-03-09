@@ -27,18 +27,24 @@ class Items extends React.Component {
     this.state = {
       category: 'geral',
       searchValue: '',
+      activeBills: [],
     };
 
     this.changeCategory = this.changeCategory.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
+    this.toggleAllBills = this.toggleAllBills.bind(this);
   }
 
   componentDidMount() {
-    this.props.fetchBills();
-    this.props.fetchBillStatuses();
-    this.props.fetchMenuItems();
-    this.props.fetchMenuItemStatuses();
-    this.props.fetchMenuCategories();
+    Promise.all([
+      this.props.fetchBills(),
+      this.props.fetchBillStatuses(),
+      this.props.fetchMenuItems(),
+      this.props.fetchMenuItemStatuses(),
+      this.props.fetchMenuCategories(),
+    ]).then(() => {
+      this.populateActiveBills();
+    });
   }
 
   componentWillUnmount() {
@@ -105,6 +111,22 @@ class Items extends React.Component {
     return ['geral', ...this.props.menuCategories.data.map(c => c.name)];
   }
 
+  getAllAvailableTables() {
+    const activeBills = [];
+    this.props.bills.data.forEach((b) => {
+      if (activeBills.indexOf(b.table) < 0) {
+        activeBills.push(b.table);
+      }
+    });
+    return activeBills;
+  }
+
+  populateActiveBills() {
+    this.setState({
+      activeBills: this.getAllAvailableTables(),
+    });
+  }
+
   changeCategory(e) {
     this.setState({
       category: e.target.innerHTML.toLowerCase(),
@@ -117,10 +139,26 @@ class Items extends React.Component {
     };
   }
 
+  toggleAllBills() {
+    if (this.state.activeBills.length < this.getAllAvailableTables().length) {
+      this.populateActiveBills();
+    } else {
+      this.setState({
+        activeBills: [],
+      });
+    }
+  }
+
   render() {
     return (
       <div className="full-w flex-column start items-container">
-        <TablePicker searchValue={this.state.searchValue} onSearchChange={this.onSearchChange} />
+        <TablePicker
+          searchValue={this.state.searchValue}
+          onSearchChange={this.onSearchChange}
+          bills={this.props.bills.data}
+          activeBills={this.state.activeBills}
+          toggleAllBills={this.toggleAllBills}
+        />
         <div className="flex justify-center full-w items--categories">
           {
             this.getCategories().map(c => (
