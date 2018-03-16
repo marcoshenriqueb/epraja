@@ -5,6 +5,7 @@ import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
 import ItemsFilters from './../../components/itemsFilters/itemsFilters';
+import Table from './../../components/table/table';
 import actions from './../../store/actions';
 
 const {
@@ -110,7 +111,7 @@ class Items extends React.Component {
             this.state.activeFilters.includes(itemCategory)
           ) {
             items.push(Object.assign({}, i, {
-              menuItem: this.getItem(i.menuItem),
+              menuItem: this.getItem(i.menuItem).name,
               table: b.table,
               status: this.getItemStatus(i.itemStatus),
             }));
@@ -222,53 +223,10 @@ class Items extends React.Component {
           changeFilter={this.changeFilter}
           activeFilters={this.state.activeFilters}
         />
-        <div className="full-w flex-column">
-          <table>
-            <thead>
-              <tr>
-                <th>Ordem/Hora</th>
-                <th>Mesa</th>
-                <th>Nome do Prato</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                this.getItems().map((i, k) => (
-                  <tr key={i._id}>
-                    <th className="space-between">
-                      {k + 1}
-                      <div>&nbsp;</div>
-                    </th>
-                    <th className="">
-                      {i.table}
-                      <div>&nbsp;</div>
-                    </th>
-                    <th className="">
-                      {i.menuItem.name}
-                      <div>&nbsp;</div>
-                    </th>
-                    <th className="flex items--table--statuses">
-                      {
-                        this.props.menuItemStatuses.data.map(s => (
-                          <span className={i.status.name === s.name ? `${s.name}` : ''} key={s._id}>
-                            <input
-                              onChange={this.updateStatus(i._id, s._id)}
-                              type="radio"
-                              name={`status-${i._id}`}
-                              checked={i.status.name === s.name}
-                            />
-                            &nbsp;&nbsp;{s.name}
-                          </span>
-                        ))
-                      }
-                    </th>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
+        <Table
+          headTitles={['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status']}
+          data={this.getItems()}
+        />
       </div>
     );
   }
