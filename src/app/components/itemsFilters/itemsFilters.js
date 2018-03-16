@@ -5,13 +5,20 @@ import Button from './../../components/button/button';
 
 import './itemsFilters.styl';
 
-const ItemsFilters = ({ categories, statuses }) => (
+const ItemsFilters = ({
+  categories,
+  statuses,
+  changeCategories,
+  changeStatuses,
+  getFilterClass,
+}) => (
   <div className="full-w flex space-between">
     <div className="flex">
       {
         statuses.map(s => (
           <Button
-            onClick={this.changeCategory}
+            type={`${getFilterClass(s)}`}
+            onClick={() => changeStatuses(s)}
             key={s}
             text={s}
           />
@@ -22,7 +29,8 @@ const ItemsFilters = ({ categories, statuses }) => (
       {
         categories.map(c => (
           <Button
-            onClick={this.changeCategory}
+            type={`${getFilterClass(c)}`}
+            onClick={() => changeCategories(c)}
             key={c}
             text={c}
           />
@@ -35,6 +43,9 @@ const ItemsFilters = ({ categories, statuses }) => (
 ItemsFilters.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.string).isRequired,
   statuses: PropTypes.arrayOf(PropTypes.string).isRequired,
+  changeCategories: PropTypes.func.isRequired,
+  changeStatuses: PropTypes.func.isRequired,
+  getFilterClass: PropTypes.func.isRequired,
 };
 
 export default ItemsFilters;

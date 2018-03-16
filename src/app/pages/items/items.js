@@ -26,12 +26,16 @@ class Items extends React.Component {
     super(props);
 
     this.state = {
-      category: 'geral',
+      categories: this.getCategories(),
+      statuses: this.getStatuses(),
+      activeFilters: [...this.getCategories(), ...this.getStatuses()],
       searchValue: '',
       activeBills: [],
     };
 
-    this.changeCategory = this.changeCategory.bind(this);
+    this.getFilterClass = this.getFilterClass.bind(this);
+    this.changeCategories = this.changeCategories.bind(this);
+    this.changeStatuses = this.changeStatuses.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.toggleAllBills = this.toggleAllBills.bind(this);
     this.toggleBill = this.toggleBill.bind(this);
@@ -71,6 +75,12 @@ class Items extends React.Component {
     return result.length ? result[0] : {};
   }
 
+  getItemStatusName(id) {
+    const result = this.props.menuItemStatuses.data.filter(s => s._id === id);
+
+    return result.length ? result[0].name.toLowerCase() : '';
+  }
+
   getStatusName(id) {
     const result = this.props.billStatuses.data.filter(s => s._id === id);
 
@@ -91,14 +101,14 @@ class Items extends React.Component {
 
   getItems() {
     if (!this.props.bills.data.length) return [];
-
     const items = [];
     this.props.bills.data.forEach((b) => {
       if (this.getStatusName(b.billStatus) !== 'fechada') {
         b.menuItems.forEach((i) => {
           if (
-            this.state.category === 'geral' ||
-            this.state.category === this.getCategory(this.getItem(i.menuItem).menuCategory)
+            this.state.categories.includes(this.getCategory(this.getItem(i.menuItem).menuCategory))
+            &&
+            this.state.statuses.includes(this.getItemStatusName(i.itemStatus))
           ) {
             items.push(Object.assign({}, i, {
               menuItem: this.getItem(i.menuItem),
@@ -113,8 +123,19 @@ class Items extends React.Component {
     return items;
   }
 
+  getStatuses() {
+    return [...this.props.menuItemStatuses.data.map(s => s.name.toLowerCase())];
+  }
+
   getCategories() {
-    return [...this.props.menuCategories.data.map(c => c.name)];
+    return [...this.props.menuCategories.data.map(c => c.name.toLowerCase())];
+  }
+
+  getFilterClass(f) {
+    if (this.state.activeFilters.indexOf(f) < 0) {
+      return '';
+    }
+    return 'secondary';
   }
 
   getAllAvailableTables() {
@@ -133,10 +154,44 @@ class Items extends React.Component {
     });
   }
 
-  changeCategory(e) {
-    this.setState({
-      category: e.target.innerHTML.toLowerCase(),
-    });
+  changeCategories(e) {
+    const activeCategories = [...this.state.categories];
+    if (activeCategories.indexOf(e.toLowerCase()) >= 0) {
+      const index = activeCategories.indexOf(e.toLowerCase());
+      if (index !== -1) {
+        activeCategories.splice(index, 1);
+        this.setState({
+          categories: activeCategories,
+          activeFilters: [...activeCategories, ...this.state.statuses],
+        });
+      }
+    } else {
+      activeCategories.push(e.toLowerCase());
+      this.setState({
+        categories: activeCategories,
+        activeFilters: [...activeCategories, ...this.state.statuses],
+      });
+    }
+  }
+
+  changeStatuses(e) {
+    const activeStatus = [...this.state.statuses];
+    if (activeStatus.indexOf(e.toLowerCase()) >= 0) {
+      const index = activeStatus.indexOf(e.toLowerCase());
+      if (index !== -1) {
+        activeStatus.splice(index, 1);
+        this.setState({
+          statuses: activeStatus,
+          activeFilters: [...activeStatus, ...this.state.categories],
+        });
+      }
+    } else {
+      activeStatus.push(e.toLowerCase());
+      this.setState({
+        statuses: activeStatus,
+        activeFilters: [...activeStatus, ...this.state.categories],
+      });
+    }
   }
 
   updateStatus(id, statusId) {
@@ -185,22 +240,13 @@ class Items extends React.Component {
           toggleBill={this.toggleBill}
         />
         <ItemsFilters
+          getFilterClass={this.getFilterClass}
           categories={this.getCategories()}
-          statuses={[...this.props.menuItemStatuses.data.map(s => s.name)]}
+          statuses={this.getStatuses()}
+          changeCategories={this.changeCategories}
+          changeStatuses={this.changeStatuses}
+          activeFilters={this.state.activeFilters}
         />
-        <div className="flex justify-center full-w items--categories">
-          {
-            this.getCategories().map(c => (
-              <span
-                key={c}
-                onClick={this.changeCategory}
-                className={`button-o ${this.state.category === c.toLowerCase() ? 'active' : ''}`}
-              >
-                {c.toLowerCase()}
-              </span>
-            ))
-          }
-        </div>
         <div className="full-w flex-column">
           <table>
             <thead>
