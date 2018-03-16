@@ -26,16 +26,13 @@ class Items extends React.Component {
     super(props);
 
     this.state = {
-      categories: this.getCategories(),
-      statuses: this.getStatuses(),
       activeFilters: [...this.getCategories(), ...this.getStatuses()],
       searchValue: '',
       activeBills: [],
     };
 
     this.getFilterClass = this.getFilterClass.bind(this);
-    this.changeCategories = this.changeCategories.bind(this);
-    this.changeStatuses = this.changeStatuses.bind(this);
+    this.changeFilter = this.changeFilter.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.toggleAllBills = this.toggleAllBills.bind(this);
     this.toggleBill = this.toggleBill.bind(this);
@@ -105,10 +102,12 @@ class Items extends React.Component {
     this.props.bills.data.forEach((b) => {
       if (this.getStatusName(b.billStatus) !== 'fechada') {
         b.menuItems.forEach((i) => {
+          const itemStatus = this.getItemStatusName(i.itemStatus);
+          const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
           if (
-            this.state.categories.includes(this.getCategory(this.getItem(i.menuItem).menuCategory))
+            this.state.activeFilters.includes(itemStatus)
             &&
-            this.state.statuses.includes(this.getItemStatusName(i.itemStatus))
+            this.state.activeFilters.includes(itemCategory)
           ) {
             items.push(Object.assign({}, i, {
               menuItem: this.getItem(i.menuItem),
@@ -119,7 +118,6 @@ class Items extends React.Component {
         });
       }
     });
-
     return items;
   }
 
@@ -154,42 +152,20 @@ class Items extends React.Component {
     });
   }
 
-  changeCategories(e) {
-    const activeCategories = [...this.state.categories];
-    if (activeCategories.indexOf(e.toLowerCase()) >= 0) {
-      const index = activeCategories.indexOf(e.toLowerCase());
+  changeFilter(e) {
+    const activeFilters = [...this.state.activeFilters];
+    if (activeFilters.indexOf(e.toLowerCase()) > -1) {
+      const index = activeFilters.indexOf(e.toLowerCase());
       if (index !== -1) {
-        activeCategories.splice(index, 1);
+        activeFilters.splice(index, 1);
         this.setState({
-          categories: activeCategories,
-          activeFilters: [...activeCategories, ...this.state.statuses],
+          activeFilters: [...activeFilters],
         });
       }
     } else {
-      activeCategories.push(e.toLowerCase());
+      activeFilters.push(e.toLowerCase());
       this.setState({
-        categories: activeCategories,
-        activeFilters: [...activeCategories, ...this.state.statuses],
-      });
-    }
-  }
-
-  changeStatuses(e) {
-    const activeStatus = [...this.state.statuses];
-    if (activeStatus.indexOf(e.toLowerCase()) >= 0) {
-      const index = activeStatus.indexOf(e.toLowerCase());
-      if (index !== -1) {
-        activeStatus.splice(index, 1);
-        this.setState({
-          statuses: activeStatus,
-          activeFilters: [...activeStatus, ...this.state.categories],
-        });
-      }
-    } else {
-      activeStatus.push(e.toLowerCase());
-      this.setState({
-        statuses: activeStatus,
-        activeFilters: [...activeStatus, ...this.state.categories],
+        activeFilters: [...activeFilters],
       });
     }
   }
@@ -243,8 +219,7 @@ class Items extends React.Component {
           getFilterClass={this.getFilterClass}
           categories={this.getCategories()}
           statuses={this.getStatuses()}
-          changeCategories={this.changeCategories}
-          changeStatuses={this.changeStatuses}
+          changeFilter={this.changeFilter}
           activeFilters={this.state.activeFilters}
         />
         <div className="full-w flex-column">
