@@ -8,8 +8,7 @@ import './itemsFilters.styl';
 const ItemsFilters = ({
   categories,
   statuses,
-  changeCategories,
-  changeStatuses,
+  changeFilter,
   getFilterClass,
 }) => (
   <div className="full-w flex space-between">
@@ -17,8 +16,8 @@ const ItemsFilters = ({
       {
         statuses.map(s => (
           <Button
-            type={`${getFilterClass(s)}`}
-            onClick={() => changeStatuses(s)}
+            type={getFilterClass(s)}
+            onClick={() => changeFilter(s)}
             key={s}
             text={s}
           />
@@ -29,8 +28,8 @@ const ItemsFilters = ({
       {
         categories.map(c => (
           <Button
-            type={`${getFilterClass(c)}`}
-            onClick={() => changeCategories(c)}
+            type={getFilterClass(c)}
+            onClick={() => changeFilter(c)}
             key={c}
             text={c}
           />
@@ -43,8 +42,7 @@ const ItemsFilters = ({
 ItemsFilters.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.string).isRequired,
   statuses: PropTypes.arrayOf(PropTypes.string).isRequired,
-  changeCategories: PropTypes.func.isRequired,
-  changeStatuses: PropTypes.func.isRequired,
+  changeFilter: PropTypes.func.isRequired,
   getFilterClass: PropTypes.func.isRequired,
 };
 
