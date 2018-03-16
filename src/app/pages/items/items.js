@@ -252,9 +252,8 @@ class Items extends React.Component {
             <thead>
               <tr>
                 <th>Ordem/Hora</th>
-                <th>Quant.</th>
-                <th>Nome do Prato</th>
                 <th>Mesa</th>
+                <th>Nome do Prato</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -262,10 +261,18 @@ class Items extends React.Component {
               {
                 this.getItems().map((i, k) => (
                   <tr key={i._id}>
-                    <th>{k + 1}</th>
-                    <th>{i.quantity}</th>
-                    <th>{i.menuItem.name}</th>
-                    <th>{i.table}</th>
+                    <th className="space-between">
+                      {k + 1}
+                      <div>&nbsp;</div>
+                    </th>
+                    <th className="">
+                      {i.table}
+                      <div>&nbsp;</div>
+                    </th>
+                    <th className="">
+                      {i.menuItem.name}
+                      <div>&nbsp;</div>
+                    </th>
                     <th className="flex items--table--statuses">
                       {
                         this.props.menuItemStatuses.data.map(s => (
