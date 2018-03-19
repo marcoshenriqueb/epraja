@@ -13,7 +13,7 @@ const Table = ({
         <tr>
           {
             headTitles.map(t => (
-              <th>{t}</th>
+              <th key={t}>{t}</th>
             ))
           }
         </tr>
@@ -21,22 +21,19 @@ const Table = ({
       <tbody>
         {
           data.map((i, k) => (
-            <tr key={k._id}>
+            <tr key={`${Date.now()}_${k._id}`}>
               {
                 Object.entries(i).map((o) => {
-                  let newValue = '';
-                  console.log(o);
-                  for (let m = 0; m < headTitles.length; m += 1) {
-                    if (o[1] === headTitles[m].toLowerCase()) {
-                      newValue = o.value;
-                      break;
-                    }
+                  console.log(headTitles.indexOf(o[0]));
+                  if (headTitles.indexOf(o[0]) >= 0) {
+                    return (
+                      <th key={`${k._id}_${o[0]}`}>
+                        {o[1]}
+                      </th>
+                    );
                   }
-                  return (
-                    <th>
-                      {newValue}
-                    </th>
-                  );
+
+                  return null;
                 })
               }
             </tr>
