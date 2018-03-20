@@ -32,6 +32,7 @@ class Items extends React.Component {
       activeBills: [],
     };
 
+    this.getCellComponent = this.getCellComponent.bind(this);
     this.getFilterClass = this.getFilterClass.bind(this);
     this.changeFilter = this.changeFilter.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -123,6 +124,26 @@ class Items extends React.Component {
     return items;
   }
 
+  getCellComponent(i) {
+    return (
+      <th className="flex items--table--statuses">
+        {
+          this.props.menuItemStatuses.data.map(s => (
+            <span className={i.status === s.name ? `${s.name}` : ''} key={s._id}>
+              <input
+                onChange={this.updateStatus(i._id, s._id)}
+                type="radio"
+                name={`status-${i._id}`}
+                checked={i.itemStatus === s._id}
+              />
+              &nbsp;&nbsp;{s.name}
+            </span>
+          ))
+        }
+      </th>
+    );
+  }
+
   getStatuses() {
     return [...this.props.menuItemStatuses.data.map(s => s.name.toLowerCase())];
   }
@@ -209,6 +230,12 @@ class Items extends React.Component {
   render() {
     const titlesKeys = ['order', 'table', 'menuItem', 'status'];
     const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status'];
+    const cellComponent = [
+      null,
+      null,
+      null,
+      this.getCellComponent,
+    ];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker
@@ -230,6 +257,7 @@ class Items extends React.Component {
           titlesKeys={titlesKeys}
           titlesValues={titlesValues}
           data={this.getItems()}
+          cellComponent={cellComponent}
         />
       </div>
     );
