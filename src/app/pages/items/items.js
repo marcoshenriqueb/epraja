@@ -102,7 +102,7 @@ class Items extends React.Component {
     const items = [];
     this.props.bills.data.forEach((b) => {
       if (this.getStatusName(b.billStatus) !== 'fechada') {
-        b.menuItems.forEach((i) => {
+        b.menuItems.forEach((i, k) => {
           const itemStatus = this.getItemStatusName(i.itemStatus);
           const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
           if (
@@ -113,7 +113,8 @@ class Items extends React.Component {
             items.push(Object.assign({}, i, {
               menuItem: this.getItem(i.menuItem).name,
               table: b.table,
-              status: this.getItemStatus(i.itemStatus),
+              status: this.getItemStatusName(i.itemStatus),
+              order: k + 1,
             }));
           }
         });
@@ -206,6 +207,8 @@ class Items extends React.Component {
   }
 
   render() {
+    const titlesKeys = ['order', 'table', 'menuItem', 'status'];
+    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status'];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker
@@ -224,7 +227,8 @@ class Items extends React.Component {
           activeFilters={this.state.activeFilters}
         />
         <Table
-          headTitles={['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status']}
+          titlesKeys={titlesKeys}
+          titlesValues={titlesValues}
           data={this.getItems()}
         />
       </div>

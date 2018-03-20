@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import './table.styl';
 
 const Table = ({
-  headTitles,
+  titlesKeys,
+  titlesValues,
   data,
 }) => (
   <div className="full-w flex-column">
@@ -12,7 +13,7 @@ const Table = ({
       <thead>
         <tr>
           {
-            headTitles.map(t => (
+            titlesValues.map(t => (
               <th key={t}>{t}</th>
             ))
           }
@@ -21,18 +22,17 @@ const Table = ({
       <tbody>
         {
           data.map((i, k) => (
-            <tr key={`${Date.now()}_${k._id}`}>
+            <tr key={i._id + k.toString()}>
               {
-                Object.entries(i).map((o) => {
-                  console.log(headTitles.indexOf(o[0]));
-                  if (headTitles.indexOf(o[0]) >= 0) {
+                titlesKeys.map((o) => {
+                  if (Object.keys(i).indexOf(o) >= 0) {
+                    console.log(i);
                     return (
-                      <th key={`${k._id}_${o[0]}`}>
-                        {o[1]}
+                      <th key={`${i._id}_${o}`}>
+                        {Object.values(i)[Object.keys(i).indexOf(o)]}
                       </th>
                     );
                   }
-
                   return null;
                 })
               }
@@ -45,7 +45,8 @@ const Table = ({
 );
 
 Table.propTypes = {
-  headTitles: PropTypes.arrayOf(PropTypes.string).isRequired,
+  titlesKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
+  titlesValues: PropTypes.arrayOf(PropTypes.string).isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
