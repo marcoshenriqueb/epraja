@@ -117,6 +117,7 @@ class Items extends React.Component {
               table: b.table,
               status: this.getStatusCellComponent(i),
               order: k + 1,
+              billStatus: this.getStatusName(b.billStatus),
             }));
           }
         });
@@ -233,8 +234,8 @@ class Items extends React.Component {
   }
 
   render() {
-    const titlesKeys = ['order', 'table', 'menuItem', 'status'];
-    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status'];
+    const titlesKeys = ['order', 'table', 'menuItem', 'status', 'billStatus'];
+    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status', 'Conta'];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker

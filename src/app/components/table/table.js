@@ -15,7 +15,11 @@ const Table = ({
         <tr>
           {
             titlesValues.map(t => (
-              <th className="table--header--item" key={t}>{t}</th>
+              <th className="table--header--item" key={t}>
+                <div className="flex start">
+                  {t}
+                </div>
+              </th>
             ))
           }
         </tr>
@@ -29,7 +33,9 @@ const Table = ({
                   if (i[o] === undefined) return null;
                   return (
                     <td className="table--row--column" key={`${i._id}_${o}`}>
-                      {i[o]}
+                      <div className="flex-column start justify-center table--row--cell">
+                        {i[o]}
+                      </div>
                       <div className="table--row--blank--item" />
                     </td>
                   );
