@@ -1,23 +1,30 @@
 @import './../../../assets/stylus/_settings'
 
-table
+.table
     border-spacing 0
     border-collapse collapse
     border: 1px solid rgba(0, 0, 0, 0.5)
-    th
-        padding .5rem
-        border-left: 1px solid rgba(0, 0, 0, 0.2)
 
-thead
-    tr
-        background-color background-medium
-tbody
-    tr
-        &.blank--rows--false &:nth-child(2n + 1)
-            background-color background-light
+.table--header
+    background-color background-medium
 
-    th
-        &.blank--rows--true
-            height 40px
-            padding-bottom 23px
-            background-image linear-gradient(to bottom, #DDE0E0 65%, #F9F4ED 35%)
+.table--header--item
+    padding .5rem
+    border-left: 1px solid rgba(0, 0, 0, 0.2)
+
+.table--row--blank
+    margin-bottom 2rem
+    background-color background-light
+    
+    .table--row--blank--item
+        width 100%
+        height 10px
+        background-color white
+        
+    &:last-child
+        .table--row--blank--item
+            display none
+
+.table--row--striped:nth-child(2n + 1)
+    background-color background-light
+

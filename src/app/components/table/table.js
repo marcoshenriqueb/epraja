@@ -10,12 +10,12 @@ const Table = ({
   blankRows,
 }) => (
   <div className="full-w flex-column">
-    <table>
-      <thead>
+    <table className="table">
+      <thead className="table--header">
         <tr>
           {
             titlesValues.map(t => (
-              <th key={t}>{t}</th>
+              <th className="table--header--item" key={t}>{t}</th>
             ))
           }
         </tr>
@@ -23,14 +23,15 @@ const Table = ({
       <tbody>
         {
           data.map((i, k) => (
-            <tr className={`blank--rows--${blankRows}`} key={i._id + k.toString()}>
+            <tr className={blankRows ? 'table--row--blank' : 'table--row--striped'} key={i._id + k.toString()}>
               {
                 titlesKeys.map((o) => {
                   if (i[o] === undefined) return null;
                   return (
-                    <th className={`blank--rows--${blankRows}`} key={`${i._id}_${o}`}>
+                    <td className="table--row--column" key={`${i._id}_${o}`}>
                       {i[o]}
-                    </th>
+                      <div className="table--row--blank--item" />
+                    </td>
                   );
                 })
               }
