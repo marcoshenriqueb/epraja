@@ -256,6 +256,7 @@ class Items extends React.Component {
           titlesKeys={titlesKeys}
           titlesValues={titlesValues}
           data={this.getItems()}
+          blankRows
         />
       </div>
     );

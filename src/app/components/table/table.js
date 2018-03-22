@@ -7,6 +7,7 @@ const Table = ({
   titlesKeys,
   titlesValues,
   data,
+  blankRows,
 }) => (
   <div className="full-w flex-column">
     <table>
@@ -22,13 +23,12 @@ const Table = ({
       <tbody>
         {
           data.map((i, k) => (
-            <tr key={i._id + k.toString()}>
+            <tr className={`blank--rows--${blankRows}`} key={i._id + k.toString()}>
               {
                 titlesKeys.map((o) => {
                   if (i[o] === undefined) return null;
-
                   return (
-                    <th key={`${i._id}_${o}`}>
+                    <th className={`blank--rows--${blankRows}`} key={`${i._id}_${o}`}>
                       {i[o]}
                     </th>
                   );
@@ -46,6 +46,11 @@ Table.propTypes = {
   titlesKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
   titlesValues: PropTypes.arrayOf(PropTypes.string).isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  blankRows: PropTypes.bool,
+};
+
+Table.defaultProps = {
+  blankRows: false,
 };
 
 export default Table;
