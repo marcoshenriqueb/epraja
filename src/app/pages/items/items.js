@@ -5,6 +5,7 @@ import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
 import ItemsFilters from './../../components/itemsFilters/itemsFilters';
+import Table from './../../components/table/table';
 import actions from './../../store/actions';
 
 const {
@@ -31,6 +32,7 @@ class Items extends React.Component {
       activeBills: [],
     };
 
+    this.getStatusCellComponent = this.getStatusCellComponent.bind(this);
     this.getFilterClass = this.getFilterClass.bind(this);
     this.changeFilter = this.changeFilter.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -98,10 +100,11 @@ class Items extends React.Component {
 
   getItems() {
     if (!this.props.bills.data.length) return [];
+
     const items = [];
     this.props.bills.data.forEach((b) => {
       if (this.getStatusName(b.billStatus) !== 'fechada') {
-        b.menuItems.forEach((i) => {
+        b.menuItems.forEach((i, k) => {
           const itemStatus = this.getItemStatusName(i.itemStatus);
           const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
           if (
@@ -110,15 +113,41 @@ class Items extends React.Component {
             this.state.activeFilters.includes(itemCategory)
           ) {
             items.push(Object.assign({}, i, {
-              menuItem: this.getItem(i.menuItem),
+              menuItem: this.getItem(i.menuItem).name,
               table: b.table,
-              status: this.getItemStatus(i.itemStatus),
+              status: this.getStatusCellComponent(i),
+              order: k + 1,
+              billStatus: this.getStatusName(b.billStatus),
             }));
           }
         });
       }
     });
+
     return items;
+  }
+
+  getStatusCellComponent(item) {
+    return (
+      <div className="flex items--table--statuses">
+        {
+          this.props.menuItemStatuses.data.map(s => (
+            <span
+              className={this.getItemStatusName(item.itemStatus) === s.name.toLowerCase() ? `${s.name}` : ''}
+              key={s._id}
+            >
+              <input
+                onChange={this.updateStatus(item._id, s._id)}
+                type="radio"
+                name={`status-${item._id}`}
+                checked={item.itemStatus === s._id}
+              />
+              &nbsp;&nbsp;{s.name}
+            </span>
+          ))
+        }
+      </div>
+    );
   }
 
   getStatuses() {
@@ -205,6 +234,8 @@ class Items extends React.Component {
   }
 
   render() {
+    const titlesKeys = ['order', 'table', 'menuItem', 'status', 'billStatus'];
+    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status', 'Conta'];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker
@@ -222,46 +253,12 @@ class Items extends React.Component {
           changeFilter={this.changeFilter}
           activeFilters={this.state.activeFilters}
         />
-        <div className="full-w flex-column">
-          <table>
-            <thead>
-              <tr>
-                <th>Ordem/Hora</th>
-                <th>Quant.</th>
-                <th>Nome do Prato</th>
-                <th>Mesa</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                this.getItems().map((i, k) => (
-                  <tr key={i._id}>
-                    <th>{k + 1}</th>
-                    <th>{i.quantity}</th>
-                    <th>{i.menuItem.name}</th>
-                    <th>{i.table}</th>
-                    <th className="flex items--table--statuses">
-                      {
-                        this.props.menuItemStatuses.data.map(s => (
-                          <span className={i.status.name === s.name ? `${s.name}` : ''} key={s._id}>
-                            <input
-                              onChange={this.updateStatus(i._id, s._id)}
-                              type="radio"
-                              name={`status-${i._id}`}
-                              checked={i.status.name === s.name}
-                            />
-                            &nbsp;&nbsp;{s.name}
-                          </span>
-                        ))
-                      }
-                    </th>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
+        <Table
+          titlesKeys={titlesKeys}
+          titlesValues={titlesValues}
+          data={this.getItems()}
+          blankRows
+        />
       </div>
     );
   }
