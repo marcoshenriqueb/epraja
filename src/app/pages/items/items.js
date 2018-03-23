@@ -27,7 +27,7 @@ class Items extends React.Component {
     super(props);
 
     this.state = {
-      activeFilters: [...this.getCategories(), ...this.getStatuses()],
+      activeFilters: [...this.getCategories(), ...this.getStatuses(), 'fechada', 'aberta'],
       searchValue: '',
       activeBills: [],
     };
@@ -103,25 +103,26 @@ class Items extends React.Component {
 
     const items = [];
     this.props.bills.data.forEach((b) => {
-      if (this.getStatusName(b.billStatus) !== 'fechada') {
-        b.menuItems.forEach((i, k) => {
-          const itemStatus = this.getItemStatusName(i.itemStatus);
-          const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
-          if (
-            this.state.activeFilters.includes(itemStatus)
-            &&
-            this.state.activeFilters.includes(itemCategory)
-          ) {
-            items.push(Object.assign({}, i, {
-              menuItem: this.getItem(i.menuItem).name,
-              table: b.table,
-              status: this.getStatusCellComponent(i),
-              order: k + 1,
-              billStatus: this.getStatusName(b.billStatus),
-            }));
-          }
-        });
-      }
+      b.menuItems.forEach((i, k) => {
+        const itemStatus = this.getItemStatusName(i.itemStatus);
+        const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
+        const billStatus = this.getStatusName(b.billStatus);
+        if (
+          this.state.activeFilters.includes(itemStatus)
+          &&
+          this.state.activeFilters.includes(itemCategory)
+          &&
+          this.state.activeFilters.includes(billStatus)
+        ) {
+          items.push(Object.assign({}, i, {
+            menuItem: this.getItem(i.menuItem).name,
+            table: b.table,
+            status: this.getStatusCellComponent(i),
+            order: k + 1,
+            billStatus: this.getStatusName(b.billStatus),
+          }));
+        }
+      });
     });
 
     return items;
@@ -159,10 +160,12 @@ class Items extends React.Component {
   }
 
   getFilterClass(f) {
-    if (this.state.activeFilters.indexOf(f) < 0) {
-      return '';
+    if (f !== 'aberta' && this.state.activeFilters.indexOf(f) > -1) {
+      return 'secondary';
+    } else if (f === 'aberta' && this.state.activeFilters.indexOf(f) < 0) {
+      return 'secondary';
     }
-    return 'secondary';
+    return '';
   }
 
   getAllAvailableTables() {

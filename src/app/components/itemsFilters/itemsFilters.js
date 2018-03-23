@@ -35,6 +35,11 @@ const ItemsFilters = ({
           />
         ))
       }
+      <Button
+        type={getFilterClass('aberta')}
+        onClick={() => changeFilter('aberta')}
+        text="CAIXA"
+      />
     </div>
   </div>
 );
