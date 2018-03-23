@@ -20,6 +20,7 @@ const ItemsFilters = ({
             onClick={() => changeFilter(s)}
             key={s}
             text={s}
+            classes="capitalize"
           />
         ))
       }
@@ -32,13 +33,14 @@ const ItemsFilters = ({
             onClick={() => changeFilter(c)}
             key={c}
             text={c}
+            classes="capitalize"
           />
         ))
       }
       <Button
         type={getFilterClass('aberta')}
         onClick={() => changeFilter('aberta')}
-        text="CAIXA"
+        text="Caixa"
       />
     </div>
   </div>

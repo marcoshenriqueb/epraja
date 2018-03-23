@@ -9,10 +9,11 @@ const Button = ({
   type,
   size,
   link,
+  classes,
 }) => {
   const button = (
     <button
-      className={`button button--${type} button--${size}`}
+      className={`button button--${type} button--${size} ${classes}`}
       onClick={onClick}
     >
       { text }
@@ -36,6 +37,7 @@ Button.propTypes = {
   type: PropTypes.string,
   onClick: PropTypes.func,
   link: PropTypes.string,
+  classes: PropTypes.string,
 };
 
 Button.defaultProps = {
@@ -43,6 +45,7 @@ Button.defaultProps = {
   size: 'medium',
   link: '',
   onClick: () => {},
+  classes: '',
 };
 
 export default Button;
