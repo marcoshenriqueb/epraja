@@ -28,7 +28,7 @@ const RadioButton = ({
 
 RadioButton.propTypes = {
   statuses: PropTypes.arrayOf(PropTypes.object).isRequired,
-  checked: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  checked: PropTypes.arrayOf(PropTypes.string).isRequired,
   updateBillItemStatus: PropTypes.func,
   item: PropTypes.string,
 };
