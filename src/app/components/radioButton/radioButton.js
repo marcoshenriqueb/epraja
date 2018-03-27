@@ -5,56 +5,38 @@ import Button from './../../components/button/button';
 
 import './radioButton.styl';
 
-class RadioButton extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      active: ['radio', 'radio', 'radio'],
-    };
-  }
-
-  chengeButtonType() {
-    const activeButton = [];
-    this.props.checked.forEach((i) => {
-      if (i) {
-        activeButton.push('secondary');
-      } else {
-        activeButton.push('radio');
-      }
-    });
-    this.setState({
-      active: activeButton,
-    });
-  }
-
-  render() {
-    return (
-      <div className="full-w flex">
-        {
-          this.props.statuses.map((s, k) => (
-            <Button
-              onClick={this.props.onChange(s._id)}
-              key={s._id}
-              text={s.name}
-              type={this.state.active[k]}
-              size=""
-            />
-          ))
-        }
-      </div>
-    );
-  }
-}
+const RadioButton = ({
+  statuses,
+  checked,
+  updateBillItemStatus,
+  item,
+}) => (
+  <div className="full-w flex">
+    {
+      statuses.map((s, k) => (
+        <Button
+          onClick={() => { updateBillItemStatus(item, s._id); }}
+          key={s._id}
+          text={s.name}
+          type={checked[k]}
+          size=""
+        />
+      ))
+    }
+  </div>
+);
 
 RadioButton.propTypes = {
   statuses: PropTypes.arrayOf(PropTypes.object).isRequired,
   checked: PropTypes.arrayOf(PropTypes.bool).isRequired,
-  onChange: PropTypes.func,
+  updateBillItemStatus: PropTypes.func,
+  item: PropTypes.string,
 };
 
 RadioButton.defaultProps = {
-  onChange: () => {},
+  updateBillItemStatus: () => {},
+  item: '',
 };
+
 
 export default RadioButton;
