@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import './table.styl';
 
+import TableComponent from './../../components/table/table';
 import actions from './../../store/actions';
+import Button from './../../components/button/button';
 
 const {
   fetchBills: fetchBillsAction,
@@ -17,6 +18,14 @@ const {
 } = actions;
 
 class Table extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      filter: 'detalhada',
+    };
+  }
+
   componentDidMount() {
     this.props.fetchBills();
     this.props.fetchBillStatuses();
@@ -47,6 +56,13 @@ class Table extends React.Component {
     return result.length ? result[0] : {};
   }
 
+  getButtonType(button) {
+    if (button === this.state.filter) {
+      return 'secondary';
+    }
+    return '';
+  }
+
   getTotal() {
     if (!this.props.bills.data.length) return 0;
     if (!this.props.menuItems.data.length) return 0;
@@ -54,42 +70,82 @@ class Table extends React.Component {
     let total = 0;
     const items = this.getTable().menuItems;
     items.forEach((i) => {
-      total += (this.getItem(i.menuItem).price * i.quantity);
+      total += (this.getItem(i.menuItem).price);
     });
-
     return total;
   }
 
+  mountData() {
+    if (!Object.keys(this.getTable()).length) return [];
+    const items = [];
+    const tableItems = [...this.getTable().menuItems];
+    if (this.state.filter === 'detalhada') {
+      tableItems.forEach((i, k) => {
+        items.push(Object.assign({}, i, {
+          ordered: k + 1,
+          menuItem: this.getItem(i.menuItem).name,
+          price: this.getItem(i.menuItem).price,
+          quantity: 1,
+          totalPrice: '-',
+        }));
+      });
+    } else {
+      const itemType = [];
+      tableItems.forEach((i, k) => {
+        if (!itemType.contains(i.menuItem)) {
+          items.push(Object.assign({}, i, {
+            ordered: k + 1,
+            menuItem: this.getItem(i.menuItem).name,
+            price: this.getItem(i.menuItem).price,
+            quantity: 1,
+            totalPrice: 1 * this.getItem(i.menuItem).price,
+          }));
+        }
+      });
+    }
+    return items;
+  }
+
   render() {
+    const titlesKeys = ['ordered', 'menuItem', 'quantity', 'price', 'totalPrice'];
+    const titlesValues = ['Pedido Entregue', 'Nome', 'Qtde', 'Preço Unitário', 'Preço Total'];
     return (
       <div className="full-w flex start table-container">
-        <Link to="/caixa">Voltar</Link>
         <div
-          className="table-item flex-column"
+          className="table-filter flex-column"
         >
-          Mesa { this.getTable().table }
+          <Button
+            text="Agrupada"
+            classes="margin-bottom"
+            type={`${this.getButtonType('agrupada')}`}
+            onClick={() => this.setState({ filter: 'agrupada' })}
+          />
+          <div />
+          <Button
+            text="Detalhada"
+            type={`${this.getButtonType('detalhada')}`}
+            onClick={() => this.setState({ filter: 'detalhada' })}
+          />
         </div>
         <div className="flex-column table-details">
-          <div className="flex start space-between">
-            <h2 className="table-details--title">Fechamento de conta</h2>
-            <div className="flex-column end">
-              <h2>Mesa { this.getTable().table }</h2>
-              <h2>Hora: { moment().format('HH:mm') }</h2>
+          <div className="flex-column stretch">
+            <div className="flex start table-details--header space-between">
+              <h2 className="table-details--title">Fechamento de conta { moment().format('HH:mm') }</h2>
+              <div className="table-details--number flex-column justify-center">
+                <h2 className="table-details--numbertext">Mesa</h2>
+                <h2 className="table-details--numbertext">{ this.getTable().table }</h2>
+              </div>
+            </div>
+            <div className="table-details--content full-w">
+              <TableComponent
+                titlesKeys={titlesKeys}
+                titlesValues={titlesValues}
+                data={this.mountData()}
+                blankRows
+              />
             </div>
           </div>
-          <div className="table-details--content full-w">
-            {
-              !Object.keys(this.getTable()).length ? null : this.getTable().menuItems
-              .map(i => (
-                <div className="flex space-between full-w table-details--item">
-                  <span>{i.quantity}</span>
-                  <span>{this.getItem(i.menuItem).name}</span>
-                  <span>R$ {this.getItem(i.menuItem).price}</span>
-                </div>
-              ))
-            }
-          </div>
-          <div className="flex space-between full-w">
+          <div className="table-details--footer flex-column end full-w">
             <span>Total:</span>
             <span>R$ {this.getTotal()}</span>
           </div>
