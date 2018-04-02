@@ -114,6 +114,8 @@ class Items extends React.Component {
           this.state.activeFilters.includes(itemCategory)
           &&
           this.state.activeFilters.includes(billStatus)
+          &&
+          this.state.activeBills.includes(b.table)
         ) {
           items.push(Object.assign({}, i, {
             menuItem: this.getItem(i.menuItem).name,
