@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
+import RadioButton from './../../components/radioButton/radioButton';
 import ItemsFilters from './../../components/itemsFilters/itemsFilters';
 import Table from './../../components/table/table';
 import actions from './../../store/actions';
@@ -129,24 +130,24 @@ class Items extends React.Component {
   }
 
   getStatusCellComponent(item) {
+    const classes = [];
+    this.props.menuItemStatuses.data.map(s => (item.itemStatus === s._id)).forEach((i) => {
+      if (i) {
+        classes.push('secondary');
+      } else {
+        classes.push('radio');
+      }
+    });
     return (
       <div className="flex items--table--statuses">
-        {
-          this.props.menuItemStatuses.data.map(s => (
-            <span
-              className={this.getItemStatusName(item.itemStatus) === s.name.toLowerCase() ? `${s.name}` : ''}
-              key={s._id}
-            >
-              <input
-                onChange={this.updateStatus(item._id, s._id)}
-                type="radio"
-                name={`status-${item._id}`}
-                checked={item.itemStatus === s._id}
-              />
-              &nbsp;&nbsp;{s.name}
-            </span>
-          ))
-        }
+        <RadioButton
+          options={this.props.menuItemStatuses.data}
+          checked={classes}
+          updateBillItemStatus={(selected) => {
+            this.props.updateBillItemStatus(item._id, selected);
+          }}
+          item={item._id}
+        />
       </div>
     );
   }
