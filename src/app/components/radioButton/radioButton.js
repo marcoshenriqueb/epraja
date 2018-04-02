@@ -6,16 +6,15 @@ import Button from './../../components/button/button';
 import './radioButton.styl';
 
 const RadioButton = ({
-  statuses,
+  options,
   checked,
   updateBillItemStatus,
-  item,
 }) => (
   <div className="full-w flex">
     {
-      statuses.map((s, k) => (
+      options.map((s, k) => (
         <Button
-          onClick={() => { updateBillItemStatus(item, s._id); }}
+          onClick={() => { updateBillItemStatus(s._id); }}
           key={s._id}
           text={s.name}
           type={checked[k]}
@@ -27,15 +26,13 @@ const RadioButton = ({
 );
 
 RadioButton.propTypes = {
-  statuses: PropTypes.arrayOf(PropTypes.object).isRequired,
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
   checked: PropTypes.arrayOf(PropTypes.string).isRequired,
   updateBillItemStatus: PropTypes.func,
-  item: PropTypes.string,
 };
 
 RadioButton.defaultProps = {
   updateBillItemStatus: () => {},
-  item: '',
 };
 
 

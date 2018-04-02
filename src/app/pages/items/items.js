@@ -133,7 +133,7 @@ class Items extends React.Component {
 
   getStatusCellComponent(item) {
     const classes = [];
-    [...this.props.menuItemStatuses.data.map(s => (item.itemStatus === s._id))].forEach((i) => {
+    this.props.menuItemStatuses.data.map(s => (item.itemStatus === s._id)).forEach((i) => {
       if (i) {
         classes.push('secondary');
       } else {
@@ -143,9 +143,11 @@ class Items extends React.Component {
     return (
       <div className="flex items--table--statuses">
         <RadioButton
-          statuses={this.props.menuItemStatuses.data}
+          options={this.props.menuItemStatuses.data}
           checked={classes}
-          updateBillItemStatus={this.props.updateBillItemStatus}
+          updateBillItemStatus={(selected) => {
+            this.props.updateBillItemStatus(item._id, selected);
+          }}
           item={item._id}
         />
       </div>
