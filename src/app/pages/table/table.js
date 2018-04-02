@@ -69,6 +69,7 @@ class Table extends React.Component {
 
     let total = 0;
     const items = this.getTable().menuItems;
+    console.log(items);
     items.forEach((i) => {
       total += (this.getItem(i.menuItem).price);
     });
@@ -90,17 +91,25 @@ class Table extends React.Component {
         }));
       });
     } else {
-      const itemType = [];
-      tableItems.forEach((i, k) => {
-        if (!itemType.contains(i.menuItem)) {
-          items.push(Object.assign({}, i, {
-            ordered: k + 1,
-            menuItem: this.getItem(i.menuItem).name,
-            price: this.getItem(i.menuItem).price,
-            quantity: 1,
-            totalPrice: 1 * this.getItem(i.menuItem).price,
-          }));
+      const itemsType = [];
+      const itemsQty = [];
+      tableItems.forEach((i) => {
+        if (!itemsType.includes(this.getItem(i.menuItem)._id)) {
+          itemsType.push(i.menuItem);
+          itemsQty.push(1);
+        } else {
+          itemsQty[itemsType.indexOf(i.menuItem)] += 1;
         }
+      });
+      itemsType.forEach((i, k) => {
+        console.log(i);
+        items.push(Object.assign({}, i, {
+          ordered: k + 1,
+          menuItem: this.getItem(i).name,
+          price: this.getItem(i).price,
+          quantity: itemsQty[k],
+          totalPrice: itemsQty[k] * this.getItem(i).price,
+        }));
       });
     }
     return items;
