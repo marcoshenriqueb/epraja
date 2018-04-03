@@ -106,7 +106,6 @@ class Items extends React.Component {
     const items = [];
     this.props.bills.data.forEach((b) => {
       b.menuItems.forEach((i, k) => {
-        console.log(b);
         const itemStatus = this.getItemStatusName(i.itemStatus);
         const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
         const billStatus = this.getStatusName(b.billStatus);
@@ -252,6 +251,7 @@ class Items extends React.Component {
   }
 
   render() {
+    console.log(this.state.activeFilters);
     const titlesKeys = ['order', 'table', 'menuItem', 'status', 'billStatus'];
     const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status', 'Conta'];
     return (

@@ -69,7 +69,6 @@ class Table extends React.Component {
 
     let total = 0;
     const items = this.getTable().menuItems;
-    console.log(items);
     items.forEach((i) => {
       total += (this.getItem(i.menuItem).price);
     });
@@ -102,7 +101,6 @@ class Table extends React.Component {
         }
       });
       itemsType.forEach((i, k) => {
-        console.log(i);
         items.push(Object.assign({}, i, {
           ordered: k + 1,
           menuItem: this.getItem(i).name,
