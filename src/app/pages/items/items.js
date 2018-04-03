@@ -251,7 +251,6 @@ class Items extends React.Component {
   }
 
   render() {
-    console.log(this.state.activeFilters);
     const titlesKeys = ['order', 'table', 'menuItem', 'status', 'billStatus'];
     const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status', 'Conta'];
     return (

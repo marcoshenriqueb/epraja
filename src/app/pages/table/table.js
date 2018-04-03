@@ -57,10 +57,7 @@ class Table extends React.Component {
   }
 
   getButtonType(button) {
-    if (button === this.state.filter) {
-      return 'secondary';
-    }
-    return '';
+    return button === this.state.filter ? 'secondary' : '';
   }
 
   getTotal() {
@@ -77,8 +74,10 @@ class Table extends React.Component {
 
   mountData() {
     if (!Object.keys(this.getTable()).length) return [];
+
     const items = [];
     const tableItems = [...this.getTable().menuItems];
+
     if (this.state.filter === 'detalhada') {
       tableItems.forEach((i, k) => {
         items.push(Object.assign({}, i, {
@@ -92,6 +91,7 @@ class Table extends React.Component {
     } else {
       const itemsType = [];
       const itemsQty = [];
+
       tableItems.forEach((i) => {
         if (!itemsType.includes(this.getItem(i.menuItem)._id)) {
           itemsType.push(i.menuItem);
@@ -100,6 +100,7 @@ class Table extends React.Component {
           itemsQty[itemsType.indexOf(i.menuItem)] += 1;
         }
       });
+
       itemsType.forEach((i, k) => {
         items.push(Object.assign({}, i, {
           ordered: k + 1,
@@ -110,6 +111,7 @@ class Table extends React.Component {
         }));
       });
     }
+
     return items;
   }
 
