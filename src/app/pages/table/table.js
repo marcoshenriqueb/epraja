@@ -38,12 +38,6 @@ class Table extends React.Component {
     this.props.resetMenuItems();
   }
 
-  getStatusName(id) {
-    const result = this.props.billStatuses.data.filter(s => s._id === id);
-
-    return result.length ? result[0].name.toLowerCase() : '';
-  }
-
   getTable() {
     const result = this.props.bills.data.filter(b => b._id === this.props.match.params.id);
 
@@ -172,9 +166,6 @@ Table.propTypes = {
       menuItems: PropTypes.arrayOf(PropTypes.shape({})),
     }).isRequired).isRequired,
   }).isRequired,
-  billStatuses: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
-  }).isRequired,
   menuItems: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
@@ -189,7 +180,6 @@ Table.propTypes = {
 const TableConnector = connect(state => (
   {
     bills: state.bill.bills,
-    billStatuses: state.billStatus.billStatuses,
     menuItems: state.menuItem.menuItems,
   }
 ), dispatch => (
