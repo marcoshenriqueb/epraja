@@ -14,13 +14,9 @@ const {
   fetchBills: fetchBillsAction,
   resetBills: resetBillsAction,
   fetchBillStatuses: fetchBillStatusesAction,
-  resetBillStatuses: resetBillStatusesAction,
   fetchMenuItems: fetchMenuItemsAction,
-  resetMenuItems: resetMenuItemsAction,
   fetchMenuItemStatuses: fetchMenuItemStatusesAction,
-  resetMenuItemStatuses: resetMenuItemStatusesAction,
   fetchMenuCategories: fetchMenuCategoriesAction,
-  resetMenuCategories: resetMenuCategoriesAction,
   updateBillItemStatus: updateBillItemStatusAction,
 } = actions;
 
@@ -29,7 +25,7 @@ class Items extends React.Component {
     super(props);
 
     this.state = {
-      activeFilters: [...this.getCategories(), ...this.getStatuses(), 'fechada', 'aberta'],
+      activeFilters: [],
       searchValue: '',
       activeBills: [],
     };
@@ -51,15 +47,14 @@ class Items extends React.Component {
       this.props.fetchMenuCategories(),
     ]).then(() => {
       this.populateActiveBills();
+      this.setState({
+        activeFilters: [...this.getCategories(), ...this.getStatuses(), 'fechada', 'aberta'],
+      });
     });
   }
 
   componentWillUnmount() {
     this.props.resetBills();
-    this.props.resetBillStatuses();
-    this.props.resetMenuItems();
-    this.props.resetMenuItemStatuses();
-    this.props.resetMenuCategories();
   }
 
   onSearchChange(e) {
@@ -68,12 +63,6 @@ class Items extends React.Component {
       searchValue: e.target.value,
       activeBills: result,
     });
-  }
-
-  getItemStatus(id) {
-    const result = this.props.menuItemStatuses.data.filter(s => s._id === id);
-
-    return result.length ? result[0] : {};
   }
 
   getItemStatusName(id) {
@@ -216,12 +205,6 @@ class Items extends React.Component {
     }
   }
 
-  updateStatus(id, statusId) {
-    return () => {
-      this.props.updateBillItemStatus(id, statusId);
-    };
-  }
-
   toggleAllBills() {
     if (this.state.activeBills.length < this.getAllAvailableTables().length) {
       this.populateActiveBills();
@@ -302,13 +285,9 @@ Items.propTypes = {
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchBillStatuses: PropTypes.func.isRequired,
-  resetBillStatuses: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
-  resetMenuItems: PropTypes.func.isRequired,
   fetchMenuItemStatuses: PropTypes.func.isRequired,
-  resetMenuItemStatuses: PropTypes.func.isRequired,
   fetchMenuCategories: PropTypes.func.isRequired,
-  resetMenuCategories: PropTypes.func.isRequired,
   updateBillItemStatus: PropTypes.func.isRequired,
 };
 
@@ -331,26 +310,14 @@ const ItemsConnector = connect(state => (
     fetchBillStatuses: () => (
       dispatch(fetchBillStatusesAction())
     ),
-    resetBillStatuses: () => (
-      dispatch(resetBillStatusesAction())
-    ),
     fetchMenuItems: () => (
       dispatch(fetchMenuItemsAction())
-    ),
-    resetMenuItems: () => (
-      dispatch(resetMenuItemsAction())
     ),
     fetchMenuItemStatuses: () => (
       dispatch(fetchMenuItemStatusesAction())
     ),
-    resetMenuItemStatuses: () => (
-      dispatch(resetMenuItemStatusesAction())
-    ),
     fetchMenuCategories: () => (
       dispatch(fetchMenuCategoriesAction())
-    ),
-    resetMenuCategories: () => (
-      dispatch(resetMenuCategoriesAction())
     ),
     updateBillItemStatus: (id, statusId) => (
       dispatch(updateBillItemStatusAction(id, statusId))

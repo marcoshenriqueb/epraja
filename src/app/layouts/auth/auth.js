@@ -7,7 +7,6 @@ import './auth.styl';
 import routeComponents from './../../router';
 import Login from './../../pages/login/login';
 import Items from './../../pages/items/items';
-import Tables from './../../pages/tables/tables';
 import Table from './../../pages/table/table';
 import Button from './../../components/button/button';
 import ReportsConnector from './../../pages/reports/reports';
@@ -66,26 +65,19 @@ class Auth extends React.Component {
       <PrivateRoute
         key={1}
         exact
-        path="/caixa"
-        component={Tables}
-        isAuthenticated={this.props.authenticated}
-      />,
-      <PrivateRoute
-        key={2}
-        exact
         path="/caixa/:id"
         component={Table}
         isAuthenticated={this.props.authenticated}
       />,
       <PrivateRoute
-        key={3}
+        key={2}
         exact
         path="/relatorios"
         component={ReportsConnector}
         isAuthenticated={this.props.authenticated}
       />,
       <GuestRoute
-        key={4}
+        key={3}
         path="/login"
         component={Login}
         isAuthenticated={this.props.authenticated}
