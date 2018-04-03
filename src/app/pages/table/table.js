@@ -11,10 +11,7 @@ import Button from './../../components/button/button';
 const {
   fetchBills: fetchBillsAction,
   resetBills: resetBillsAction,
-  fetchBillStatuses: fetchBillStatusesAction,
-  resetBillStatuses: resetBillStatusesAction,
   fetchMenuItems: fetchMenuItemsAction,
-  resetMenuItems: resetMenuItemsAction,
 } = actions;
 
 class Table extends React.Component {
@@ -28,14 +25,11 @@ class Table extends React.Component {
 
   componentDidMount() {
     this.props.fetchBills();
-    this.props.fetchBillStatuses();
     this.props.fetchMenuItems();
   }
 
   componentWillUnmount() {
     this.props.resetBills();
-    this.props.resetBillStatuses();
-    this.props.resetMenuItems();
   }
 
   getTable() {
@@ -171,10 +165,7 @@ Table.propTypes = {
   }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
-  fetchBillStatuses: PropTypes.func.isRequired,
-  resetBillStatuses: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
-  resetMenuItems: PropTypes.func.isRequired,
 };
 
 const TableConnector = connect(state => (
@@ -190,17 +181,8 @@ const TableConnector = connect(state => (
     resetBills: () => (
       dispatch(resetBillsAction())
     ),
-    fetchBillStatuses: () => (
-      dispatch(fetchBillStatusesAction())
-    ),
-    resetBillStatuses: () => (
-      dispatch(resetBillStatusesAction())
-    ),
     fetchMenuItems: () => (
       dispatch(fetchMenuItemsAction())
-    ),
-    resetMenuItems: () => (
-      dispatch(resetMenuItemsAction())
     ),
   }
 ))(Table);
