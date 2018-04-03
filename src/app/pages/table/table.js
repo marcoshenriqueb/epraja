@@ -134,7 +134,7 @@ class Table extends React.Component {
             onClick={() => this.setState({ filter: 'detalhada' })}
           />
         </div>
-        <div className="flex-column table-details">
+        <div className="flex-column table-details end">
           <div className="flex-column stretch">
             <div className="flex start table-details--header space-between">
               <h2 className="table-details--title">Fechamento de conta { moment().format('HH:mm') }</h2>
@@ -152,9 +152,8 @@ class Table extends React.Component {
               />
             </div>
           </div>
-          <div className="table-details--footer flex-column end full-w">
-            <span>Total:</span>
-            <span>R$ {this.getTotal()}</span>
+          <div className="table-details--footer flex-column end">
+            <span> R$ {this.getTotal()}</span>
           </div>
         </div>
       </div>
