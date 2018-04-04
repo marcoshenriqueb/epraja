@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
@@ -122,7 +123,7 @@ class Items extends React.Component {
             table: b.table,
             status: this.getStatusCellComponent(i),
             order: k + 1,
-            billStatus: this.getStatusName(b.billStatus),
+            billStatus: this.getBillStatusComponent(b.billStatus, b._id),
           }));
         }
       });
@@ -151,6 +152,16 @@ class Items extends React.Component {
           item={item._id}
         />
       </div>
+    );
+  }
+
+  getBillStatusComponent(status, id) {
+    return (
+      <Link
+        to={`/caixa/${id}`}
+      >
+        {this.getStatusName(status)}
+      </Link>
     );
   }
 
