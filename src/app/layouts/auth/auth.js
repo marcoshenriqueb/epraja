@@ -66,7 +66,7 @@ class Auth extends React.Component {
       <PrivateRoute
         key={1}
         exact
-        path="/cancelamento/:bill/:id"
+        path="/cancelamento/:bill/:item/:id"
         component={Cancellation}
         isAuthenticated={this.props.authenticated}
       />,

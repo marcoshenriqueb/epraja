@@ -10,6 +10,7 @@ const {
   fetchBills: fetchBillsAction,
   resetBills: resetBillsAction,
   fetchMenuItems: fetchMenuItemsAction,
+  removeBillItem: removeBillItemAction,
 } = actions;
 
 class Cancellation extends React.Component {
@@ -22,6 +23,7 @@ class Cancellation extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this.props);
     this.props.fetchBills();
     this.props.fetchMenuItems();
   }
@@ -46,6 +48,14 @@ class Cancellation extends React.Component {
     return button === this.state.owner ? 'secondary' : '';
   }
 
+  cancelItem() {
+    Promise.all([
+      this.props.removeBillItem(this.props.match.params.bill, this.props.match.params.id),
+    ]).then(() => {
+      this.props.history.goBack();
+    });
+  }
+
   render() {
     return (
       <div className="full-w flex justify-center">
@@ -64,7 +74,7 @@ class Cancellation extends React.Component {
             <tbody>
               <tr className="modal-table--itemRow">
                 <td className="modal-table--item">{this.getTable().table}</td>
-                <td className="modal-table--item">{this.getItem(this.props.match.params.id).name}</td>
+                <td className="modal-table--item">{this.getItem(this.props.match.params.item).name}</td>
                 <td className="modal-table--item">-</td>
               </tr>
             </tbody>
@@ -90,6 +100,7 @@ class Cancellation extends React.Component {
               <Button
                 text="Confirmar Cancelamento"
                 type="secondary"
+                onClick={() => this.cancelItem()}
               />
               <Button
                 text="Voltar"
@@ -108,6 +119,7 @@ Cancellation.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired,
+      item: PropTypes.string.isRequired,
       bill: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
@@ -119,10 +131,13 @@ Cancellation.propTypes = {
   menuItems: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
-  history: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  history: PropTypes.shape({
+    goBack: PropTypes.func.isRequired,
+  }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
+  removeBillItem: PropTypes.func.isRequired,
 };
 
 const CancellationConnector = connect(state => (
@@ -140,6 +155,9 @@ const CancellationConnector = connect(state => (
     ),
     fetchMenuItems: () => (
       dispatch(fetchMenuItemsAction())
+    ),
+    removeBillItem: (bill, id) => (
+      dispatch(removeBillItemAction(bill, id))
     ),
   }
 ))(Cancellation);

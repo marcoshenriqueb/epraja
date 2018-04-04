@@ -90,7 +90,7 @@ class Items extends React.Component {
 
   getItems() {
     if (!this.props.bills.data.length) return [];
-
+    console.log(this.props.bills);
     const items = [];
     this.props.bills.data.forEach((b) => {
       b.menuItems.forEach((i, k) => {
@@ -112,7 +112,7 @@ class Items extends React.Component {
             status: this.getStatusCellComponent(i),
             order: (
               <Link
-                to={`/cancelamento/${b._id}/${i.menuItem}`}
+                to={`/cancelamento/${b._id}/${i.menuItem}/${i._id}`}
               >
                 {k + 1}
               </Link>
