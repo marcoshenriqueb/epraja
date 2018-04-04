@@ -8,6 +8,7 @@ import routeComponents from './../../router';
 import Login from './../../pages/login/login';
 import Items from './../../pages/items/items';
 import Table from './../../pages/table/table';
+import Cancellation from './../../pages/cancellation/cancellation';
 import Button from './../../components/button/button';
 import ReportsConnector from './../../pages/reports/reports';
 
@@ -65,19 +66,26 @@ class Auth extends React.Component {
       <PrivateRoute
         key={1}
         exact
+        path="/cancelamento/:bill/:id"
+        component={Cancellation}
+        isAuthenticated={this.props.authenticated}
+      />,
+      <PrivateRoute
+        key={2}
+        exact
         path="/caixa/:id"
         component={Table}
         isAuthenticated={this.props.authenticated}
       />,
       <PrivateRoute
-        key={2}
+        key={3}
         exact
         path="/relatorios"
         component={ReportsConnector}
         isAuthenticated={this.props.authenticated}
       />,
       <GuestRoute
-        key={3}
+        key={4}
         path="/login"
         component={Login}
         isAuthenticated={this.props.authenticated}
