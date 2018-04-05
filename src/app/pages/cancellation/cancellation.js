@@ -48,9 +48,7 @@ class Cancellation extends React.Component {
   }
 
   cancelItem() {
-    Promise.all([
-      this.props.removeBillItem(this.props.match.params.bill, this.props.match.params.id),
-    ]).then(() => {
+    this.props.removeBillItem(this.props.match.params.bill, this.props.match.params.id).then(() => {
       this.props.history.goBack();
     });
   }
