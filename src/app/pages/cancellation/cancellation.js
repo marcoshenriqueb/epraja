@@ -23,7 +23,6 @@ class Cancellation extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
     this.props.fetchBills();
     this.props.fetchMenuItems();
   }
@@ -74,7 +73,9 @@ class Cancellation extends React.Component {
             <tbody>
               <tr className="modal-table--itemRow">
                 <td className="modal-table--item">{this.getTable().table}</td>
-                <td className="modal-table--item">{this.getItem(this.props.match.params.item).name}</td>
+                <td className="modal-table--item">
+                  {this.getItem(this.props.match.params.item).name}
+                </td>
                 <td className="modal-table--item">-</td>
               </tr>
             </tbody>
