@@ -30,7 +30,6 @@ class Items extends React.Component {
       activeBills: [],
     };
 
-    this.getStatusCellComponent = this.getStatusCellComponent.bind(this);
     this.getFilterClass = this.getFilterClass.bind(this);
     this.changeFilter = this.changeFilter.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -91,7 +90,7 @@ class Items extends React.Component {
 
   getItems() {
     if (!this.props.bills.data.length) return [];
-
+    console.log(this.props.bills);
     const items = [];
     this.props.bills.data.forEach((b) => {
       b.menuItems.forEach((i, k) => {
@@ -111,7 +110,13 @@ class Items extends React.Component {
             menuItem: this.getItem(i.menuItem).name,
             table: b.table,
             status: this.getStatusCellComponent(i),
-            order: k + 1,
+            order: (
+              <Link
+                to={`/cancelamento/${b._id}/${i.menuItem}/${i._id}`}
+              >
+                {k + 1}
+              </Link>
+            ),
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
           }));
         }

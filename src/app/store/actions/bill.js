@@ -92,6 +92,17 @@ const updateBillItemStatus = (id, statusId) => (
   )
 );
 
+const removeBillItem = (bill, id) => (
+  dispatch => (
+    api.bills.patch(bill, {
+      $pull: { menuItems: { _id: id } },
+    }, {}).then((response) => {
+      dispatch(updateBill(response[0] || {}));
+      return response;
+    }, error => error)
+  )
+);
+
 const resetBillsState = () => (
   {
     type: 'RESET_BILLS',
@@ -113,4 +124,5 @@ export default {
   fetchBills,
   resetBills,
   updateBillItemStatus,
+  removeBillItem,
 };
