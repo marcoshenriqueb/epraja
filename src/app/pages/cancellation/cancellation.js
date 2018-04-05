@@ -62,7 +62,7 @@ class Cancellation extends React.Component {
           <div className="modal-header">
             <h2 className="modal-header--title">Cancelamento</h2>
           </div>
-          <table className="modal-table">
+          <table className="modal-table full-w">
             <thead>
               <tr className="modal-table--head">
                 <th>Mesa</th>
