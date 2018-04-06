@@ -1,165 +1,133 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  PieChart,
-  Pie,
-  Tooltip,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-} from 'recharts';
-import moment from 'moment';
+
 import './reports.styl';
 
 import actions from './../../store/actions';
 
 const {
-  fetchSurveys: fetchSurveysAction,
-  resetSurveys: resetSurveysAction,
-  fetchSurveyRates: fetchSurveyRatesAction,
-  resetSurveyRates: resetSurveyRatesAction,
+  fetchBills: fetchBillsAction,
+  resetBills: resetBillsAction,
+  fetchMenuItems: fetchMenuItemsAction,
+  fetchMenuCategories: fetchMenuCategoriesAction,
 } = actions;
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-const MONTHS_COUNT = 3;
 
 class Reports extends React.Component {
   componentDidMount() {
-    this.props.fetchSurveys();
-    this.props.fetchSurveyRates();
+    this.props.fetchBills();
+    this.props.fetchMenuItems();
+    this.props.fetchMenuCategories();
   }
 
   componentWillUnmount() {
-    this.props.resetSurveys();
-    this.props.resetSurveyRates();
+    this.props.resetBills();
   }
 
-  getSurveyRate(id) {
-    const result = this.props.surveyRates.data.filter(r => r._id === id);
+  getCategory(id) {
+    const result = this.props.menuCategories.data.filter(c => c._id === id);
+
+    return result.length ? result[0].name.toLowerCase() : '';
+  }
+
+  getItemName(id) {
+    const result = this.props.menuItems.data.filter(i => i._id === id);
 
     return result.length ? result[0] : {};
   }
 
-  getAggregateSurveys() {
-    return this.props.surveyRates.data.map((r) => {
-      let count = 0;
-      this.props.surveys.data.forEach((s) => {
-        if (s.surveyRate === r._id) {
-          count += 1;
-        }
-      });
-
-      return Object.assign({}, r, { value: count });
-    });
-  }
-
-  getMonthlyAggregateSurveys() {
-    return [...Array(MONTHS_COUNT).keys()].map((key) => {
-      const data = { name: moment().subtract(MONTHS_COUNT - (key + 1), 'months').format('MMMM') };
-
-      this.props.surveyRates.data.forEach((r) => {
-        this.props.surveys.data.forEach((s, i) => {
-          if (i === 0) {
-            data[r.name] = 0;
-          }
-
-          if (
-            moment(s.createdAt).format('MMMM') !== data.name ||
-            r._id !== s.surveyRate
-          ) return;
-
-          data[r.name] += 1;
-        });
-      });
-
-      return data;
-    });
-  }
-
   render() {
     return (
-      <div className="full-w flex start wrap reports-container">
-        <PieChart width={400} height={400}>
-          <Pie
-            isAnimationActive={false}
-            data={this.getAggregateSurveys()}
-            dataKey="value"
-            cx={200}
-            cy={200}
-            outerRadius={80}
-            fill="red"
-            label
-          >
-            {
-              this.getAggregateSurveys()
-              .map((entry, index) =>
-                <Cell key={COLORS[index % COLORS.length]} fill={COLORS[index % COLORS.length]} />)
-            }
-          </Pie>
-          <Tooltip />
-        </PieChart>
-        <BarChart
-          width={600}
-          height={300}
-          data={this.getMonthlyAggregateSurveys()}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <XAxis dataKey="name" />
-          <YAxis />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
-          <Legend />
-          {
-            this.props.surveyRates.data.map((r, i) => (
-              <Bar key={r.name} dataKey={r.name} fill={COLORS[i % COLORS.length]} />
-            ))
-          }
-        </BarChart>
+      <div className="full-w flex-column start wrap reports-container">
+        <div className="flex reports-header full-w">
+          <h3>Relatórios</h3>
+        </div>
+        <div className="flex reports-filters full-w">
+          <table>
+            <thead>
+              <tr>
+                <th>Mesas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>oi</td>
+                <td>oi</td>
+              </tr>
+            </tbody>
+          </table>
+          <table>
+            <thead>
+              <tr>
+                <th>Comidas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>oi</td>
+                <td>oi</td>
+              </tr>
+            </tbody>
+          </table>
+          <table>
+            <thead>
+              <tr>
+                <th>Bebidas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>oi</td>
+                <td>oi</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="flex reports-footer full-w">
+          asd
+        </div>
       </div>
     );
   }
 }
 
 Reports.propTypes = {
-  surveys: PropTypes.shape({
+  bills: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape({
+      menuItems: PropTypes.arrayOf(PropTypes.shape({})),
+    }).isRequired).isRequired,
+  }).isRequired,
+  menuItems: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
-  surveyRates: PropTypes.shape({
+  menuCategories: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
-  fetchSurveys: PropTypes.func.isRequired,
-  resetSurveys: PropTypes.func.isRequired,
-  fetchSurveyRates: PropTypes.func.isRequired,
-  resetSurveyRates: PropTypes.func.isRequired,
+  fetchBills: PropTypes.func.isRequired,
+  resetBills: PropTypes.func.isRequired,
+  fetchMenuItems: PropTypes.func.isRequired,
+  fetchMenuCategories: PropTypes.func.isRequired,
 };
 
 const ReportsConnector = connect(state => (
   {
-    surveys: state.survey.surveys,
-    surveyRates: state.surveyRate.surveyRates,
+    bills: state.bill.bills,
+    menuItems: state.menuItem.menuItems,
+    menuCategories: state.menuCategory.menuCategories,
   }
 ), dispatch => (
   {
-    fetchSurveys: query => (
-      dispatch(fetchSurveysAction(query))
+    fetchBills: query => (
+      dispatch(fetchBillsAction(query))
     ),
-    resetSurveys: () => (
-      dispatch(resetSurveysAction())
+    resetBills: () => (
+      dispatch(resetBillsAction())
     ),
-    fetchSurveyRates: () => (
-      dispatch(fetchSurveyRatesAction())
+    fetchMenuItems: () => (
+      dispatch(fetchMenuItemsAction())
     ),
-    resetSurveyRates: () => (
-      dispatch(resetSurveyRatesAction())
+    fetchMenuCategories: () => (
+      dispatch(fetchMenuCategoriesAction())
     ),
   }
 ))(Reports);
