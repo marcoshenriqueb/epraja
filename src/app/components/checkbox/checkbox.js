@@ -15,6 +15,14 @@ class Checkbox extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.checked) {
+      this.setState({ icon: 'X', isChecked: true });
+    } else if (nextProps.checked === false) {
+      this.setState({ icon: '', isChecked: false });
+    }
+  }
+
   toggleCheckboxChange() {
     if (this.state.isChecked) {
       this.setState({ icon: '', isChecked: false });
@@ -38,12 +46,13 @@ class Checkbox extends React.Component {
 
 Checkbox.propTypes = {
   label: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  checked: PropTypes.bool
+  onChange: PropTypes.func,
+  checked: PropTypes.bool,
 };
 
 Checkbox.defaultProps = {
+  onChange: () => {},
   checked: null,
-}
+};
 
 export default Checkbox;

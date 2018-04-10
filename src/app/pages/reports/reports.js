@@ -22,10 +22,11 @@ class Reports extends React.Component {
     this.state = {
       itemFilters: [],
       tables: [],
-      type: '',
+      type: [false, false, false],
     };
 
-    this.toggleCheckbox = this.toggleCheckbox.bind(this);
+    this.toggleItemFilters = this.toggleItemFilters.bind(this);
+    this.toggleTables = this.toggleTables.bind(this);
   }
 
   componentDidMount() {
@@ -50,30 +51,38 @@ class Reports extends React.Component {
     return result.length ? result[0].name : {};
   }
 
-  manageArray(array, item) {
-    const newArray = [...array]
-    if (newArray.includes(item)) {
-      newArray.splice(item);
-    } else {
-      newArray.push(item);
-    }
-    return array;
-  }
-
   toggleItemFilters(filter) {
-    const newItems = this.manageArray(...this.state.itemFilters, filter);
-
+    const newItems = [...this.state.itemFilters];
+    if (newItems.includes(filter)) {
+      newItems.splice(filter);
+    } else {
+      newItems.push(filter);
+    }
     this.setState({ itemFilters: newItems });
   }
 
   toggleTables(table) {
-    const newTables = this.manageArray(...this.state.tables, table);
-
+    const newTables = [...this.state.tables];
+    if (newTables.includes(table)) {
+      newTables.splice(table);
+    } else {
+      newTables.push(table);
+    }
     this.setState({ tables: newTables });
   }
 
-  toggleType(type) {
-    this.setState({ type: type });
+  manageType(number) {
+    const newType = this.state.type;
+    for (let i = 0; i < 3; i += 1) {
+      if (i === number) {
+        newType[i] = true;
+      } else {
+        newType[i] = false;
+      }
+    }
+    this.setState({
+      type: newType,
+    });
   }
 
   render() {
@@ -165,7 +174,8 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="faturado"
-                    onChange={this.toggleType}
+                    checked={this.state.type[0]}
+                    onChange={() => this.manageType(0)}
                   />
                 </td>
               </tr>
@@ -174,7 +184,8 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="cancelados"
-                    onChange={this.toggleType}
+                    checked={this.state.type[1]}
+                    onChange={() => this.manageType(1)}
                   />
                 </td>
               </tr>
@@ -183,7 +194,8 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="tempo"
-                    onChange={this.toggleType}
+                    checked={this.state.type[2]}
+                    onChange={() => this.manageType(2)}
                   />
                 </td>
               </tr>
