@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { DateRangePicker } from 'react-dates';
 
 import './reports.styl';
 
@@ -23,10 +24,15 @@ class Reports extends React.Component {
       itemFilters: [],
       tables: [],
       type: [false, false, false],
+      startDate: null,
+      endDate: null,
+      focusedInput: null,
     };
 
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
+    console.log(this.state.startDate);
+    console.log(this.state.endDate);
   }
 
   componentDidMount() {
@@ -88,8 +94,22 @@ class Reports extends React.Component {
   render() {
     return (
       <div className="full-w flex-column start wrap reports-container">
-        <div className="flex reports-header full-w">
+        <div className="flex reports-header full-w space-between">
           <h1>Relatórios</h1>
+          <DateRangePicker
+            required
+            showClearDates
+            showDefaultInputIcon
+            hideKeyboardShortcutsPanel
+            startDatePlaceholderText="de"
+            endDatePlaceholderText="até"
+            startDate={this.state.startDate}
+            endDate={this.state.endDate}
+            onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
+            focusedInput={this.state.focusedInput}
+            onFocusChange={focusedInput => this.setState({ focusedInput })}
+          />
+          <div colSpan={1} />
         </div>
         <div className="flex start reports-filters full-w space-between">
           <table className="table-paddingTop full-w table-noSeparator">
