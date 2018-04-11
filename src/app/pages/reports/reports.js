@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { DateRangePicker } from 'react-dates';
+import moment from 'moment';
 
 import './reports.styl';
 
@@ -101,6 +102,10 @@ class Reports extends React.Component {
             showClearDates
             showDefaultInputIcon
             hideKeyboardShortcutsPanel
+            displayFormat="DD/MM/YYYY"
+            initialVisibleMonth={() => moment().subtract(1, 'month')}
+            monthFormat="MM/YYYY"
+            isOutsideRange={d => d > moment()}
             startDatePlaceholderText="de"
             endDatePlaceholderText="até"
             startDate={this.state.startDate}
