@@ -33,7 +33,6 @@ class Reports extends React.Component {
 
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
-    console.log(this.props);
   }
 
   componentDidMount() {
@@ -93,58 +92,79 @@ class Reports extends React.Component {
   }
 
   mountFaturado() {
-    const data = [];
+    const report = {
+      data: [],
+      titleKeys: ['date', 'table'],
+      titleValues: ['DATA', 'MESA'],
+      qty: 0,
+      total: 0,
+      date: `${this.state.startDate.format('DD/MM')} - ${this.state.endDate.format('DD/MM')}`,
+    };
+    this.props.menuCategories.data.forEach((c) => {
+      report.titleKeys.push(`${c.name}qty`, `${c.name}subTotal`);
+      report.titleValues.push(`${c.name.toUpperCase}`, `R$ ${c.name.toUpperCase()}`);
+    });
+    report.titleKeys.push('totalQty', 'total');
+    report.titleValues.push('TOTAL', 'R$ TOTAL');
+
     const j = this.state.endDate.add(1, 'days');
-
     for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
-      const day = {};
-      day.date = i.format('DD/MM/YYYY');
-      day.data = [];
-
+      const day = {
+        data: [],
+        date: i.format('DD/MM/YYYY'),
+        total: 0,
+        qty: 0,
+      };
       this.state.tables.forEach((t) => {
-        let total = 0;
-        const row = {};
-        row.table = t;
-
+        const row = {
+          table: t,
+          total: 0,
+          qty: 0,
+        };
         this.props.menuCategories.data.forEach((c) => {
           let qty = 0;
           let subTotal = 0;
-          const bills = this.props.bills.data.filter((b) => {
-            console.log(b.table === t);
-            console.log(moment(b.createdAt).format('DD/MM/YYYY') === row.day);
-            console.log(moment(b.createdAt).format('DD/MM/YYYY'));
-            console.log(row.day);
-            return moment(b.createdAt).format('DD/MM/YYYY') === row.day && b.table === t;
-          });
-          console.log(bills);
           let items = [];
-          bills.forEach((bill) => {
+
+          this.props.bills.data.filter(b => (
+            moment(b.createdAt).format('DD/MM/YYYY') === day.date
+            &&
+            b.table === t
+          )).forEach((bill) => {
             const newItems = bill.menuItems.filter(item => (
               this.getItem(item.menuItem).menuCategory === c._id
             ));
-            console.log(newItems);
             items = [...items, ...newItems];
-            console.log(items);
           });
+
           items.forEach((item) => {
             qty += 1;
             subTotal += this.getItem(item.menuItem).price;
           });
-          row[`c${qty}`] = qty;
-          row[`c${subTotal}`] = subTotal;
-          total += subTotal;
-        });
 
-        row.total = total;
-        if (total > 0) day.data.push(row);
+          row[`${c.name}qty`] = qty;
+          day[`${c.name}qty`] += qty;
+          report[`${c.name}qty`] += qty;
+          row.qty += qty;
+          day.qty += qty;
+          report.qty += qty;
+
+          row[`${c.name}subTotal`] = subTotal;
+          day[`${c.name}subTotal`] += subTotal;
+          report[`${c.name}subTotal`] += subTotal;
+          row.total += subTotal;
+          day.total += subTotal;
+          report.total += subTotal;
+        });
+        if (row.total > 0) day.data.push(row);
       });
-      if (day.data.length > 0) data.push(day);
+      if (day.data.length > 0) report.data.push(day);
     }
-    if (data.length > 0) {
+    if (report.data.length > 0) {
       this.props.history.push({
         pathname: '/relatorios/faturado',
         state: {
-          data,
+          report,
         },
       });
     }

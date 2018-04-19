@@ -11,6 +11,7 @@ import Table from './../../pages/table/table';
 import Cancellation from './../../pages/cancellation/cancellation';
 import Button from './../../components/button/button';
 import Reports from './../../pages/reports/reports';
+import Report from './../../pages/report/report';
 
 import actions from './../../store/actions';
 
@@ -88,7 +89,7 @@ class Auth extends React.Component {
         key={4}
         exact
         path="/relatorios/:type"
-        component={Reports}
+        component={Report}
         isAuthenticated={this.props.authenticated}
       />,
       <GuestRoute
