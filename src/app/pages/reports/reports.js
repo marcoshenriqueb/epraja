@@ -24,6 +24,7 @@ class Reports extends React.Component {
     this.state = {
       itemFilters: [],
       tables: [],
+      allTables: false,
       type: [false, false, false],
       startDate: null,
       endDate: null,
@@ -32,8 +33,7 @@ class Reports extends React.Component {
 
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
-    console.log(this.state.startDate);
-    console.log(this.state.endDate);
+    console.log(this.props);
   }
 
   componentDidMount() {
@@ -52,10 +52,10 @@ class Reports extends React.Component {
     return result.length ? result[0].name.toLowerCase() : '';
   }
 
-  getItemName(id) {
+  getItem(id) {
     const result = this.props.menuItems.data.filter(i => i._id === id);
 
-    return result.length ? result[0].name : {};
+    return result.length ? result[0] : {};
   }
 
   toggleItemFilters(filter) {
@@ -92,6 +92,98 @@ class Reports extends React.Component {
     });
   }
 
+  mountFaturado() {
+    const data = [];
+    const j = this.state.endDate.add(1, 'days');
+
+    for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
+      const day = {};
+      day.date = i.format('DD/MM/YYYY');
+      day.data = [];
+
+      this.state.tables.forEach((t) => {
+        let total = 0;
+        const row = {};
+        row.table = t;
+
+        this.props.menuCategories.data.forEach((c) => {
+          let qty = 0;
+          let subTotal = 0;
+          const bills = this.props.bills.data.filter((b) => {
+            console.log(b.table === t);
+            console.log(moment(b.createdAt).format('DD/MM/YYYY') === row.day);
+            console.log(moment(b.createdAt).format('DD/MM/YYYY'));
+            console.log(row.day);
+            return moment(b.createdAt).format('DD/MM/YYYY') === row.day && b.table === t;
+          });
+          console.log(bills);
+          let items = [];
+          bills.forEach((bill) => {
+            const newItems = bill.menuItems.filter(item => (
+              this.getItem(item.menuItem).menuCategory === c._id
+            ));
+            console.log(newItems);
+            items = [...items, ...newItems];
+            console.log(items);
+          });
+          items.forEach((item) => {
+            qty += 1;
+            subTotal += this.getItem(item.menuItem).price;
+          });
+          row[`c${qty}`] = qty;
+          row[`c${subTotal}`] = subTotal;
+          total += subTotal;
+        });
+
+        row.total = total;
+        if (total > 0) day.data.push(row);
+      });
+      if (day.data.length > 0) data.push(day);
+    }
+    if (data.length > 0) {
+      this.props.history.push({
+        pathname: '/relatorios/faturado',
+        state: {
+          data,
+        },
+      });
+    }
+  }
+
+  mountCancelados() {
+    const j = this.state.endDate.add(1, 'days');
+    for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
+      console.log(this.state.data);
+    }
+  }
+
+  mountTempo() {
+    const j = this.state.endDate.add(1, 'days');
+    for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
+      console.log(i);
+    }
+  }
+
+  generateReport() {
+    if (
+      this.state.startDate !== null
+      &&
+      this.state.endDate !== null
+      &&
+      this.state.tables !== []
+      &&
+      this.state.itemFilters !== []
+    ) {
+      if (this.state.type[0]) {
+        this.mountFaturado();
+      } else if (this.state.type[1]) {
+        this.mountCancelados();
+      } else if (this.state.type[2]) {
+        this.mountTempo();
+      }
+    }
+  }
+
   render() {
     return (
       <div className="full-w flex-column start wrap reports-container">
@@ -102,6 +194,8 @@ class Reports extends React.Component {
             showClearDates
             showDefaultInputIcon
             hideKeyboardShortcutsPanel
+            startDateId="startDate"
+            endDateId="endDate"
             displayFormat="DD/MM/YYYY"
             initialVisibleMonth={() => moment().subtract(1, 'month')}
             monthFormat="MM/YYYY"
@@ -129,17 +223,17 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-equalWidth">
                   <Checkbox
                     label="todasmesas"
-                    onChange={this.toggleTables}
+                    onChange={() => this.setState({ allTables: !this.state.allTables })}
                   />
                 </td>
               </tr>
               {
                 this.props.bills.data.map(i => (
-                  <tr className="table-row">
+                  <tr className="table-row" key={i._id}>
                     <td className="table-cell table--cell-equalWidth table--cell-tableNumber">{i.table}</td>
                     <td className="table-cell table--cell-equalWidth">
                       <Checkbox
-                        label={`${i.table}`}
+                        label={i.table}
                         onChange={this.toggleTables}
                       />
                     </td>
@@ -150,7 +244,7 @@ class Reports extends React.Component {
           </table>
           {
             this.props.menuCategories.data.map(c => (
-              <table className="full-w table-noSeparator">
+              <table className="full-w table-noSeparator" key={c._id}>
                 <thead>
                   <tr>
                     <th className="table-header" colSpan={2}>{this.getCategoryName(c._id)}</th>
@@ -168,8 +262,8 @@ class Reports extends React.Component {
                   </tr>
                   {
                     this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
-                      <tr className="table-row">
-                        <td className="table-cell table--cell-75Width">{this.getItemName(i._id)}</td>
+                      <tr className="table-row" key={i._id}>
+                        <td className="table-cell table--cell-75Width">{this.getItem(i._id).name}</td>
                         <td className="table-cell table--cell-25Width">
                           <Checkbox
                             label={i._id}
@@ -230,6 +324,7 @@ class Reports extends React.Component {
             text="OK"
             type="secondary"
             size="square"
+            onClick={() => this.generateReport()}
           />
         </div>
       </div>
@@ -238,6 +333,9 @@ class Reports extends React.Component {
 }
 
 Reports.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
   bills: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({
       menuItems: PropTypes.arrayOf(PropTypes.shape({})),

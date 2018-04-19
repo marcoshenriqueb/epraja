@@ -10,7 +10,7 @@ import Items from './../../pages/items/items';
 import Table from './../../pages/table/table';
 import Cancellation from './../../pages/cancellation/cancellation';
 import Button from './../../components/button/button';
-import ReportsConnector from './../../pages/reports/reports';
+import Reports from './../../pages/reports/reports';
 
 import actions from './../../store/actions';
 
@@ -81,11 +81,18 @@ class Auth extends React.Component {
         key={3}
         exact
         path="/relatorios"
-        component={ReportsConnector}
+        component={Reports}
+        isAuthenticated={this.props.authenticated}
+      />,
+      <PrivateRoute
+        key={4}
+        exact
+        path="/relatorios/:type"
+        component={Reports}
         isAuthenticated={this.props.authenticated}
       />,
       <GuestRoute
-        key={4}
+        key={5}
         path="/login"
         component={Login}
         isAuthenticated={this.props.authenticated}
