@@ -1,2 +1,37 @@
 @import './../../../assets/stylus/_settings'
 
+.report-container
+    padding 3% 10%
+
+.reports-header
+    text-transform Capitalize
+
+.table
+    border-spacing 0
+    border-collapse collapse
+
+.table--header
+    background-color background-dark
+    color white
+
+.table--header--item
+    padding .5rem
+
+.table--body
+    background-color background-light-secondary
+
+.table--row--column
+    padding 0
+    border-left 1px solid rgba(0, 0, 0, 0.2)
+    &:first-of-type
+        border-left none
+
+.table--row--striped
+    &:nth-child(2n + 1)
+        background-color background-light
+
+.table--row--cell
+    height 1.6rem
+    padding .5rem
+
+

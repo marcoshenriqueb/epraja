@@ -94,18 +94,20 @@ class Reports extends React.Component {
   mountFaturado() {
     const report = {
       data: [],
-      titleKeys: ['date', 'table'],
-      titleValues: ['DATA', 'MESA'],
+      titlesKeys: ['date', 'table'],
+      titlesValues: ['DATA', 'MESA'],
       qty: 0,
       total: 0,
       date: `${this.state.startDate.format('DD/MM')} - ${this.state.endDate.format('DD/MM')}`,
     };
     this.props.menuCategories.data.forEach((c) => {
-      report.titleKeys.push(`${c.name}qty`, `${c.name}subTotal`);
-      report.titleValues.push(`${c.name.toUpperCase}`, `R$ ${c.name.toUpperCase()}`);
+      report.titlesKeys.push(`${c.name}Qty`, `${c.name}Subtotal`);
+      report.titlesValues.push(`${c.name.toUpperCase()}`, `R$ ${c.name.toUpperCase()}`);
+      report[`${c.name}Qty`] = 0;
+      report[`${c.name}Subtotal`] = 0;
     });
-    report.titleKeys.push('totalQty', 'total');
-    report.titleValues.push('TOTAL', 'R$ TOTAL');
+    report.titlesKeys.push('qty', 'total');
+    report.titlesValues.push('TOTAL', 'R$ TOTAL');
 
     const j = this.state.endDate.add(1, 'days');
     for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
@@ -115,6 +117,10 @@ class Reports extends React.Component {
         total: 0,
         qty: 0,
       };
+      this.props.menuCategories.data.forEach((c) => {
+        day[`${c.name}Qty`] = 0;
+        day[`${c.name}Subtotal`] = 0;
+      });
       this.state.tables.forEach((t) => {
         const row = {
           table: t,
@@ -136,22 +142,21 @@ class Reports extends React.Component {
             ));
             items = [...items, ...newItems];
           });
-
           items.forEach((item) => {
             qty += 1;
             subTotal += this.getItem(item.menuItem).price;
           });
 
-          row[`${c.name}qty`] = qty;
-          day[`${c.name}qty`] += qty;
-          report[`${c.name}qty`] += qty;
+          row[`${c.name}Qty`] = qty;
+          day[`${c.name}Qty`] += qty;
+          report[`${c.name}Qty`] += qty;
           row.qty += qty;
           day.qty += qty;
           report.qty += qty;
 
-          row[`${c.name}subTotal`] = subTotal;
-          day[`${c.name}subTotal`] += subTotal;
-          report[`${c.name}subTotal`] += subTotal;
+          row[`${c.name}Subtotal`] = subTotal;
+          day[`${c.name}Subtotal`] += subTotal;
+          report[`${c.name}Subtotal`] += subTotal;
           row.total += subTotal;
           day.total += subTotal;
           report.total += subTotal;
@@ -161,6 +166,7 @@ class Reports extends React.Component {
       if (day.data.length > 0) report.data.push(day);
     }
     if (report.data.length > 0) {
+      console.log(report);
       this.props.history.push({
         pathname: '/relatorios/faturado',
         state: {
