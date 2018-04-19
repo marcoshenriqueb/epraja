@@ -2,11 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './report.styl';
 
+import Button from './../../components/button/button';
+
 const Report = ({
   match,
   location,
 }) => (
-  <div className="flex-column full-w report-container">
+  <div id="page" className="flex-column full-w report-container">
     <div className="flex reports-header full-w">
       <h1>Relatório {match.params.type}</h1>
     </div>
@@ -27,14 +29,9 @@ const Report = ({
       <tbody className="table--body">
         {
           location.state.report.data.map((day, k) => (
-            <tr className="table--row--striped" key={k.toString()}>
-              <td className="table--row--column" key={`data${k.toString()}`}>
-                <div className="flex-column justify-center table--row--cell">
-                  {day.date}
-                </div>
-              </td>
-              {
-                day.data.map(row => (
+            [...day.data.map(row => (
+              <tr className="table--row--striped" key={k.toString()}>
+                {
                   location.state.report.titlesKeys.map((o, m) => {
                     if (row[o] === undefined) return null;
                     return (
@@ -45,13 +42,57 @@ const Report = ({
                       </td>
                     );
                   })
-                ))
-              }
-            </tr>
+                }
+              </tr>
+            )),
+              <tr className="table--row--subtotal" key={(-k).toString()}>
+                {
+                  location.state.report.titlesKeys.map((o, m) => {
+                    if (day[o] === undefined) return <td className="table--row--column" />;
+                    return (
+                      <td className="table--row--column" key={m.toString()}>
+                        <div className="flex-column justify-center table--row--cell">
+                          {day[o]}
+                        </div>
+                      </td>
+                    );
+                  })
+                }
+              </tr>]
           ))
         }
+        <tr className="table--row--total">
+          {
+            location.state.report.titlesKeys.map((o, m) => {
+              if (location.state.report[o] === undefined) return null;
+              if (o === 'date') {
+                return (
+                  <td className="table--row--column table--row--period" colSpan={2} key={m.toString()}>
+                    <div className="flex-column justify-center table--row--cell">
+                      {location.state.report[o]}
+                    </div>
+                  </td>
+                );
+              }
+              return (
+                <td className="table--row--column" key={m.toString()}>
+                  <div className="flex-column justify-center table--row--cell">
+                    {location.state.report[o]}
+                  </div>
+                </td>
+              );
+            })
+          }
+        </tr>
       </tbody>
     </table>
+    <div className="flex justify-end full-w print--button">
+      <Button
+        text="Imprimir"
+        type="secondary"
+        size="big"
+      />
+    </div>
   </div>
 );
 

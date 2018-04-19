@@ -98,7 +98,8 @@ class Reports extends React.Component {
       titlesValues: ['DATA', 'MESA'],
       qty: 0,
       total: 0,
-      date: `${this.state.startDate.format('DD/MM')} - ${this.state.endDate.format('DD/MM')}`,
+      date: `${this.state.startDate.format('DD/MM/YYYY')}
+        até ${this.state.endDate.format('DD/MM/YYYY')}`,
     };
     this.props.menuCategories.data.forEach((c) => {
       report.titlesKeys.push(`${c.name}Qty`, `${c.name}Subtotal`);
@@ -113,7 +114,6 @@ class Reports extends React.Component {
     for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
       const day = {
         data: [],
-        date: i.format('DD/MM/YYYY'),
         total: 0,
         qty: 0,
       };
@@ -124,6 +124,7 @@ class Reports extends React.Component {
       this.state.tables.forEach((t) => {
         const row = {
           table: t,
+          date: i.format('DD/MM/YYYY'),
           total: 0,
           qty: 0,
         };
@@ -133,7 +134,7 @@ class Reports extends React.Component {
           let items = [];
 
           this.props.bills.data.filter(b => (
-            moment(b.createdAt).format('DD/MM/YYYY') === day.date
+            moment(b.createdAt).format('DD/MM/YYYY') === row.date
             &&
             b.table === t
           )).forEach((bill) => {
@@ -166,7 +167,6 @@ class Reports extends React.Component {
       if (day.data.length > 0) report.data.push(day);
     }
     if (report.data.length > 0) {
-      console.log(report);
       this.props.history.push({
         pathname: '/relatorios/faturado',
         state: {
