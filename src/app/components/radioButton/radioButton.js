@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 
 import Button from './../../components/button/button';
 
-import './radioButton.styl';
-
 const RadioButton = ({
   options,
   checked,
