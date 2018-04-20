@@ -10,7 +10,7 @@ const {
   fetchBills: fetchBillsAction,
   resetBills: resetBillsAction,
   fetchMenuItems: fetchMenuItemsAction,
-  removeBillItem: removeBillItemAction,
+  updateBillItemCancellation: updateBillItemCancellationAction,
 } = actions;
 
 class Cancellation extends React.Component {
@@ -18,7 +18,7 @@ class Cancellation extends React.Component {
     super(props);
 
     this.state = {
-      owner: 'cliente',
+      owner: 'Cliente',
     };
   }
 
@@ -48,9 +48,10 @@ class Cancellation extends React.Component {
   }
 
   cancelItem() {
-    this.props.removeBillItem(this.props.match.params.bill, this.props.match.params.id).then(() => {
-      this.props.history.goBack();
-    });
+    this.props.updateBillItemCancellation(this.props.match.params.id, this.state.owner)
+      .then(() => {
+        this.props.history.goBack();
+      });
   }
 
   render() {
@@ -84,14 +85,14 @@ class Cancellation extends React.Component {
               <div>
                 <Button
                   text="Cliente"
-                  type={this.getButtonType('cliente')}
-                  onClick={() => this.setState({ owner: 'cliente' })}
+                  type={this.getButtonType('Cliente')}
+                  onClick={() => this.setState({ owner: 'Cliente' })}
                 />
                 <span />
                 <Button
                   text="O Local"
-                  type={this.getButtonType('local')}
-                  onClick={() => this.setState({ owner: 'local' })}
+                  type={this.getButtonType('Estabelecimento')}
+                  onClick={() => this.setState({ owner: 'Estabelecimento' })}
                 />
               </div>
             </div>
@@ -136,7 +137,7 @@ Cancellation.propTypes = {
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
-  removeBillItem: PropTypes.func.isRequired,
+  updateBillItemCancellation: PropTypes.func.isRequired,
 };
 
 const CancellationConnector = connect(state => (
@@ -155,8 +156,8 @@ const CancellationConnector = connect(state => (
     fetchMenuItems: () => (
       dispatch(fetchMenuItemsAction())
     ),
-    removeBillItem: (bill, id) => (
-      dispatch(removeBillItemAction(bill, id))
+    updateBillItemCancellation: (id, owner) => (
+      dispatch(updateBillItemCancellationAction(id, owner))
     ),
   }
 ))(Cancellation);

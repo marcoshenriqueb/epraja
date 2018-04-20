@@ -105,10 +105,14 @@ class Items extends React.Component {
           this.state.activeFilters.includes(billStatus)
           &&
           this.state.activeBills.includes(b.table)
+          &&
+          !i.itemCancellation.canceled
         ) {
+          console.log(i);
           items.push(Object.assign({}, i, {
             menuItem: this.getItem(i.menuItem).name,
             table: b.table,
+            comment: i.comment,
             status: this.getStatusCellComponent(i),
             order: (
               <Link
@@ -237,8 +241,8 @@ class Items extends React.Component {
   }
 
   render() {
-    const titlesKeys = ['order', 'table', 'menuItem', 'status', 'billStatus'];
-    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status', 'Conta'];
+    const titlesKeys = ['order', 'table', 'menuItem', 'comment', 'status', 'billStatus'];
+    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Comentário', 'Status', 'Conta'];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker

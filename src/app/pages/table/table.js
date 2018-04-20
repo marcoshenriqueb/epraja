@@ -116,12 +116,14 @@ class Table extends React.Component {
             classes="margin-bottom"
             type={`${this.getButtonType('agrupada')}`}
             onClick={() => this.setState({ filter: 'agrupada' })}
+            size="big"
           />
           <div />
           <Button
             text="Detalhada"
             type={`${this.getButtonType('detalhada')}`}
             onClick={() => this.setState({ filter: 'detalhada' })}
+            size="big"
           />
         </div>
         <div className="flex-column table-details end">

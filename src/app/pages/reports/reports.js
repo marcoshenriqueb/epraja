@@ -150,12 +150,16 @@ class Reports extends React.Component {
               if (this.state.allItems[k]) {
                 return (
                   this.getItem(item.menuItem).menuCategory === c._id
+                  &&
+                  item.itemCancellation.canceled === !this.state.type[0]
                 );
               }
               return (
                 this.getItem(item.menuItem).menuCategory === c._id
                 &&
                 this.state.itemFilters.includes(item.menuItem)
+                &&
+                item.itemCancellation.canceled === !this.state.type[0]
               );
             });
             items = [...items, ...newItems];
@@ -186,7 +190,7 @@ class Reports extends React.Component {
     }
     if (report.data.length > 0) {
       this.props.history.push({
-        pathname: '/relatorios/faturado',
+        pathname: `/relatorios/${this.state.type[0] ? 'faturado' : 'cancelados'}`,
         state: {
           report,
         },
