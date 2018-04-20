@@ -33,7 +33,7 @@ const Table = ({
                   if (i[o] === undefined) return null;
                   return (
                     <td className="table--row--column" key={`${i._id}_${o}`}>
-                      <div className="flex-column start justify-center table--row--cell">
+                      <div className={`flex-column start justify-center ${o === 'status' ? 'table--row--status' : 'table--row--cell'}`}>
                         {i[o]}
                       </div>
                       <div className="table--row--blank--item" />

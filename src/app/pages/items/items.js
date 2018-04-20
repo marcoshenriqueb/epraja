@@ -136,16 +136,14 @@ class Items extends React.Component {
       }
     });
     return (
-      <div className="flex items--table--statuses">
-        <RadioButton
-          options={this.props.menuItemStatuses.data}
-          checked={classes}
-          updateBillItemStatus={(selected) => {
-            this.props.updateBillItemStatus(item._id, selected);
-          }}
-          item={item._id}
-        />
-      </div>
+      <RadioButton
+        options={this.props.menuItemStatuses.data}
+        checked={classes}
+        updateBillItemStatus={(selected) => {
+          this.props.updateBillItemStatus(item._id, selected);
+        }}
+        item={item._id}
+      />
     );
   }
 

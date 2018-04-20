@@ -24,21 +24,26 @@ class Reports extends React.Component {
     this.state = {
       itemFilters: [],
       tables: [],
+      allItems: [],
       allTables: false,
-      type: [false, false, false],
+      type: [false, false],
       startDate: null,
       endDate: null,
       focusedInput: null,
     };
-
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
   }
 
   componentDidMount() {
-    this.props.fetchBills();
-    this.props.fetchMenuItems();
-    this.props.fetchMenuCategories();
+    Promise.all([
+      this.props.fetchBills(),
+      this.props.fetchMenuItems(),
+      this.props.fetchMenuCategories(),
+    ]).then(() => {
+      const categories = this.props.menuCategories.data.map(() => false);
+      this.setState({ allItems: categories });
+    });
   }
 
   componentWillUnmount() {
@@ -79,7 +84,7 @@ class Reports extends React.Component {
 
   manageType(number) {
     const newType = this.state.type;
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < 2; i += 1) {
       if (i === number) {
         newType[i] = true;
       } else {
@@ -91,7 +96,7 @@ class Reports extends React.Component {
     });
   }
 
-  mountFaturado() {
+  mountReport() {
     const report = {
       data: [],
       titlesKeys: ['date', 'table'],
@@ -110,6 +115,9 @@ class Reports extends React.Component {
     report.titlesKeys.push('qty', 'total');
     report.titlesValues.push('TOTAL', 'R$ TOTAL');
 
+    const tables = this.state.allTables ?
+      this.props.bills.data.map(b => b.table) : this.state.tables;
+
     const j = this.state.endDate.add(1, 'days');
     for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
       const day = {
@@ -121,14 +129,14 @@ class Reports extends React.Component {
         day[`${c.name}Qty`] = 0;
         day[`${c.name}Subtotal`] = 0;
       });
-      this.state.tables.forEach((t) => {
+      tables.forEach((t) => {
         const row = {
           table: t,
           date: i.format('DD/MM/YYYY'),
           total: 0,
           qty: 0,
         };
-        this.props.menuCategories.data.forEach((c) => {
+        this.props.menuCategories.data.forEach((c, k) => {
           let qty = 0;
           let subTotal = 0;
           let items = [];
@@ -138,11 +146,21 @@ class Reports extends React.Component {
             &&
             b.table === t
           )).forEach((bill) => {
-            const newItems = bill.menuItems.filter(item => (
-              this.getItem(item.menuItem).menuCategory === c._id
-            ));
+            const newItems = bill.menuItems.filter((item) => {
+              if (this.state.allItems[k]) {
+                return (
+                  this.getItem(item.menuItem).menuCategory === c._id
+                );
+              }
+              return (
+                this.getItem(item.menuItem).menuCategory === c._id
+                &&
+                this.state.itemFilters.includes(item.menuItem)
+              );
+            });
             items = [...items, ...newItems];
           });
+
           items.forEach((item) => {
             qty += 1;
             subTotal += this.getItem(item.menuItem).price;
@@ -176,37 +194,17 @@ class Reports extends React.Component {
     }
   }
 
-  mountCancelados() {
-    const j = this.state.endDate.add(1, 'days');
-    for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
-      console.log(this.state.data);
-    }
-  }
-
-  mountTempo() {
-    const j = this.state.endDate.add(1, 'days');
-    for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
-      console.log(i);
-    }
-  }
-
   generateReport() {
     if (
       this.state.startDate !== null
       &&
       this.state.endDate !== null
       &&
-      this.state.tables !== []
+      (this.state.tables !== [] || this.state.allTables)
       &&
-      this.state.itemFilters !== []
+      (this.state.itemFilters !== [] || this.state.allItems.includes(true))
     ) {
-      if (this.state.type[0]) {
-        this.mountFaturado();
-      } else if (this.state.type[1]) {
-        this.mountCancelados();
-      } else if (this.state.type[2]) {
-        this.mountTempo();
-      }
+      this.mountReport();
     }
   }
 
@@ -248,7 +246,7 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-equalWidth table--cell-tableNumber">Todos</td>
                 <td className="table-cell table--cell-equalWidth">
                   <Checkbox
-                    label="todasmesas"
+                    label="mesas"
                     onChange={() => this.setState({ allTables: !this.state.allTables })}
                   />
                 </td>
@@ -269,7 +267,7 @@ class Reports extends React.Component {
             </tbody>
           </table>
           {
-            this.props.menuCategories.data.map(c => (
+            this.props.menuCategories.data.map((c, k) => (
               <table className="full-w table-noSeparator" key={c._id}>
                 <thead>
                   <tr>
@@ -281,8 +279,12 @@ class Reports extends React.Component {
                     <td className="table-cell table--cell-75Width">Todos</td>
                     <td className="table-cell table--cell-25Width">
                       <Checkbox
-                        label={`todas${c.name}`}
-                        onChange={this.toggleItemFilters}
+                        label={c.name}
+                        onChange={() => {
+                          const allItems = [...this.state.allItems];
+                          allItems[k] = !this.state.allItems[k];
+                          this.setState({ allItems });
+                        }}
                       />
                     </td>
                   </tr>
@@ -331,16 +333,6 @@ class Reports extends React.Component {
                     label="cancelados"
                     checked={this.state.type[1]}
                     onChange={() => this.manageType(1)}
-                  />
-                </td>
-              </tr>
-              <tr className="table-row">
-                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">TEMPO DE ATENDIMENTO</td>
-                <td className="table-cell table--cell-fixedWidth">
-                  <Checkbox
-                    label="tempo"
-                    checked={this.state.type[2]}
-                    onChange={() => this.manageType(2)}
                   />
                 </td>
               </tr>

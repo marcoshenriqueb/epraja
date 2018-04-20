@@ -10,7 +10,7 @@ const RadioButton = ({
   checked,
   updateBillItemStatus,
 }) => (
-  <div className="full-w flex">
+  <div className="full-w flex full-h">
     {
       options.map((s, k) => (
         <Button
@@ -19,6 +19,7 @@ const RadioButton = ({
           text={s.name}
           type={checked[k]}
           size=""
+          classes="flex full-w full-h"
         />
       ))
     }
