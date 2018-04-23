@@ -24,7 +24,7 @@ class Reports extends React.Component {
     this.state = {
       itemFilters: [],
       tables: [],
-      type: [false, false, false],
+      type: 0,
       startDate: null,
       endDate: null,
       focusedInput: null,
@@ -118,20 +118,6 @@ class Reports extends React.Component {
       newTables.push(Number(table));
     }
     this.setState({ tables: newTables });
-  }
-
-  manageType(number) {
-    const newType = this.state.type;
-    for (let i = 0; i < 3; i += 1) {
-      if (i === number) {
-        newType[i] = true;
-      } else {
-        newType[i] = false;
-      }
-    }
-    this.setState({
-      type: newType,
-    });
   }
 
   render() {
@@ -262,8 +248,8 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="faturado"
-                    checked={this.state.type[0]}
-                    onChange={() => this.manageType(0)}
+                    checked={this.state.type === 0}
+                    onChange={() => this.setState({ type: 0 })}
                   />
                 </td>
               </tr>
@@ -274,8 +260,8 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="cancelados"
-                    checked={this.state.type[1]}
-                    onChange={() => this.manageType(1)}
+                    checked={this.state.type === 1}
+                    onChange={() => this.setState({ type: 1 })}
                   />
                 </td>
               </tr>
@@ -286,8 +272,8 @@ class Reports extends React.Component {
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="tempo"
-                    checked={this.state.type[2]}
-                    onChange={() => this.manageType(2)}
+                    checked={this.state.type === 2}
+                    onChange={() => this.setState({ type: 2 })}
                   />
                 </td>
               </tr>
