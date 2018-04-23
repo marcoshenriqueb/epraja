@@ -103,7 +103,7 @@ class Auth extends React.Component {
     const navs = [];
     if (this.props.location.pathname !== '/') {
       navs
-        .push(<Link to="/"><Button onClick={() => {}} text="Home" type="primary" key="1" /></Link>);
+        .push(<Link to="/" key="1"><Button onClick={() => {}} text="Home" type="primary" /></Link>);
     }
     navs.push(<Button onClick={this.logout} text="Sair" type="primary" key="2" />);
 
