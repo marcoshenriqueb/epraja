@@ -179,7 +179,7 @@ class Reports extends React.Component {
                 return (
                   this.getItem(item.menuItem).menuCategory === c._id
                   &&
-                  item.itemCancellation.canceled === !this.state.type[0]
+                  item.canceled === !this.state.type[0]
                 );
               }
               return (
@@ -187,7 +187,7 @@ class Reports extends React.Component {
                 &&
                 this.state.itemFilters.includes(item.menuItem)
                 &&
-                item.itemCancellation.canceled === !this.state.type[0]
+                item.canceled === !this.state.type[0]
               );
             });
             items = [...items, ...newItems];
@@ -250,8 +250,6 @@ class Reports extends React.Component {
             showClearDates
             showDefaultInputIcon
             hideKeyboardShortcutsPanel
-            startDateId="startDate"
-            endDateId="endDate"
             displayFormat="DD/MM/YYYY"
             initialVisibleMonth={() => moment().subtract(1, 'month')}
             monthFormat="MM/YYYY"

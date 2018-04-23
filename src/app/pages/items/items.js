@@ -90,7 +90,6 @@ class Items extends React.Component {
 
   getItems() {
     if (!this.props.bills.data.length) return [];
-    console.log(this.props.bills);
     const items = [];
     this.props.bills.data.forEach((b) => {
       b.menuItems.forEach((i, k) => {
@@ -106,9 +105,8 @@ class Items extends React.Component {
           &&
           this.state.activeBills.includes(b.table)
           &&
-          !i.itemCancellation.canceled
+          i.canceled === false
         ) {
-          console.log(i);
           items.push(Object.assign({}, i, {
             menuItem: this.getItem(i.menuItem).name,
             table: b.table,

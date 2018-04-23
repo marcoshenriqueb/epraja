@@ -95,8 +95,8 @@ const updateBillItemStatus = (id, statusId) => (
 const updateBillItemCancellation = (id, owner) => (
   dispatch => (
     api.bills.patch(null, {
-      'menuItems.$.itemCancellation.canceled': true,
-      'menuItems.$.itemCancellation.owner': owner,
+      'menuItems.$.canceled': true,
+      'menuItems.$.canceledOwner': owner,
     }, {
       query: {
         'menuItems._id': id,
