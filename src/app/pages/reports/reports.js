@@ -31,6 +31,7 @@ class Reports extends React.Component {
     };
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
+    this.generateReport = this.generateReport.bind(this);
   }
 
   componentDidMount() {
@@ -142,9 +143,9 @@ class Reports extends React.Component {
     });
     report.titlesKeys.push('qty', 'total');
     report.titlesValues.push('TOTAL', 'R$ TOTAL');
+    console.log(report);
 
-    const tables = this.state.allTables ?
-      this.props.bills.data.map(b => b.table) : this.state.tables;
+    const tables = [...this.state.tables];
 
     const j = this.state.endDate.add(1, 'days');
     for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
@@ -232,9 +233,9 @@ class Reports extends React.Component {
       &&
       this.state.endDate !== null
       &&
-      (this.state.tables !== [] || this.state.allTables)
+      this.state.tables.length
       &&
-      (this.state.itemFilters !== [] || this.state.allItems.includes(true))
+      this.state.itemFilters.length
     ) {
       this.mountReport();
     }
@@ -333,7 +334,7 @@ class Reports extends React.Component {
                       this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
                         <tr className="table-row" key={i.name}>
                           <td className="table-cell table--cell-75Width">
-                            {this.getItemName(i._id)}
+                            {this.getItem(i._id).name}
                           </td>
                           <td className="table-cell table--cell-25Width">
                             <Checkbox
@@ -391,7 +392,7 @@ class Reports extends React.Component {
             text="OK"
             type="secondary"
             size="square"
-            onClick={() => this.generateReport()}
+            onClick={this.generateReport}
           />
         </div>
       </div>

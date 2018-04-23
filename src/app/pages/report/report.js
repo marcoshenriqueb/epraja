@@ -67,7 +67,11 @@ const Report = ({
               if (location.state.report[o] === undefined) return null;
               if (o === 'date') {
                 return (
-                  <td className="table--row--column table--row--period" colSpan={2} key={m.toString()}>
+                  <td
+                    className="table--row--column table--row--period"
+                    colSpan={2}
+                    key={m.toString()}
+                  >
                     <div className="flex-column justify-center table--row--cell">
                       {location.state.report[o]}
                     </div>
