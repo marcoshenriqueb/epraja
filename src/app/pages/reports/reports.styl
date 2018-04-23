@@ -1,2 +1,78 @@
+@import './../../../assets/stylus/_settings'
+
 .reports-container
-    padding 2rem
+    padding 2rem 5rem 2rem 5rem
+
+.reports-header
+    background-color primary-color
+    color white
+    padding-left 1rem
+
+.reports-filter
+    padding 0 .5rem
+    &:first-child
+        padding-left 0
+    &:last-child
+        padding-right 0
+
+.table-noSeparator
+    border-collapse collapse
+    margin 1rem 0 0 0
+
+.table-noSeparator + .table-noSeparator
+    margin-left 1rem
+
+.table-header
+    background-color background-medium
+    color white
+    height 2rem
+    text-transform uppercase
+
+.table-header--secondary
+    background-color primary-color
+    color white
+    height 2rem
+
+.table-header--secondaryTitle
+    margin 0
+    font-weight 300
+
+.table-row
+    background-color background-light-secondary
+    &:nth-child(2n + 1)
+        background-color background-light
+
+.table-cell
+    height 1.5rem
+    text-align center
+    border-left: 1px solid rgba(0, 0, 0, 0.2)
+    &:first-child
+        border-left: none
+
+.table--cell-25Width
+    width 25%
+
+.table--cell-75Width
+    width 75%
+
+.table--cell-equalWidth
+    width 50%
+
+.table--cell-fixedHeight
+    padding 0 2rem 0 2rem
+    height 1.5rem
+
+.table--cell-fixedWidth
+    width 5rem
+
+.table--cell-tableNumber
+    background-color modal-background
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2)
+
+.checkbox
+  position absolute
+  top 2px
+  left 0
+  height 20px
+  width 20px
+  background #E6E6E6
