@@ -29,13 +29,13 @@ const Report = ({
       <tbody className="table--body">
         {
           location.state.report.data.map((day, k) => (
-            [...day.data.map(row => (
-              <tr className="table--row--striped" key={k.toString()}>
+            [...day.data.map((row, m) => (
+              <tr className="table--row--striped" key={m.toString()}>
                 {
-                  location.state.report.titlesKeys.map((o, m) => {
+                  location.state.report.titlesKeys.map((o, n) => {
                     if (row[o] === undefined) return null;
                     return (
-                      <td className="table--row--column" key={m.toString()}>
+                      <td className="table--row--column" key={n.toString()}>
                         <div className="flex-column justify-center table--row--cell">
                           {row[o]}
                         </div>
@@ -45,10 +45,10 @@ const Report = ({
                 }
               </tr>
             )),
-              <tr className="table--row--subtotal" key={(-k).toString()}>
+              <tr className="table--row--subtotal" key={`${(k).toString()}1`}>
                 {
                   location.state.report.titlesKeys.map((o, m) => {
-                    if (day[o] === undefined) return <td className="table--row--column" />;
+                    if (day[o] === undefined) return <td key={m.toString()} className="table--row--column" />;
                     return (
                       <td className="table--row--column" key={m.toString()}>
                         <div className="flex-column justify-center table--row--cell">
