@@ -17,7 +17,6 @@ const receiveMenuCategories = categories => (
 const fetchMenuCategories = () => (
   (dispatch) => {
     dispatch(requestMenuCategories());
-    console.log(store.getState().auth.user.data);
     return api.menuCategories.find({
       query: {
         business: store.getState().auth.user.data.business,

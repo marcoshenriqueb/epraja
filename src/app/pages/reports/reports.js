@@ -32,8 +32,6 @@ class Reports extends React.Component {
 
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
-    console.log(this.state.startDate);
-    console.log(this.state.endDate);
   }
 
   componentDidMount() {
@@ -58,10 +56,45 @@ class Reports extends React.Component {
     return result.length ? result[0].name : {};
   }
 
+  getAllCategoryNames() {
+    return this.props.menuCategories.data.map(c => c.name);
+  }
+
+  getAllCategoryItems(category) {
+    return this.props.menuItems.data.filter(i => (
+      this.getCategoryName(i.menuCategory) === category.toLowerCase()
+    ));
+  }
+
+  getAllTables() {
+    const tables = [];
+    this.props.bills.data.forEach((b) => {
+      if (tables.includes(b.table)) return;
+      tables.push(b.table);
+    });
+
+    return tables;
+  }
+
   toggleItemFilters(filter) {
     const newItems = [...this.state.itemFilters];
+
+    if (this.getAllCategoryNames().includes(filter)) {
+      if (this.getAllCategoryItems(filter).some(i => newItems.includes(i._id))) {
+        this.getAllCategoryItems(filter).forEach((i) => {
+          if (newItems.includes(i._id)) {
+            newItems.splice(newItems.indexOf(i._id), 1);
+          }
+        });
+      } else {
+        this.getAllCategoryItems(filter).forEach((i) => {
+          newItems.push(i._id);
+        });
+      }
+    }
+
     if (newItems.includes(filter)) {
-      newItems.splice(filter);
+      newItems.splice(newItems.indexOf(filter), 1);
     } else {
       newItems.push(filter);
     }
@@ -70,10 +103,19 @@ class Reports extends React.Component {
 
   toggleTables(table) {
     const newTables = [...this.state.tables];
-    if (newTables.includes(table)) {
-      newTables.splice(table);
+
+    if (table === 'todasmesas' && !newTables.length) {
+      this.setState({ tables: this.getAllTables() });
+      return;
+    } else if (table === 'todasmesas' && newTables.length) {
+      this.setState({ tables: [] });
+      return;
+    }
+
+    if (newTables.includes(Number(table))) {
+      newTables.splice(newTables.indexOf(table), 1);
     } else {
-      newTables.push(table);
+      newTables.push(Number(table));
     }
     this.setState({ tables: newTables });
   }
@@ -109,78 +151,97 @@ class Reports extends React.Component {
             startDatePlaceholderText="de"
             endDatePlaceholderText="até"
             startDate={this.state.startDate}
+            startDateId="reports-start-date"
             endDate={this.state.endDate}
+            endDateId="reports-end-date"
             onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
             focusedInput={this.state.focusedInput}
             onFocusChange={focusedInput => this.setState({ focusedInput })}
           />
           <div colSpan={1} />
         </div>
-        <div className="flex start reports-filters full-w space-between">
-          <table className="table-paddingTop full-w table-noSeparator">
-            <thead>
-              <tr>
-                <th className="table-header">Mesas</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="table-row">
-                <td className="table-cell table--cell-equalWidth table--cell-tableNumber">Todos</td>
-                <td className="table-cell table--cell-equalWidth">
-                  <Checkbox
-                    label="todasmesas"
-                    onChange={this.toggleTables}
-                  />
-                </td>
-              </tr>
-              {
-                this.props.bills.data.map(i => (
-                  <tr className="table-row">
-                    <td className="table-cell table--cell-equalWidth table--cell-tableNumber">{i.table}</td>
-                    <td className="table-cell table--cell-equalWidth">
-                      <Checkbox
-                        label={`${i.table}`}
-                        onChange={this.toggleTables}
-                      />
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
+        <div className="flex start full-w">
+          <div className="grow-1 reports-filter">
+            <table className="full-w table-paddingTop table-noSeparator">
+              <thead>
+                <tr>
+                  <th className="table-header">Mesas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="table-row">
+                  <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
+                    Todos
+                  </td>
+                  <td className="table-cell table--cell-equalWidth">
+                    <Checkbox
+                      label="todasmesas"
+                      onChange={this.toggleTables}
+                      checked={this.getAllTables().length === this.state.tables.length}
+                    />
+                  </td>
+                </tr>
+                {
+                  this.props.bills.data.map(i => (
+                    <tr className="table-row" key={`${i.table}_${i._id}`}>
+                      <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
+                        {i.table}
+                      </td>
+                      <td className="table-cell table--cell-equalWidth">
+                        <Checkbox
+                          label={`${i.table}`}
+                          onChange={this.toggleTables}
+                          checked={this.state.tables.includes(i.table)}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
           {
             this.props.menuCategories.data.map(c => (
-              <table className="full-w table-noSeparator">
-                <thead>
-                  <tr>
-                    <th className="table-header" colSpan={2}>{this.getCategoryName(c._id)}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="table-row">
-                    <td className="table-cell table--cell-75Width">Todos</td>
-                    <td className="table-cell table--cell-25Width">
-                      <Checkbox
-                        label={`todas${c.name}`}
-                        onChange={this.toggleItemFilters}
-                      />
-                    </td>
-                  </tr>
-                  {
-                    this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
-                      <tr className="table-row">
-                        <td className="table-cell table--cell-75Width">{this.getItemName(i._id)}</td>
-                        <td className="table-cell table--cell-25Width">
-                          <Checkbox
-                            label={i._id}
-                            onChange={this.toggleItemFilters}
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
+              <div className="grow-1 reports-filter" key={c.name}>
+                <table className="full-w table-noSeparator">
+                  <thead>
+                    <tr>
+                      <th className="table-header" colSpan={2}>{this.getCategoryName(c._id)}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="table-row">
+                      <td className="table-cell table--cell-75Width">Todos</td>
+                      <td className="table-cell table--cell-25Width">
+                        <Checkbox
+                          label={c.name}
+                          onChange={this.toggleItemFilters}
+                          checked={
+                            this.getAllCategoryItems(c.name)
+                            .every(i => this.state.itemFilters.includes(i._id))
+                          }
+                        />
+                      </td>
+                    </tr>
+                    {
+                      this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
+                        <tr className="table-row" key={i.name}>
+                          <td className="table-cell table--cell-75Width">
+                            {this.getItemName(i._id)}
+                          </td>
+                          <td className="table-cell table--cell-25Width">
+                            <Checkbox
+                              label={i._id}
+                              onChange={this.toggleItemFilters}
+                              checked={this.state.itemFilters.includes(i._id)}
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </div>
             ))
           }
         </div>
@@ -195,7 +256,9 @@ class Reports extends React.Component {
             </thead>
             <tbody>
               <tr className="table-row">
-                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">FATURADO</td>
+                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
+                  FATURADO
+                </td>
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="faturado"
@@ -205,7 +268,9 @@ class Reports extends React.Component {
                 </td>
               </tr>
               <tr className="table-row">
-                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">PEDIDOS CANCELADOS</td>
+                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
+                  PEDIDOS CANCELADOS
+                </td>
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="cancelados"
@@ -215,7 +280,9 @@ class Reports extends React.Component {
                 </td>
               </tr>
               <tr className="table-row">
-                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">TEMPO DE ATENDIMENTO</td>
+                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
+                  TEMPO DE ATENDIMENTO
+                </td>
                 <td className="table-cell table--cell-fixedWidth">
                   <Checkbox
                     label="tempo"
