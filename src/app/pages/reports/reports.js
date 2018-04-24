@@ -76,6 +76,28 @@ class Reports extends React.Component {
     return tables;
   }
 
+  getBillItemsFromTableCategoryAndDate(table, category, date) {
+    let result = [];
+
+    this.props.bills.data.filter(b => (
+      moment(b.createdAt).format('DD/MM/YYYY') === date
+      &&
+      b.table === table
+    )).forEach((bill) => {
+      const canceled = this.state.type === 1;
+
+      result = [...bill.menuItems.filter(item => (
+        this.getItem(item.menuItem).menuCategory === category._id
+        &&
+        this.state.itemFilters.includes(item.menuItem)
+        &&
+        item.canceled === canceled
+      ))];
+    });
+
+    return result;
+  }
+
   toggleItemFilters(filter) {
     const newItems = [...this.state.itemFilters];
 
@@ -161,26 +183,7 @@ class Reports extends React.Component {
         this.props.menuCategories.data.forEach((c) => {
           let qty = 0;
           let subTotal = 0;
-          let items = [];
-
-          this.props.bills.data.filter(b => (
-            moment(b.createdAt).format('DD/MM/YYYY') === row.date
-            &&
-            b.table === t
-          )).forEach((bill) => {
-            let canceled = false;
-            if (this.state.type === 1) canceled = true;
-
-            const newItems = bill.menuItems.filter(item => (
-              this.getItem(item.menuItem).menuCategory === c._id
-              &&
-              this.state.itemFilters.includes(item.menuItem)
-              &&
-              item.canceled === canceled
-            ));
-
-            items = [...items, ...newItems];
-          });
+          const items = this.getBillItemsFromTableCategoryAndDate(row.date, c, row.table);
 
           items.forEach((item) => {
             qty += 1;
@@ -205,6 +208,7 @@ class Reports extends React.Component {
       });
       if (day.data.length > 0) report.data.push(day);
     }
+    console.log(report);
     if (report.data.length > 0) {
       this.props.history.push({
         pathname: `/relatorios/${this.state.type[0] ? 'faturado' : 'cancelados'}`,

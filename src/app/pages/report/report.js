@@ -48,7 +48,10 @@ const Report = ({
               <tr className="table--row--subtotal" key={`${(k).toString()}1`}>
                 {
                   location.state.report.titlesKeys.map((o, m) => {
-                    if (day[o] === undefined) return <td key={m.toString()} className="table--row--column" />;
+                    if (day[o] === undefined) {
+                      return <td key={m.toString()} className="table--row--column" />;
+                    }
+
                     return (
                       <td className="table--row--column" key={m.toString()}>
                         <div className="flex-column justify-center table--row--cell">
