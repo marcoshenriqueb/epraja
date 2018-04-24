@@ -207,7 +207,7 @@ class Reports extends React.Component {
     }
     if (report.data.length > 0) {
       this.props.history.push({
-        pathname: `/relatorios/${this.state.type[0] ? 'faturado' : 'cancelados'}`,
+        pathname: `/relatorios/${this.state.type === 0 ? 'faturado' : 'cancelados'}`,
         state: {
           report,
         },
