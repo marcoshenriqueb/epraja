@@ -2,21 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './report.styl';
 
-import Button from './../../components/button/button';
+import Button from './../button/button';
 
 const Report = ({
-  match,
-  location,
+  title,
+  report,
 }) => (
   <div id="page" className="flex-column full-w report-container">
     <div className="flex reports-header full-w">
-      <h1>Relatório {match.params.type}</h1>
+      <h1>Relatório {title}</h1>
     </div>
     <table className="table full-w">
       <thead className="table--header">
         <tr>
           {
-            location.state.report.titlesValues.map(t => (
+            report.titlesValues.map(t => (
               <th className="table--header--item" key={t}>
                 <div className="flex justify-center">
                   {t}
@@ -28,11 +28,11 @@ const Report = ({
       </thead>
       <tbody className="table--body">
         {
-          location.state.report.data.map((day, k) => (
+          report.data.map((day, k) => (
             [...day.data.map((row, m) => (
               <tr className="table--row--striped" key={m.toString()}>
                 {
-                  location.state.report.titlesKeys.map((o, n) => {
+                  report.titlesKeys.map((o, n) => {
                     if (row[o] === undefined) return null;
                     return (
                       <td className="table--row--column" key={n.toString()}>
@@ -47,7 +47,7 @@ const Report = ({
             )),
               <tr className="table--row--subtotal" key={`${(k).toString()}1`}>
                 {
-                  location.state.report.titlesKeys.map((o, m) => {
+                  report.titlesKeys.map((o, m) => {
                     if (day[o] === undefined) {
                       return <td key={m.toString()} className="table--row--column" />;
                     }
@@ -66,8 +66,8 @@ const Report = ({
         }
         <tr className="table--row--total">
           {
-            location.state.report.titlesKeys.map((o, m) => {
-              if (location.state.report[o] === undefined) return null;
+            report.titlesKeys.map((o, m) => {
+              if (report[o] === undefined) return null;
               if (o === 'date') {
                 return (
                   <td
@@ -76,7 +76,7 @@ const Report = ({
                     key={m.toString()}
                   >
                     <div className="flex-column justify-center table--row--cell">
-                      {location.state.report[o]}
+                      {report[o]}
                     </div>
                   </td>
                 );
@@ -84,7 +84,7 @@ const Report = ({
               return (
                 <td className="table--row--column" key={m.toString()}>
                   <div className="flex-column justify-center table--row--cell">
-                    {location.state.report[o]}
+                    {report[o]}
                   </div>
                 </td>
               );
@@ -104,14 +104,8 @@ const Report = ({
 );
 
 Report.propTypes = {
-  location: PropTypes.shape({
-    state: PropTypes.shape({
-      report: PropTypes.shape({}).isRequired,
-    }).isRequired,
-  }).isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({ type: PropTypes.string.isRequired }).isRequired,
-  }).isRequired,
+  title: PropTypes.string.isRequired,
+  report: PropTypes.shape({}).isRequired,
 };
 
 export default Report;

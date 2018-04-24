@@ -9,6 +9,7 @@ import './reports.styl';
 import actions from './../../store/actions';
 import Button from './../../components/button/button';
 import Checkbox from './../../components/checkbox/checkbox';
+import Report from './../../components/report/report';
 
 const {
   fetchBills: fetchBillsAction,
@@ -28,6 +29,7 @@ class Reports extends React.Component {
       startDate: null,
       endDate: null,
       focusedInput: null,
+      data: null,
     };
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
@@ -208,14 +210,8 @@ class Reports extends React.Component {
       });
       if (day.data.length > 0) report.data.push(day);
     }
-    console.log(report);
     if (report.data.length > 0) {
-      this.props.history.push({
-        pathname: `/relatorios/${this.state.type === 0 ? 'faturado' : 'cancelados'}`,
-        state: {
-          report,
-        },
-      });
+      this.setState({ data: report });
     }
   }
 
@@ -234,169 +230,174 @@ class Reports extends React.Component {
   }
 
   render() {
-    return (
-      <div className="full-w flex-column start wrap reports-container">
-        <div className="flex reports-header full-w space-between">
-          <h1>Relatórios</h1>
-          <DateRangePicker
-            required
-            showClearDates
-            showDefaultInputIcon
-            hideKeyboardShortcutsPanel
-            displayFormat="DD/MM/YYYY"
-            initialVisibleMonth={() => moment().subtract(1, 'month')}
-            monthFormat="MM/YYYY"
-            isOutsideRange={d => d > moment()}
-            startDatePlaceholderText="de"
-            endDatePlaceholderText="até"
-            minimumNights={0}
-            startDate={this.state.startDate}
-            startDateId="reports-start-date"
-            endDate={this.state.endDate}
-            endDateId="reports-end-date"
-            onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
-            focusedInput={this.state.focusedInput}
-            onFocusChange={focusedInput => this.setState({ focusedInput })}
-          />
-          <div colSpan={1} />
-        </div>
-        <div className="flex start full-w">
-          <div className="grow-1 reports-filter">
-            <table className="full-w table-paddingTop table-noSeparator">
+    if (this.state.data === null) {
+      return (
+        <div className="full-w flex-column start wrap reports-container">
+          <div className="flex reports-header full-w space-between">
+            <h1>Relatórios</h1>
+            <DateRangePicker
+              required
+              showClearDates
+              showDefaultInputIcon
+              hideKeyboardShortcutsPanel
+              displayFormat="DD/MM/YYYY"
+              initialVisibleMonth={() => moment().subtract(1, 'month')}
+              monthFormat="MM/YYYY"
+              isOutsideRange={d => d > moment()}
+              startDatePlaceholderText="de"
+              endDatePlaceholderText="até"
+              minimumNights={0}
+              startDate={this.state.startDate}
+              startDateId="reports-start-date"
+              endDate={this.state.endDate}
+              endDateId="reports-end-date"
+              onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
+              focusedInput={this.state.focusedInput}
+              onFocusChange={focusedInput => this.setState({ focusedInput })}
+            />
+            <div colSpan={1} />
+          </div>
+          <div className="flex start full-w">
+            <div className="grow-1 reports-filter">
+              <table className="full-w table-paddingTop table-noSeparator">
+                <thead>
+                  <tr>
+                    <th className="table-header">Mesas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="table-row">
+                    <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
+                      Todos
+                    </td>
+                    <td className="table-cell table--cell-equalWidth">
+                      <Checkbox
+                        label="todasmesas"
+                        onChange={this.toggleTables}
+                        checked={this.getAllTables().length === this.state.tables.length}
+                      />
+                    </td>
+                  </tr>
+                  {
+                    this.props.bills.data.map(i => (
+                      <tr className="table-row" key={`${i.table}_${i._id}`}>
+                        <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
+                          {i.table}
+                        </td>
+                        <td className="table-cell table--cell-equalWidth">
+                          <Checkbox
+                            label={`${i.table}`}
+                            onChange={this.toggleTables}
+                            checked={this.state.tables.includes(i.table)}
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+            {
+              this.props.menuCategories.data.map(c => (
+                <div className="grow-1 reports-filter" key={c.name}>
+                  <table className="full-w table-noSeparator">
+                    <thead>
+                      <tr>
+                        <th className="table-header" colSpan={2}>{this.getCategoryName(c._id)}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="table-row">
+                        <td className="table-cell table--cell-75Width">Todos</td>
+                        <td className="table-cell table--cell-25Width">
+                          <Checkbox
+                            label={c.name}
+                            onChange={this.toggleItemFilters}
+                            checked={
+                              this.getAllCategoryItems(c.name)
+                              .every(i => this.state.itemFilters.includes(i._id))
+                            }
+                          />
+                        </td>
+                      </tr>
+                      {
+                        this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
+                          <tr className="table-row" key={i.name}>
+                            <td className="table-cell table--cell-75Width">
+                              {this.getItem(i._id).name}
+                            </td>
+                            <td className="table-cell table--cell-25Width">
+                              <Checkbox
+                                label={i._id}
+                                onChange={this.toggleItemFilters}
+                                checked={this.state.itemFilters.includes(i._id)}
+                              />
+                            </td>
+                          </tr>
+                        ))
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              ))
+            }
+          </div>
+          <div className="flex reports-footer full-w space-between">
+            <table className="table-paddingTop table-noSeparator">
               <thead>
                 <tr>
-                  <th className="table-header">Mesas</th>
+                  <th className="table-header--secondary">
+                    <h2 className="table-header--secondaryTitle">Tipos de Relatório</h2>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="table-row">
-                  <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
-                    Todos
+                  <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
+                    FATURADO
                   </td>
-                  <td className="table-cell table--cell-equalWidth">
+                  <td className="table-cell table--cell-fixedWidth">
                     <Checkbox
-                      label="todasmesas"
-                      onChange={this.toggleTables}
-                      checked={this.getAllTables().length === this.state.tables.length}
+                      label="faturado"
+                      checked={this.state.type === 0}
+                      onChange={() => this.setState({ type: 0 })}
                     />
                   </td>
                 </tr>
-                {
-                  this.props.bills.data.map(i => (
-                    <tr className="table-row" key={`${i.table}_${i._id}`}>
-                      <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
-                        {i.table}
-                      </td>
-                      <td className="table-cell table--cell-equalWidth">
-                        <Checkbox
-                          label={`${i.table}`}
-                          onChange={this.toggleTables}
-                          checked={this.state.tables.includes(i.table)}
-                        />
-                      </td>
-                    </tr>
-                  ))
-                }
+                <tr className="table-row">
+                  <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
+                    PEDIDOS CANCELADOS
+                  </td>
+                  <td className="table-cell table--cell-fixedWidth">
+                    <Checkbox
+                      label="cancelados"
+                      checked={this.state.type === 1}
+                      onChange={() => this.setState({ type: 1 })}
+                    />
+                  </td>
+                </tr>
               </tbody>
             </table>
+            <Button
+              text="OK"
+              type="secondary"
+              size="square"
+              onClick={this.generateReport}
+            />
           </div>
-          {
-            this.props.menuCategories.data.map(c => (
-              <div className="grow-1 reports-filter" key={c.name}>
-                <table className="full-w table-noSeparator">
-                  <thead>
-                    <tr>
-                      <th className="table-header" colSpan={2}>{this.getCategoryName(c._id)}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="table-row">
-                      <td className="table-cell table--cell-75Width">Todos</td>
-                      <td className="table-cell table--cell-25Width">
-                        <Checkbox
-                          label={c.name}
-                          onChange={this.toggleItemFilters}
-                          checked={
-                            this.getAllCategoryItems(c.name)
-                            .every(i => this.state.itemFilters.includes(i._id))
-                          }
-                        />
-                      </td>
-                    </tr>
-                    {
-                      this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
-                        <tr className="table-row" key={i.name}>
-                          <td className="table-cell table--cell-75Width">
-                            {this.getItem(i._id).name}
-                          </td>
-                          <td className="table-cell table--cell-25Width">
-                            <Checkbox
-                              label={i._id}
-                              onChange={this.toggleItemFilters}
-                              checked={this.state.itemFilters.includes(i._id)}
-                            />
-                          </td>
-                        </tr>
-                      ))
-                    }
-                  </tbody>
-                </table>
-              </div>
-            ))
-          }
         </div>
-        <div className="flex reports-footer full-w space-between">
-          <table className="table-paddingTop table-noSeparator">
-            <thead>
-              <tr>
-                <th className="table-header--secondary">
-                  <h2 className="table-header--secondaryTitle">Tipos de Relatório</h2>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="table-row">
-                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
-                  FATURADO
-                </td>
-                <td className="table-cell table--cell-fixedWidth">
-                  <Checkbox
-                    label="faturado"
-                    checked={this.state.type === 0}
-                    onChange={() => this.setState({ type: 0 })}
-                  />
-                </td>
-              </tr>
-              <tr className="table-row">
-                <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
-                  PEDIDOS CANCELADOS
-                </td>
-                <td className="table-cell table--cell-fixedWidth">
-                  <Checkbox
-                    label="cancelados"
-                    checked={this.state.type === 1}
-                    onChange={() => this.setState({ type: 1 })}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <Button
-            text="OK"
-            type="secondary"
-            size="square"
-            onClick={this.generateReport}
-          />
-        </div>
-      </div>
+      );
+    }
+    return (
+      <Report
+        title={this.state.type === 0 ? 'Faturado' : 'Cancelados'}
+        report={this.state.data}
+      />
     );
   }
 }
 
 Reports.propTypes = {
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
   bills: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({
       menuItems: PropTypes.arrayOf(PropTypes.shape({})),
