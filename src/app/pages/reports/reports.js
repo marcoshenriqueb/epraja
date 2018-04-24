@@ -100,6 +100,81 @@ class Reports extends React.Component {
     return result;
   }
 
+  getReportHeader() {
+    const report = {
+      data: [],
+      titlesKeys: ['date', 'table'],
+      titlesValues: ['DATA', 'MESA'],
+      qty: 0,
+      total: 0,
+      date: `${this.state.startDate.format('DD/MM/YYYY')}
+        até ${this.state.endDate.format('DD/MM/YYYY')}`,
+    };
+    this.props.menuCategories.data.forEach((c) => {
+      report.titlesKeys.push(`${c.name}Qty`, `${c.name}Subtotal`);
+      report.titlesValues.push(`${c.name.toUpperCase()}`, `R$ ${c.name.toUpperCase()}`);
+      report[`${c.name}Qty`] = 0;
+      report[`${c.name}Subtotal`] = 0;
+    });
+    report.titlesKeys.push('qty', 'total');
+    report.titlesValues.push('TOTAL', 'R$ TOTAL');
+
+    return report;
+  }
+
+  getRowData(date, table) {
+    const row = {
+      table,
+      date: date.format('DD/MM/YYYY'),
+      total: 0,
+      qty: 0,
+    };
+    this.props.menuCategories.data.forEach((c) => {
+      let qty = 0;
+      let subTotal = 0;
+      const items = this.getBillItemsFromTableCategoryAndDate(row.table, c, row.date);
+
+      items.forEach((item) => {
+        qty += 1;
+        subTotal += this.getItem(item.menuItem).price;
+      });
+
+      row[`${c.name}Qty`] = qty;
+      row.qty += qty;
+
+      row[`${c.name}Subtotal`] = subTotal;
+      row.total += subTotal;
+    });
+
+    return row;
+  }
+
+  getDayData(date) {
+    const day = {
+      data: [],
+      total: 0,
+      qty: 0,
+    };
+    this.props.menuCategories.data.forEach((c) => {
+      day[`${c.name}Qty`] = 0;
+      day[`${c.name}Subtotal`] = 0;
+    });
+    this.state.tables.forEach((t) => {
+      const row = this.getRowData(date, t);
+
+      this.props.menuCategories.data.forEach((c) => {
+        day[`${c.name}Qty`] += row[`${c.name}Qty`];
+        day.qty += row[`${c.name}Qty`];
+        day[`${c.name}Subtotal`] += row[`${c.name}Subtotal`];
+        day.total += row[`${c.name}Subtotal`];
+      });
+
+      if (row.total > 0) day.data.push(row);
+    });
+
+    return day;
+  }
+
   toggleItemFilters(filter) {
     const newItems = [...this.state.itemFilters];
 
@@ -145,71 +220,22 @@ class Reports extends React.Component {
   }
 
   mountReport() {
-    const report = {
-      data: [],
-      titlesKeys: ['date', 'table'],
-      titlesValues: ['DATA', 'MESA'],
-      qty: 0,
-      total: 0,
-      date: `${this.state.startDate.format('DD/MM/YYYY')}
-        até ${this.state.endDate.format('DD/MM/YYYY')}`,
-    };
-    this.props.menuCategories.data.forEach((c) => {
-      report.titlesKeys.push(`${c.name}Qty`, `${c.name}Subtotal`);
-      report.titlesValues.push(`${c.name.toUpperCase()}`, `R$ ${c.name.toUpperCase()}`);
-      report[`${c.name}Qty`] = 0;
-      report[`${c.name}Subtotal`] = 0;
-    });
-    report.titlesKeys.push('qty', 'total');
-    report.titlesValues.push('TOTAL', 'R$ TOTAL');
-    console.log(report);
+    const report = this.getReportHeader();
 
     const j = this.state.endDate.clone();
     for (const i = this.state.startDate.clone(); i <= j; i.add(1, 'days')) {
-      const day = {
-        data: [],
-        total: 0,
-        qty: 0,
-      };
+      const day = this.getDayData(i);
+
       this.props.menuCategories.data.forEach((c) => {
-        day[`${c.name}Qty`] = 0;
-        day[`${c.name}Subtotal`] = 0;
+        report[`${c.name}Qty`] += day[`${c.name}Qty`];
+        report.qty += day[`${c.name}Qty`];
+        report[`${c.name}Subtotal`] += day[`${c.name}Subtotal`];
+        report.total += day[`${c.name}Subtotal`];
       });
-      this.state.tables.forEach((t) => {
-        const row = {
-          table: t,
-          date: i.format('DD/MM/YYYY'),
-          total: 0,
-          qty: 0,
-        };
-        this.props.menuCategories.data.forEach((c) => {
-          let qty = 0;
-          let subTotal = 0;
-          const items = this.getBillItemsFromTableCategoryAndDate(row.table, c, row.date);
 
-          items.forEach((item) => {
-            qty += 1;
-            subTotal += this.getItem(item.menuItem).price;
-          });
-
-          row[`${c.name}Qty`] = qty;
-          day[`${c.name}Qty`] += qty;
-          report[`${c.name}Qty`] += qty;
-          row.qty += qty;
-          day.qty += qty;
-          report.qty += qty;
-
-          row[`${c.name}Subtotal`] = subTotal;
-          day[`${c.name}Subtotal`] += subTotal;
-          report[`${c.name}Subtotal`] += subTotal;
-          row.total += subTotal;
-          day.total += subTotal;
-          report.total += subTotal;
-        });
-        if (row.total > 0) day.data.push(row);
-      });
       if (day.data.length > 0) report.data.push(day);
     }
+
     if (report.data.length > 0) {
       this.setState({ data: report });
     }
@@ -388,6 +414,7 @@ class Reports extends React.Component {
         </div>
       );
     }
+
     return (
       <Report
         title={this.state.type === 0 ? 'Faturado' : 'Cancelados'}
