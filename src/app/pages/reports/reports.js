@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import './reports.styl';
 
+import arrowImg from './../../../assets/images/arrow.png';
 import actions from './../../store/actions';
 import Button from './../../components/button/button';
 import Checkbox from './../../components/checkbox/checkbox';
@@ -233,6 +234,13 @@ class Reports extends React.Component {
     if (this.state.data === null) {
       return (
         <div className="full-w flex-column start wrap reports-container">
+          <div
+            className="flex justify-center center div-back"
+            onClick={() => this.props.history.goBack()}
+          >
+            <img src={arrowImg} alt="Voltar" />
+            <h3 className="button-back">Voltar</h3>
+          </div>
           <div className="flex reports-header full-w space-between">
             <h1>Relatórios</h1>
             <DateRangePicker
@@ -389,10 +397,19 @@ class Reports extends React.Component {
       );
     }
     return (
-      <Report
-        title={this.state.type === 0 ? 'Faturado' : 'Cancelados'}
-        report={this.state.data}
-      />
+      <div className="full-w flex-column start wrap reports-container">
+        <div
+          className="flex justify-center center div-back"
+          onClick={() => this.setState({ data: null })}
+        >
+          <img src={arrowImg} alt="Voltar" />
+          <h3 className="button-back">Voltar</h3>
+        </div>
+        <Report
+          title={this.state.type === 0 ? 'Faturado' : 'Cancelados'}
+          report={this.state.data}
+        />
+      </div>
     );
   }
 }
@@ -408,6 +425,9 @@ Reports.propTypes = {
   }).isRequired,
   menuCategories: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+  }).isRequired,
+  history: PropTypes.shape({
+    goBack: PropTypes.func.isRequired,
   }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
