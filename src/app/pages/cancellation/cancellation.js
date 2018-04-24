@@ -37,8 +37,18 @@ class Cancellation extends React.Component {
     return result.length ? result[0] : {};
   }
 
-  getItem(id) {
-    const result = this.props.menuItems.data.filter(i => i._id === id);
+  getComment() {
+    const bill = this.props.bills.data.filter(b => b._id === this.props.match.params.bill);
+    if (bill.length) {
+      const result = bill[0].menuItems.filter(i => i._id === this.props.match.params.id);
+
+      return result.length ? result[0] : {};
+    }
+    return {};
+  }
+
+  getItem() {
+    const result = this.props.menuItems.data.filter(i => i._id === this.props.match.params.item);
 
     return result.length ? result[0] : {};
   }
@@ -73,15 +83,17 @@ class Cancellation extends React.Component {
               <tr className="modal-table--itemRow">
                 <td className="modal-table--item">{this.getTable().table}</td>
                 <td className="modal-table--item">
-                  {this.getItem(this.props.match.params.item).name}
+                  {this.getItem().name}
                 </td>
-                <td className="modal-table--item">-</td>
+                <td className="modal-table--item">
+                  {this.getComment().comment}
+                </td>
               </tr>
             </tbody>
           </table>
           <div className="modal-footer flex-column space-around">
             <div className="modal-footer--item flex space-around full-w">
-              <h4>Quem solicitou o cancelamento?</h4>
+              <h4 className="modal-footer--label">Quem solicitou o cancelamento?</h4>
               <div>
                 <Button
                   text="Cliente"
