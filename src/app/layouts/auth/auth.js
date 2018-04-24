@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import './auth.styl';
 
+import Logo from './../../../assets/images/logo.png';
 import routeComponents from './../../router';
 import Login from './../../pages/login/login';
 import Items from './../../pages/items/items';
@@ -104,7 +105,7 @@ class Auth extends React.Component {
         <div className="full-w flex-column">
           <div className="full-w flex header space-between">
             <span>&nbsp;</span>
-            <span>É pra já</span>
+            <img src={Logo} alt="logo" className="logo" />
             <div className="flex navs">
               {navs}
             </div>
