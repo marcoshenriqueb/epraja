@@ -183,7 +183,7 @@ class Reports extends React.Component {
         this.props.menuCategories.data.forEach((c) => {
           let qty = 0;
           let subTotal = 0;
-          const items = this.getBillItemsFromTableCategoryAndDate(row.date, c, row.table);
+          const items = this.getBillItemsFromTableCategoryAndDate(row.table, c, row.date);
 
           items.forEach((item) => {
             qty += 1;
