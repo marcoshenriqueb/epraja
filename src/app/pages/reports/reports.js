@@ -35,14 +35,9 @@ class Reports extends React.Component {
   }
 
   componentDidMount() {
-    Promise.all([
-      this.props.fetchBills(),
-      this.props.fetchMenuItems(),
-      this.props.fetchMenuCategories(),
-    ]).then(() => {
-      const categories = this.props.menuCategories.data.map(() => false);
-      this.setState({ allItems: categories });
-    });
+    this.props.fetchBills();
+    this.props.fetchMenuItems();
+    this.props.fetchMenuCategories();
   }
 
   componentWillUnmount() {
@@ -145,10 +140,8 @@ class Reports extends React.Component {
     report.titlesValues.push('TOTAL', 'R$ TOTAL');
     console.log(report);
 
-    const tables = [...this.state.tables];
-
-    const j = this.state.endDate.add(1, 'days');
-    for (const i = this.state.startDate; i < j; i.add(1, 'days')) {
+    const j = this.state.endDate.clone();
+    for (const i = this.state.startDate.clone(); i <= j; i.add(1, 'days')) {
       const day = {
         data: [],
         total: 0,
@@ -158,14 +151,14 @@ class Reports extends React.Component {
         day[`${c.name}Qty`] = 0;
         day[`${c.name}Subtotal`] = 0;
       });
-      tables.forEach((t) => {
+      this.state.tables.forEach((t) => {
         const row = {
           table: t,
           date: i.format('DD/MM/YYYY'),
           total: 0,
           qty: 0,
         };
-        this.props.menuCategories.data.forEach((c, k) => {
+        this.props.menuCategories.data.forEach((c) => {
           let qty = 0;
           let subTotal = 0;
           let items = [];
@@ -175,22 +168,17 @@ class Reports extends React.Component {
             &&
             b.table === t
           )).forEach((bill) => {
-            const newItems = bill.menuItems.filter((item) => {
-              if (this.state.allItems[k]) {
-                return (
-                  this.getItem(item.menuItem).menuCategory === c._id
-                  &&
-                  item.canceled === !this.state.type[0]
-                );
-              }
-              return (
-                this.getItem(item.menuItem).menuCategory === c._id
-                &&
-                this.state.itemFilters.includes(item.menuItem)
-                &&
-                item.canceled === !this.state.type[0]
-              );
-            });
+            let canceled = false;
+            if (this.state.type === 1) canceled = true;
+
+            const newItems = bill.menuItems.filter(item => (
+              this.getItem(item.menuItem).menuCategory === c._id
+              &&
+              this.state.itemFilters.includes(item.menuItem)
+              &&
+              item.canceled === canceled
+            ));
+
             items = [...items, ...newItems];
           });
 
@@ -257,6 +245,7 @@ class Reports extends React.Component {
             isOutsideRange={d => d > moment()}
             startDatePlaceholderText="de"
             endDatePlaceholderText="até"
+            minimumNights={0}
             startDate={this.state.startDate}
             startDateId="reports-start-date"
             endDate={this.state.endDate}
