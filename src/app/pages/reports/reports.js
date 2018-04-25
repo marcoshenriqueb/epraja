@@ -436,7 +436,7 @@ class Reports extends React.Component {
             <div>
               {
                 this.state.emptyFilters.map(f => (
-                  <h4 className="emptyFilters--alert">{f}</h4>
+                  <h4 className="emptyFilters--alert" key={f}>{f}</h4>
                 ))
               }
             </div>
