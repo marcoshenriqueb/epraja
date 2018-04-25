@@ -10,6 +10,8 @@ import ItemsFilters from './../../components/itemsFilters/itemsFilters';
 import Table from './../../components/table/table';
 import actions from './../../store/actions';
 import TrashIcon from './../../../assets/images/trashIcon.png';
+import BillOpenIcon from './../../../assets/images/billOpen.png';
+import BillClosedIcon from './../../../assets/images/billClosed.png';
 
 const {
   fetchBills: fetchBillsAction,
@@ -201,7 +203,11 @@ class Items extends React.Component {
         to={`/caixa/${id}`}
         className="table--billStatus--cell"
       >
-        {this.getStatusName(status)}
+        {this.getStatusName(status) === 'aberta' ?
+          <img src={BillOpenIcon} alt="BillOpen" />
+        :
+          <img src={BillClosedIcon} alt="BillClosed" />
+        }
       </Link>
     );
   }
