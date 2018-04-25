@@ -8,7 +8,7 @@ const Report = ({
   title,
   report,
 }) => (
-  <div id="page" className="flex-column full-w report-container">
+  <div className="flex-column full-w report-container">
     <div className="flex reports-header full-w">
       <h1>Relatório {title}</h1>
     </div>
@@ -98,6 +98,7 @@ const Report = ({
         text="Imprimir"
         type="secondary"
         size="big"
+        onClick={window.print} // eslint-disable-line
       />
     </div>
   </div>
