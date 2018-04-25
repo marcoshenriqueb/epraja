@@ -14,13 +14,19 @@ const Table = ({
       <thead className="table--header">
         <tr>
           {
-            titlesValues.map(t => (
-              <th className="table--header--item" key={t}>
-                <div className="flex start font-padding">
-                  {t}
-                </div>
-              </th>
-            ))
+            titlesValues.map((t) => {
+              if (t === null) {
+                return <th className="table--header--blank-item" />;
+              }
+
+              return (
+                <th className="table--header--item" key={t}>
+                  <div className="flex start font-padding">
+                    {t}
+                  </div>
+                </th>
+              );
+            })
           }
         </tr>
       </thead>

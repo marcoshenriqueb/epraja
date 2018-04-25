@@ -108,17 +108,18 @@ class Items extends React.Component {
           i.canceled === false
         ) {
           items.push(Object.assign({}, i, {
+            delete: (
+              <Link
+                to={`/cancelamento/${b._id}/${i.menuItem}/${i._id}`}
+              >
+                x
+              </Link>
+            ),
             menuItem: this.getItem(i.menuItem).name,
             table: b.table,
             comment: i.comment,
             status: this.getStatusCellComponent(i),
-            order: (
-              <Link
-                to={`/cancelamento/${b._id}/${i.menuItem}/${i._id}`}
-              >
-                {k + 1}
-              </Link>
-            ),
+            order: k + 1,
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
           }));
         }
@@ -240,8 +241,8 @@ class Items extends React.Component {
   }
 
   render() {
-    const titlesKeys = ['order', 'table', 'menuItem', 'comment', 'status', 'billStatus'];
-    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Comentário', 'Status', 'Conta'];
+    const titlesKeys = ['delete', 'order', 'table', 'menuItem', 'comment', 'status', 'billStatus'];
+    const titlesValues = [null, 'Ordem/Hora', 'Mesa', 'Nome do Prato', 'Comentário', 'Status', 'Conta'];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker
