@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import TextInput from './../../components/textInput/textInput';
 import Button from './../../components/button/button';
+import WhiteCircle from './../../../assets/images/whiteCircle.png';
 
 import './tablePicker.styl';
 
@@ -59,7 +60,7 @@ class TablePicker extends React.Component {
               ref={(picker) => { this.picker = picker; }}
               onClick={this.props.toggleAllBills}
             >
-              0
+              <img src={WhiteCircle} alt="selectAll" />
             </div>
             <div
               className="table-picker--slider-container"
