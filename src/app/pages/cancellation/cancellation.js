@@ -74,19 +74,33 @@ class Cancellation extends React.Component {
           <table className="modal-table full-w">
             <thead>
               <tr className="modal-table--head">
-                <th>Mesa</th>
-                <th>Nome</th>
-                <th>Comentário</th>
+                <th>
+                  <div className="font-padding">
+                    Mesa
+                  </div>
+                </th>
+                <th>
+                  <div className="font-padding">
+                    Nome
+                  </div>
+                </th>
+                <th>
+                  <div className="font-padding">
+                    Comentário
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr className="modal-table--itemRow">
-                <td className="modal-table--item">{this.getTable().table}</td>
                 <td className="modal-table--item">
-                  {this.getItem().name}
+                  <div className="font-padding">{this.getTable().table}</div>
                 </td>
                 <td className="modal-table--item">
-                  {this.getComment().comment}
+                  <div className="font-padding">{this.getItem().name}</div>
+                </td>
+                <td className="modal-table--item">
+                  <div className="font-padding">{this.getComment().comment}</div>
                 </td>
               </tr>
             </tbody>

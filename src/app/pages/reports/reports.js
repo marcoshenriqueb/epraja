@@ -296,13 +296,15 @@ class Reports extends React.Component {
               <table className="full-w table-paddingTop table-noSeparator">
                 <thead>
                   <tr>
-                    <th className="table-header">Mesas</th>
+                    <th className="table-header">
+                      <div className="font-padding">Mesas</div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="table-row">
                     <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
-                      Todos
+                      <div className="font-padding">Todos</div>
                     </td>
                     <td className="table-cell table--cell-equalWidth">
                       <Checkbox
@@ -316,7 +318,7 @@ class Reports extends React.Component {
                     this.props.bills.data.map(i => (
                       <tr className="table-row" key={`${i.table}_${i._id}`}>
                         <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
-                          {i.table}
+                          <div className="font-padding">{i.table}</div>
                         </td>
                         <td className="table-cell table--cell-equalWidth">
                           <Checkbox
@@ -337,12 +339,16 @@ class Reports extends React.Component {
                   <table className="full-w table-noSeparator">
                     <thead>
                       <tr>
-                        <th className="table-header" colSpan={2}>{this.getCategoryName(c._id)}</th>
+                        <th className="table-header" colSpan={2}>
+                          <div className="font-padding">{this.getCategoryName(c._id)}</div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="table-row">
-                        <td className="table-cell table--cell-75Width">Todos</td>
+                        <td className="table-cell table--cell-75Width">
+                          <div className="font-padding">Todos</div>
+                        </td>
                         <td className="table-cell table--cell-25Width">
                           <Checkbox
                             label={c.name}
@@ -358,7 +364,9 @@ class Reports extends React.Component {
                         this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
                           <tr className="table-row" key={i.name}>
                             <td className="table-cell table--cell-75Width">
-                              {this.getItem(i._id).name}
+                              <div className="font-padding">
+                                {this.getItem(i._id).name}
+                              </div>
                             </td>
                             <td className="table-cell table--cell-25Width">
                               <Checkbox
@@ -381,14 +389,16 @@ class Reports extends React.Component {
               <thead>
                 <tr>
                   <th className="table-header--secondary">
-                    <h2 className="table-header--secondaryTitle">Tipos de Relatório</h2>
+                    <h2 className="table-header--secondaryTitle font-padding">
+                      Tipos de Relatório
+                    </h2>
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="table-row">
                   <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
-                    FATURADO
+                    <div className="font-padding">FATURADO</div>
                   </td>
                   <td className="table-cell table--cell-fixedWidth">
                     <Checkbox
@@ -400,7 +410,7 @@ class Reports extends React.Component {
                 </tr>
                 <tr className="table-row">
                   <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
-                    PEDIDOS CANCELADOS
+                    <div className="font-padding">PEDIDOS CANCELADOS</div>
                   </td>
                   <td className="table-cell table--cell-fixedWidth">
                     <Checkbox

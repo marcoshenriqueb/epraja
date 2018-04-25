@@ -153,6 +153,7 @@ class Items extends React.Component {
     return (
       <Link
         to={`/caixa/${id}`}
+        className="table--billStatus--cell"
       >
         {this.getStatusName(status)}
       </Link>

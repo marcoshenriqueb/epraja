@@ -12,13 +12,13 @@ const Report = ({
     <div className="flex reports-header full-w">
       <h1>Relatório {title}</h1>
     </div>
-    <table className="table full-w">
-      <thead className="table--header">
+    <table className="report full-w">
+      <thead className="report--header">
         <tr>
           {
             report.titlesValues.map(t => (
-              <th className="table--header--item" key={t}>
-                <div className="flex justify-center">
+              <th className="report--header--item" key={t}>
+                <div className="flex justify-center font-padding">
                   {t}
                 </div>
               </th>
@@ -26,17 +26,17 @@ const Report = ({
           }
         </tr>
       </thead>
-      <tbody className="table--body">
+      <tbody className="report--body">
         {
           report.data.map((day, k) => (
             [...day.data.map((row, m) => (
-              <tr className="table--row--striped" key={m.toString()}>
+              <tr className="report--row--striped" key={m.toString()}>
                 {
                   report.titlesKeys.map((o, n) => {
                     if (row[o] === undefined) return null;
                     return (
-                      <td className="table--row--column" key={n.toString()}>
-                        <div className="flex-column justify-center table--row--cell">
+                      <td className="report--row--column" key={n.toString()}>
+                        <div className="flex-column justify-center report--row--cell">
                           {row[o]}
                         </div>
                       </td>
@@ -45,16 +45,16 @@ const Report = ({
                 }
               </tr>
             )),
-              <tr className="table--row--subtotal" key={`${(k).toString()}1`}>
+              <tr className="report--row--subtotal" key={`${(k).toString()}1`}>
                 {
                   report.titlesKeys.map((o, m) => {
                     if (day[o] === undefined) {
-                      return <td key={m.toString()} className="table--row--column" />;
+                      return <td key={m.toString()} className="report--row--column" />;
                     }
 
                     return (
-                      <td className="table--row--column" key={m.toString()}>
-                        <div className="flex-column justify-center table--row--cell">
+                      <td className="report--row--column" key={m.toString()}>
+                        <div className="flex-column justify-center report--row--cell">
                           {day[o]}
                         </div>
                       </td>
@@ -64,26 +64,26 @@ const Report = ({
               </tr>]
           ))
         }
-        <tr className="table--row--total">
+        <tr className="report--row--total">
           {
             report.titlesKeys.map((o, m) => {
               if (report[o] === undefined) return null;
               if (o === 'date') {
                 return (
                   <td
-                    className="table--row--column table--row--period"
+                    className="report--row--column report--row--period"
                     colSpan={2}
                     key={m.toString()}
                   >
-                    <div className="flex-column justify-center table--row--cell">
+                    <div className="flex-column justify-center report--row--cell">
                       {report[o]}
                     </div>
                   </td>
                 );
               }
               return (
-                <td className="table--row--column" key={m.toString()}>
-                  <div className="flex-column justify-center table--row--cell">
+                <td className="report--row--column" key={m.toString()}>
+                  <div className="flex-column justify-center report--row--cell">
                     {report[o]}
                   </div>
                 </td>

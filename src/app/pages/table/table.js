@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import './table.styl';
 
 import TableComponent from './../../components/table/table';
@@ -129,7 +128,7 @@ class Table extends React.Component {
         <div className="flex-column table-details end">
           <div className="flex-column stretch">
             <div className="flex start table-details--header space-between">
-              <h2 className="table-details--title">Fechamento de conta { moment().format('HH:mm') }</h2>
+              <h2 className="table-details--title">Fechamento de conta</h2>
               <div className="table-details--number flex-column justify-center">
                 <h2 className="table-details--numbertext">Mesa</h2>
                 <h2 className="table-details--numbertext">{ this.getTable().table }</h2>

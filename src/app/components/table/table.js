@@ -16,7 +16,7 @@ const Table = ({
           {
             titlesValues.map(t => (
               <th className="table--header--item" key={t}>
-                <div className="flex start">
+                <div className="flex start font-padding">
                   {t}
                 </div>
               </th>
@@ -27,13 +27,21 @@ const Table = ({
       <tbody>
         {
           data.map((i, k) => (
-            <tr className={blankRows ? 'table--row--blank' : 'table--row--striped'} key={i._id + k.toString()}>
+            <tr
+              className={blankRows ? 'table--row--blank' : 'table--row--striped'}
+              key={i._id + k.toString()}
+            >
               {
                 titlesKeys.map((o) => {
                   if (i[o] === undefined) return null;
                   return (
                     <td className="table--row--column" key={`${i._id}_${o}`}>
-                      <div className={`flex-column start justify-center ${o === 'status' ? 'table--row--status' : 'table--row--cell'}`}>
+                      <div
+                        className={
+                          `flex-column start justify-center
+                          ${o === 'status' ? 'table--row--status' : 'table--row--cell'}`
+                        }
+                      >
                         {i[o]}
                       </div>
                       <div className="table--row--blank--item" />
