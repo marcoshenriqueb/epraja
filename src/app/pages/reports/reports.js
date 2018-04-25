@@ -109,8 +109,8 @@ class Reports extends React.Component {
       titlesValues: ['DATA', 'MESA'],
       qty: 0,
       total: 0,
-      date: `${this.state.startDate.format('DD/MM/YYYY')}
-        até ${this.state.endDate.format('DD/MM/YYYY')}`,
+      date: `${this.state.startDate.format('MMMM/YYYY')}
+        até ${this.state.endDate.format('MMMM/YYYY')}`,
     };
     this.props.menuCategories.data.forEach((c) => {
       report.titlesKeys.push(`${c.name}Qty`, `${c.name}Subtotal`);

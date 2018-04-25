@@ -37,7 +37,7 @@ const Report = ({
                     return (
                       <td className="report--row--column" key={n.toString()}>
                         <div className="flex-column justify-center report--row--cell">
-                          {row[o]}
+                          {o.includes('total') ? `R$ ${row[o]}` : row[o]}
                         </div>
                       </td>
                     );
@@ -55,7 +55,7 @@ const Report = ({
                     return (
                       <td className="report--row--column" key={m.toString()}>
                         <div className="flex-column justify-center report--row--cell">
-                          {day[o]}
+                          {o.includes('total') ? `R$ ${day[o]}` : day[o]}
                         </div>
                       </td>
                     );
@@ -84,7 +84,7 @@ const Report = ({
               return (
                 <td className="report--row--column" key={m.toString()}>
                   <div className="flex-column justify-center report--row--cell">
-                    {report[o]}
+                    {o.includes('total') ? `R$ ${report[o]}` : report[o]}
                   </div>
                 </td>
               );
