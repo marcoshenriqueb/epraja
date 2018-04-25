@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import TextInput from './../../components/textInput/textInput';
 import Button from './../../components/button/button';
 import WhiteCircle from './../../../assets/images/whiteCircle.png';
+import ArrowLeft from './../../../assets/images/arrow.png';
+import ArrowRight from './../../../assets/images/arrowRight.png';
 
 import './tablePicker.styl';
 
@@ -52,7 +54,7 @@ class TablePicker extends React.Component {
         />
         <div className="flex space-between table-picker--container">
           <div onClick={this.slide(false)} className="table-picker--arrows flex">
-            <span>&#8592;</span>
+            <img alt="arrowLeft" src={ArrowLeft} />
           </div>
           <div className="flex table-picker--content">
             <div
@@ -86,7 +88,7 @@ class TablePicker extends React.Component {
             </div>
           </div>
           <div onClick={this.slide()} className="table-picker--arrows flex">
-            <span>&#8594;</span>
+            <img alt="arrowRight" src={ArrowRight} />
           </div>
         </div>
         <Link to="/relatorios"><Button onClick={() => {}} text="Relatórios" type="primary" /></Link>
