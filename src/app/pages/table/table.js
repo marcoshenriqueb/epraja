@@ -70,7 +70,7 @@ class Table extends React.Component {
         items.push(Object.assign({}, i, {
           ordered: k + 1,
           menuItem: this.getItem(i.menuItem).name,
-          price: this.getItem(i.menuItem).price,
+          price: `R$ ${this.getItem(i.menuItem).price}`,
           quantity: 1,
           totalPrice: '-',
         }));
@@ -92,9 +92,9 @@ class Table extends React.Component {
         items.push(Object.assign({}, i, {
           ordered: k + 1,
           menuItem: this.getItem(i).name,
-          price: this.getItem(i).price,
+          price: `R$ ${this.getItem(i).price}`,
           quantity: itemsQty[k],
-          totalPrice: itemsQty[k] * this.getItem(i).price,
+          totalPrice: `R$ ${itemsQty[k] * this.getItem(i).price}`,
         }));
       });
     }
