@@ -28,6 +28,7 @@ class Items extends React.Component {
       activeFilters: [],
       searchValue: '',
       activeBills: [],
+      expandedComment: '',
     };
 
     this.getFilterClass = this.getFilterClass.bind(this);
@@ -121,12 +122,44 @@ class Items extends React.Component {
               <div
                 style={{
                   width: 200,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
                 }}
               >
-                {i.comment}
+                {
+                  i.comment.length > 25 ?
+                    <div
+                      style={{
+                        position: 'relative',
+                      }}
+                    >
+                      {`${i.comment.slice(0, 25)}...`}
+                      <span
+                        onClick={() => this.setState({ expandedComment: i._id })}
+                      >
+                        V
+                      </span>
+                      {
+                        this.state.expandedComment === i._id ?
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '100%',
+                              backgroundColor: 'white',
+                              padding: '.5rem',
+                              zIndex: '100',
+                            }}
+                          >
+                            {i.comment} &nbsp;&nbsp;&nbsp;
+                            <span
+                              onClick={() => this.setState({ expandedComment: '' })}
+                            >
+                              X
+                            </span>
+                          </div> :
+                          null
+                      }
+                    </div> :
+                    i.comment
+                }
               </div>
             ),
             status: this.getStatusCellComponent(i),
