@@ -287,7 +287,7 @@ class Reports extends React.Component {
               hideKeyboardShortcutsPanel
               displayFormat="DD/MM/YYYY"
               initialVisibleMonth={() => moment().subtract(1, 'month')}
-              monthFormat="MM/YYYY"
+              monthFormat="MMMM/YYYY"
               isOutsideRange={d => d > moment()}
               startDatePlaceholderText="de"
               endDatePlaceholderText="até"
