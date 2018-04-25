@@ -31,6 +31,7 @@ class Reports extends React.Component {
       endDate: null,
       focusedInput: null,
       data: null,
+      emptyFilters: [],
     };
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
@@ -239,6 +240,8 @@ class Reports extends React.Component {
 
     if (report.data.length > 0) {
       this.setState({ data: report });
+    } else {
+      this.setState({ emptyFilters: ['Não há dados existentes para esses filtros'] });
     }
   }
 
@@ -252,7 +255,15 @@ class Reports extends React.Component {
       &&
       this.state.itemFilters.length
     ) {
+      if (this.state.emptyFilters.length) this.setState({ emptyFilters: [] });
       this.mountReport();
+    } else {
+      const emptyFilters = [];
+      if (this.state.startDate === null) emptyFilters.push('DATA INICIAL não selecionada!');
+      if (this.state.endDate === null) emptyFilters.push('DATA FINAL não selecionada!');
+      if (!this.state.tables.length) emptyFilters.push('Nenhuma MESA selecionada!');
+      if (!this.state.itemFilters.length) emptyFilters.push('Nenhum ITEM selecionado!');
+      this.setState({ emptyFilters });
     }
   }
 
@@ -422,6 +433,13 @@ class Reports extends React.Component {
                 </tr>
               </tbody>
             </table>
+            <div>
+              {
+                this.state.emptyFilters.map(f => (
+                  <h4 className="emptyFilters--alert">{f}</h4>
+                ))
+              }
+            </div>
             <Button
               text="OK"
               type="secondary"
