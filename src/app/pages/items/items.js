@@ -9,6 +9,7 @@ import RadioButton from './../../components/radioButton/radioButton';
 import ItemsFilters from './../../components/itemsFilters/itemsFilters';
 import Table from './../../components/table/table';
 import actions from './../../store/actions';
+import TrashIcon from './../../../assets/images/trashIcon.png';
 
 const {
   fetchBills: fetchBillsAction,
@@ -113,7 +114,7 @@ class Items extends React.Component {
               <Link
                 to={`/cancelamento/${b._id}/${i.menuItem}/${i._id}`}
               >
-                x
+                <img src={TrashIcon} alt="Trash" />
               </Link>
             ),
             menuItem: this.getItem(i.menuItem).name,
