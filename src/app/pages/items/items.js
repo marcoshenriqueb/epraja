@@ -117,7 +117,18 @@ class Items extends React.Component {
             ),
             menuItem: this.getItem(i.menuItem).name,
             table: b.table,
-            comment: i.comment,
+            comment: (
+              <div
+                style={{
+                  width: 200,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {i.comment}
+              </div>
+            ),
             status: this.getStatusCellComponent(i),
             order: k + 1,
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),

@@ -16,7 +16,7 @@ const Table = ({
           {
             titlesValues.map((t) => {
               if (t === null) {
-                return <th className="table--header--blank-item" />;
+                return <th className="table--header--blank-item" key={t} />;
               }
 
               return (
@@ -44,7 +44,7 @@ const Table = ({
                     <td className="table--row--column" key={`${i._id}_${o}`}>
                       <div
                         className={
-                          `flex-column start justify-center
+                          `flex justify-center
                           ${o === 'status' ? 'table--row--status' : 'table--row--cell'}`
                         }
                       >
