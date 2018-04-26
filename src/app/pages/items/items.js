@@ -134,7 +134,10 @@ class Items extends React.Component {
                 <div className="table--cell--whiteSpace" />
                 <p>
                   {
-                    moment.duration(moment().diff(moment(i.createdAt)))
+                    this.getStatusName(i.deliveredAt) === undefined ?
+                      moment.duration(moment().diff(moment(i.createdAt)))
+                        .format('HH:mm', { trim: false }) :
+                    moment.duration(moment(i.deliveredAt).diff(moment(i.createdAt)))
                       .format('HH:mm', { trim: false })
                   }
                 </p>

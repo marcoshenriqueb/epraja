@@ -17,6 +17,7 @@ const {
   resetBills: resetBillsAction,
   fetchMenuItems: fetchMenuItemsAction,
   fetchMenuCategories: fetchMenuCategoriesAction,
+  fetchBillStatuses: fetchBillStatusesAction,
 } = actions;
 
 class Reports extends React.Component {
@@ -43,6 +44,7 @@ class Reports extends React.Component {
     this.props.fetchBills();
     this.props.fetchMenuItems();
     this.props.fetchMenuCategories();
+    this.props.fetchBillStatuses();
   }
 
   componentWillUnmount() {
@@ -63,6 +65,12 @@ class Reports extends React.Component {
 
   getAllCategoryNames() {
     return this.props.menuCategories.data.map(c => c.name);
+  }
+
+  getBillStatusName(id) {
+    const result = this.props.billStatuses.data.filter(s => s._id === id);
+
+    return result.length ? result[0].name.toLowerCase() : '';
   }
 
   getAllCategoryItems(category) {
@@ -88,6 +96,8 @@ class Reports extends React.Component {
       moment(b.createdAt).format('DD/MM/YYYY') === date
       &&
       b.table === table
+      &&
+      this.getBillStatusName(b.billStatus) === 'fechada'
     )).forEach((bill) => {
       const canceled = this.state.type === 1;
       result = [...bill.menuItems.filter((item) => {
@@ -581,6 +591,9 @@ Reports.propTypes = {
   menuCategories: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
+  billStatuses: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+  }).isRequired,
   history: PropTypes.shape({
     goBack: PropTypes.func.isRequired,
   }).isRequired,
@@ -588,6 +601,7 @@ Reports.propTypes = {
   resetBills: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
   fetchMenuCategories: PropTypes.func.isRequired,
+  fetchBillStatuses: PropTypes.func.isRequired,
 };
 
 const ReportsConnector = connect(state => (
@@ -595,6 +609,7 @@ const ReportsConnector = connect(state => (
     bills: state.bill.bills,
     menuItems: state.menuItem.menuItems,
     menuCategories: state.menuCategory.menuCategories,
+    billStatuses: state.billStatus.billStatuses,
   }
 ), dispatch => (
   {
@@ -609,6 +624,9 @@ const ReportsConnector = connect(state => (
     ),
     fetchMenuCategories: () => (
       dispatch(fetchMenuCategoriesAction())
+    ),
+    fetchBillStatuses: () => (
+      dispatch(fetchBillStatusesAction())
     ),
   }
 ))(Reports);
