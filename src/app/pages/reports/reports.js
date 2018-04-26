@@ -90,17 +90,23 @@ class Reports extends React.Component {
       b.table === table
     )).forEach((bill) => {
       const canceled = this.state.type === 1;
-      result = [...bill.menuItems.filter(item => (
-        this.getItem(item.menuItem).menuCategory === category._id
-        &&
-        this.state.itemFilters.includes(item.menuItem)
-        &&
-        item.canceled === canceled
-        &&
-        item.forwardedAt !== undefined
-        &&
-        item.deliveredAt !== undefined
-      ))];
+      result = [...bill.menuItems.filter((item) => {
+        let timeReportValidation = true;
+        if (
+          (this.state.type === 2) && (((item.forwardedAt || item.deliveredAt) === undefined))
+        ) {
+          timeReportValidation = false;
+        }
+        return (
+          this.getItem(item.menuItem).menuCategory === category._id
+          &&
+          this.state.itemFilters.includes(item.menuItem)
+          &&
+          item.canceled === canceled
+          &&
+          timeReportValidation
+        );
+      })];
     });
 
     return result;

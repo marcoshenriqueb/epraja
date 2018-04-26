@@ -32,7 +32,7 @@ const Report = ({
             [...day.data.map((row, m) => (
               <tr
                 className="report--row--striped"
-                key={`1-${m.toString()}${k.toString()}-${row.table}`}
+                key={`1-${m.toString()}${k.toString()}-${Math.random()}`}
               >
                 {
                   report.titlesKeys.map((o, n) => {
