@@ -32,6 +32,7 @@ class Reports extends React.Component {
       focusedInput: null,
       data: null,
       emptyFilters: [],
+      reportName: '',
     };
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
@@ -89,13 +90,16 @@ class Reports extends React.Component {
       b.table === table
     )).forEach((bill) => {
       const canceled = this.state.type === 1;
-
       result = [...bill.menuItems.filter(item => (
         this.getItem(item.menuItem).menuCategory === category._id
         &&
         this.state.itemFilters.includes(item.menuItem)
         &&
         item.canceled === canceled
+        &&
+        item.forwardedAt !== undefined
+        &&
+        item.deliveredAt !== undefined
       ))];
     });
 
@@ -107,19 +111,31 @@ class Reports extends React.Component {
       data: [],
       titlesKeys: ['date', 'table'],
       titlesValues: ['DATA', 'MESA'],
-      qty: 0,
-      total: 0,
       date: `${this.state.startDate.format('MMMM/YYYY')}
         até ${this.state.endDate.format('MMMM/YYYY')}`,
     };
     this.props.menuCategories.data.forEach((c) => {
-      report.titlesKeys.push(`${c.name}Qty`, `${c.name}Subtotal`);
-      report.titlesValues.push(`${c.name.toUpperCase()}`, `R$ ${c.name.toUpperCase()}`);
+      report.titlesKeys.push(`${c.name}Qty`);
+      report.titlesValues.push(`${c.name.toUpperCase()}`);
       report[`${c.name}Qty`] = 0;
-      report[`${c.name}Subtotal`] = 0;
+      if (this.state.type !== 2) {
+        report.titlesKeys.push(`${c.name}Subtotal`);
+        report.titlesValues.push(`R$ ${c.name.toUpperCase()}`);
+        report[`${c.name}Subtotal`] = 0;
+      } else {
+        report.titlesKeys.push(`${c.name}TMFeito`, `${c.name}TMEntrega`, `${c.name}TMTot`);
+        report.titlesValues.push('T.M. FAZER', 'T.M. ENTREGA', 'TOTAL');
+        report[`${c.name}TMFeito`] = moment.duration(0, 'seconds');
+        report[`${c.name}TMEntrega`] = moment.duration(0, 'seconds');
+        report[`${c.name}TMTot`] = moment.duration(0, 'seconds');
+      }
     });
-    report.titlesKeys.push('qty', 'total');
-    report.titlesValues.push('TOTAL', 'R$ TOTAL');
+    if (this.state.type !== 2) {
+      report.total = 0;
+      report.qty = 0;
+      report.titlesKeys.push('qty', 'total');
+      report.titlesValues.push('TOTAL', 'R$ TOTAL');
+    }
 
     return report;
   }
@@ -128,24 +144,44 @@ class Reports extends React.Component {
     const row = {
       table,
       date: date.format('DD/MM/YYYY'),
-      total: 0,
-      qty: 0,
     };
+    if (this.state.type !== 2) {
+      row.total = 0;
+      row.qty = 0;
+    }
+
     this.props.menuCategories.data.forEach((c) => {
       let qty = 0;
       let subTotal = 0;
+      let TMFeito = moment.duration(0, 'seconds');
+      let TMEntrega = moment.duration(0, 'seconds');
       const items = this.getBillItemsFromTableCategoryAndDate(row.table, c, row.date);
 
       items.forEach((item) => {
         qty += 1;
-        subTotal += this.getItem(item.menuItem).price;
+        if (this.state.type !== 2) {
+          subTotal += this.getItem(item.menuItem).price;
+        } else {
+          TMFeito = TMFeito
+            .clone().add(moment.duration(moment(item.forwardedAt).diff(moment(item.createdAt))));
+          TMEntrega = TMEntrega
+            .clone().add(moment.duration(moment(item.deliveredAt).diff(moment(item.forwardedAt))));
+        }
       });
 
       row[`${c.name}Qty`] = qty;
-      row.qty += qty;
 
-      row[`${c.name}Subtotal`] = subTotal;
-      row.total += subTotal;
+      if (this.state.type !== 2) {
+        row[`${c.name}Subtotal`] = subTotal;
+        row.qty += qty;
+        row.total += subTotal;
+      } else {
+        row[`${c.name}TMFeito`] = moment.duration(TMFeito.seconds() / qty, 'seconds');
+        row[`${c.name}Feito`] = TMFeito;
+        row[`${c.name}TMEntrega`] = moment.duration(TMEntrega.seconds() / qty, 'seconds');
+        row[`${c.name}Entrega`] = TMEntrega;
+        row[`${c.name}TMTot`] = row[`${c.name}TMFeito`].clone().add(row[`${c.name}TMEntrega`]);
+      }
     });
 
     return row;
@@ -154,25 +190,54 @@ class Reports extends React.Component {
   getDayData(date) {
     const day = {
       data: [],
-      total: 0,
-      qty: 0,
     };
+    if (this.state.type !== 2) {
+      day.total = 0;
+      day.qty = 0;
+    }
     this.props.menuCategories.data.forEach((c) => {
       day[`${c.name}Qty`] = 0;
-      day[`${c.name}Subtotal`] = 0;
+      if (this.state.type !== 2) {
+        day[`${c.name}Subtotal`] = 0;
+      } else {
+        day[`${c.name}TMFeito`] = moment.duration(0, 'seconds');
+        day[`${c.name}TMEntrega`] = moment.duration(0, 'seconds');
+        day[`${c.name}TMTot`] = moment.duration(0, 'seconds');
+      }
     });
     this.state.tables.forEach((t) => {
       const row = this.getRowData(date, t);
 
       this.props.menuCategories.data.forEach((c) => {
         day[`${c.name}Qty`] += row[`${c.name}Qty`];
-        day.qty += row[`${c.name}Qty`];
-        day[`${c.name}Subtotal`] += row[`${c.name}Subtotal`];
-        day.total += row[`${c.name}Subtotal`];
+        if (this.state.type !== 2) {
+          day.qty += row[`${c.name}Qty`];
+          day.total += row[`${c.name}Subtotal`];
+          day[`${c.name}Subtotal`] += row[`${c.name}Subtotal`];
+        } else {
+          day[`${c.name}TMFeito`].add(row[`${c.name}Feito`]);
+          day[`${c.name}TMEntrega`].add(row[`${c.name}Entrega`]);
+        }
       });
 
-      if (row.total > 0) day.data.push(row);
+      let hasData = false;
+      this.props.menuCategories.data.forEach((c) => {
+        if (row[`${c.name}Qty`] > 0) hasData = true;
+      });
+
+      if (hasData) day.data.push(row);
     });
+    if (this.state.type === 2) {
+      this.props.menuCategories.data.forEach((c) => {
+        day[`${c.name}Feito`] = day[`${c.name}TMFeito`].clone();
+        day[`${c.name}TMFeito`] = moment.duration(day[`${c.name}TMFeito`]
+          .seconds() / day[`${c.name}Qty`], 'seconds');
+        day[`${c.name}Entrega`] = day[`${c.name}TMEntrega`].clone();
+        day[`${c.name}TMEntrega`] = moment.duration(day[`${c.name}TMEntrega`]
+          .seconds() / day[`${c.name}Qty`], 'seconds');
+        day[`${c.name}TMTot`] = day[`${c.name}TMFeito`].clone().add(day[`${c.name}TMEntrega`]);
+      });
+    }
 
     return day;
   }
@@ -230,15 +295,30 @@ class Reports extends React.Component {
 
       this.props.menuCategories.data.forEach((c) => {
         report[`${c.name}Qty`] += day[`${c.name}Qty`];
-        report.qty += day[`${c.name}Qty`];
-        report[`${c.name}Subtotal`] += day[`${c.name}Subtotal`];
-        report.total += day[`${c.name}Subtotal`];
+
+        if (this.state.type !== 2) {
+          report.qty += day[`${c.name}Qty`];
+          report.total += day[`${c.name}Subtotal`];
+          report[`${c.name}Subtotal`] += day[`${c.name}Subtotal`];
+        } else {
+          report[`${c.name}TMFeito`].add(day[`${c.name}Feito`]);
+          report[`${c.name}TMEntrega`].add(day[`${c.name}Entrega`]);
+        }
       });
 
-      if (day.data.length > 0) report.data.push(day);
+      if (day.data.length) report.data.push(day);
     }
-
-    if (report.data.length > 0) {
+    if (this.state.type === 2) {
+      this.props.menuCategories.data.forEach((c) => {
+        report[`${c.name}TMFeito`] = moment.duration(report[`${c.name}TMFeito`]
+          .seconds() / report[`${c.name}Qty`], 'seconds');
+        report[`${c.name}TMEntrega`] = moment.duration(report[`${c.name}TMEntrega`]
+          .seconds() / report[`${c.name}Qty`], 'seconds');
+        report[`${c.name}TMTot`] = report[`${c.name}TMFeito`].clone().add(report[`${c.name}TMEntrega`]);
+      });
+    }
+    console.log(report);
+    if (report.data.length) {
       this.setState({ data: report });
     } else {
       this.setState({ emptyFilters: ['Não há dados existentes para esses filtros'] });
@@ -288,7 +368,7 @@ class Reports extends React.Component {
               displayFormat="DD/MM/YYYY"
               initialVisibleMonth={() => moment().subtract(1, 'month')}
               monthFormat="MMMM/YYYY"
-              isOutsideRange={d => d > moment()}
+              isOutsideRange={d => d.clone().subtract(12, 'hours') > moment()}
               startDatePlaceholderText="de"
               endDatePlaceholderText="até"
               minimumNights={0}
@@ -415,7 +495,7 @@ class Reports extends React.Component {
                     <Checkbox
                       label="faturado"
                       checked={this.state.type === 0}
-                      onChange={() => this.setState({ type: 0 })}
+                      onChange={() => this.setState({ type: 0, reportName: 'Faturado' })}
                     />
                   </td>
                 </tr>
@@ -427,7 +507,21 @@ class Reports extends React.Component {
                     <Checkbox
                       label="cancelados"
                       checked={this.state.type === 1}
-                      onChange={() => this.setState({ type: 1 })}
+                      onChange={() => this.setState({ type: 1, reportName: 'Cancelados' })}
+                    />
+                  </td>
+                </tr>
+                <tr className="table-row">
+                  <td className="table-cell table--cell-fixedHeight table--cell-tableNumber">
+                    <div className="font-padding">TEMPO DE ATENDIMENTO</div>
+                  </td>
+                  <td className="table-cell table--cell-fixedWidth">
+                    <Checkbox
+                      label="tempo"
+                      checked={this.state.type === 2}
+                      onChange={
+                        () => this.setState({ type: 2, reportName: 'Tempo de Atendimento' })
+                      }
                     />
                   </td>
                 </tr>
@@ -461,7 +555,7 @@ class Reports extends React.Component {
           <h3 className="button-back">Voltar</h3>
         </div>
         <Report
-          title={this.state.type === 0 ? 'Faturado' : 'Cancelados'}
+          title={this.state.reportName}
           report={this.state.data}
         />
       </div>

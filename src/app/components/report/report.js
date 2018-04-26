@@ -16,8 +16,8 @@ const Report = ({
       <thead className="report--header">
         <tr>
           {
-            report.titlesValues.map(t => (
-              <th className="report--header--item" key={t}>
+            report.titlesValues.map((t, m) => (
+              <th className="report--header--item" key={m.toString()}>
                 <div className="flex justify-center font-padding">
                   {t}
                 </div>
@@ -30,14 +30,27 @@ const Report = ({
         {
           report.data.map((day, k) => (
             [...day.data.map((row, m) => (
-              <tr className="report--row--striped" key={m.toString()}>
+              <tr
+                className="report--row--striped"
+                key={`1-${m.toString()}${k.toString()}-${row.table}`}
+              >
                 {
                   report.titlesKeys.map((o, n) => {
-                    if (row[o] === undefined) return null;
+                    if (row[o] === undefined) {
+                      return null;
+                    } else if (o.includes('TM')) {
+                      return (
+                        <td className="report--row--column" key={m.toString()}>
+                          <div className="flex-column justify-center report--row--cell">
+                            { row[o].format('HH:mm:ss', { trim: false }) }
+                          </div>
+                        </td>
+                      );
+                    }
                     return (
                       <td className="report--row--column" key={n.toString()}>
                         <div className="flex-column justify-center report--row--cell">
-                          {o.includes('total') ? `R$ ${row[o]}` : row[o]}
+                          { o.includes('total') ? `R$ ${row[o]}` : row[o] }
                         </div>
                       </td>
                     );
@@ -50,12 +63,19 @@ const Report = ({
                   report.titlesKeys.map((o, m) => {
                     if (day[o] === undefined) {
                       return <td key={m.toString()} className="report--row--column" />;
+                    } else if (o.includes('TM')) {
+                      return (
+                        <td className="report--row--column" key={m.toString()}>
+                          <div className="flex-column justify-center report--row--cell">
+                            { day[o].format('HH:mm:ss', { trim: false }) }
+                          </div>
+                        </td>
+                      );
                     }
-
                     return (
                       <td className="report--row--column" key={m.toString()}>
                         <div className="flex-column justify-center report--row--cell">
-                          {o.includes('total') ? `R$ ${day[o]}` : day[o]}
+                          { o.includes('total') ? `R$ ${day[o]}` : day[o] }
                         </div>
                       </td>
                     );
@@ -80,11 +100,19 @@ const Report = ({
                     </div>
                   </td>
                 );
+              } else if (o.includes('TM')) {
+                return (
+                  <td className="report--row--column" key={m.toString()}>
+                    <div className="flex-column justify-center report--row--cell">
+                      { report[o].format('HH:mm:ss', { trim: false }) }
+                    </div>
+                  </td>
+                );
               }
               return (
                 <td className="report--row--column" key={m.toString()}>
                   <div className="flex-column justify-center report--row--cell">
-                    {o.includes('total') ? `R$ ${report[o]}` : report[o]}
+                    { o.includes('total') ? `R$ ${report[o]}` : report[o] }
                   </div>
                 </td>
               );

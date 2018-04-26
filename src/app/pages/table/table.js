@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import './table.styl';
 
 import TableComponent from './../../components/table/table';
@@ -66,9 +67,19 @@ class Table extends React.Component {
     const tableItems = [...this.getTable().menuItems];
 
     if (this.state.filter === 'detalhada') {
-      tableItems.forEach((i, k) => {
+      tableItems.forEach((i) => {
         items.push(Object.assign({}, i, {
-          ordered: k + 1,
+          ordered: (
+            <div className="flex space-between">
+              <text>
+                {moment(i.createdAt).format('HH:mm')}
+              </text>
+              <div className="table--cell--whiteSpace" />
+              <text>
+                {moment(i.deliveredAt).format('HH:mm')}
+              </text>
+            </div>
+          ),
           menuItem: this.getItem(i.menuItem).name,
           price: `R$ ${this.getItem(i.menuItem).price}`,
           quantity: 1,
@@ -90,7 +101,7 @@ class Table extends React.Component {
 
       itemsType.forEach((i, k) => {
         items.push(Object.assign({}, i, {
-          ordered: k + 1,
+          ordered: '-  -',
           menuItem: this.getItem(i).name,
           price: `R$ ${this.getItem(i).price}`,
           quantity: itemsQty[k],

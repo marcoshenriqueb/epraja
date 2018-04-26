@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
@@ -125,7 +126,20 @@ class Items extends React.Component {
             table: b.table,
             comment: this.getCommentComponent(i),
             status: this.getStatusCellComponent(i),
-            order: k + 1,
+            order: (
+              <div className="flex space-between">
+                <text>
+                  {k + 1}
+                </text>
+                <div className="table--cell--whiteSpace" />
+                <text>
+                  {
+                    moment.duration(moment().diff(moment(i.createdAt)))
+                      .format('HH:mm', { trim: false })
+                  }
+                </text>
+              </div>
+            ),
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
           }));
         }
@@ -194,16 +208,13 @@ class Items extends React.Component {
   }
 
   getBillStatusComponent(status, id) {
+    if (this.getStatusName(status) === 'aberta') return <img src={BillOpenIcon} alt="BillOpen" />;
     return (
       <Link
         to={`/caixa/${id}`}
         className="table--billStatus--cell"
       >
-        {this.getStatusName(status) === 'aberta' ?
-          <img src={BillOpenIcon} alt="BillOpen" />
-        :
-          <img src={BillClosedIcon} alt="BillClosed" />
-        }
+        <img src={BillClosedIcon} alt="BillClosed" />
       </Link>
     );
   }
