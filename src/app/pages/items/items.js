@@ -128,16 +128,16 @@ class Items extends React.Component {
             status: this.getStatusCellComponent(i),
             order: (
               <div className="flex space-between">
-                <text>
+                <p>
                   {k + 1}
-                </text>
+                </p>
                 <div className="table--cell--whiteSpace" />
-                <text>
+                <p>
                   {
                     moment.duration(moment().diff(moment(i.createdAt)))
                       .format('HH:mm', { trim: false })
                   }
-                </text>
+                </p>
               </div>
             ),
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
