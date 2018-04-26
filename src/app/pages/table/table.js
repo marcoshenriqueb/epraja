@@ -33,7 +33,7 @@ class Table extends React.Component {
   }
 
   getTable() {
-    const result = this.props.bills.data.filter(b => b._id === this.props.match.params.id);
+    const result = this.props.bills.data.filter(b => (b._id === this.props.match.params.id));
 
     return result.length ? result[0] : {};
   }
@@ -55,7 +55,7 @@ class Table extends React.Component {
     let total = 0;
     const items = this.getTable().menuItems;
     items.forEach((i) => {
-      total += (this.getItem(i.menuItem).price);
+      if (!i.canceled) total += (this.getItem(i.menuItem).price);
     });
     return total;
   }
@@ -68,34 +68,38 @@ class Table extends React.Component {
 
     if (this.state.filter === 'detalhada') {
       tableItems.forEach((i) => {
-        items.push(Object.assign({}, i, {
-          ordered: (
-            <div className="flex space-between">
-              <text>
-                {moment(i.createdAt).format('HH:mm')}
-              </text>
-              <div className="table--cell--whiteSpace" />
-              <text>
-                {moment(i.deliveredAt).format('HH:mm')}
-              </text>
-            </div>
-          ),
-          menuItem: this.getItem(i.menuItem).name,
-          price: `R$ ${this.getItem(i.menuItem).price}`,
-          quantity: 1,
-          totalPrice: '-',
-        }));
+        if (!i.canceled) {
+          items.push(Object.assign({}, i, {
+            ordered: (
+              <div className="flex space-between">
+                <text>
+                  {moment(i.createdAt).format('HH:mm')}
+                </text>
+                <div className="table--cell--whiteSpace" />
+                <text>
+                  {moment(i.deliveredAt).format('HH:mm')}
+                </text>
+              </div>
+            ),
+            menuItem: this.getItem(i.menuItem).name,
+            price: `R$ ${this.getItem(i.menuItem).price}`,
+            quantity: 1,
+            totalPrice: '-',
+          }));
+        }
       });
     } else {
       const itemsType = [];
       const itemsQty = [];
 
       tableItems.forEach((i) => {
-        if (!itemsType.includes(this.getItem(i.menuItem)._id)) {
-          itemsType.push(i.menuItem);
-          itemsQty.push(1);
-        } else {
-          itemsQty[itemsType.indexOf(i.menuItem)] += 1;
+        if (!i.canceled) {
+          if (!itemsType.includes(this.getItem(i.menuItem)._id)) {
+            itemsType.push(i.menuItem);
+            itemsQty.push(1);
+          } else {
+            itemsQty[itemsType.indexOf(i.menuItem)] += 1;
+          }
         }
       });
 
