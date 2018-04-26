@@ -12,6 +12,8 @@ import actions from './../../store/actions';
 import TrashIcon from './../../../assets/images/trashIcon.png';
 import BillOpenIcon from './../../../assets/images/billOpen.png';
 import BillClosedIcon from './../../../assets/images/billClosed.png';
+import XIcon from './../../../assets/images/x.png';
+import ArrowDown from './../../../assets/images/arrowDown.png';
 
 const {
   fetchBills: fetchBillsAction,
@@ -121,50 +123,7 @@ class Items extends React.Component {
             ),
             menuItem: this.getItem(i.menuItem).name,
             table: b.table,
-            comment: (
-              <div
-                style={{
-                  width: 200,
-                }}
-              >
-                {
-                  i.comment.length > 25 ?
-                    <div
-                      style={{
-                        position: 'relative',
-                      }}
-                    >
-                      {`${i.comment.slice(0, 25)}...`}
-                      <span
-                        onClick={() => this.setState({ expandedComment: i._id })}
-                      >
-                        V
-                      </span>
-                      {
-                        this.state.expandedComment === i._id ?
-                          <div
-                            style={{
-                              position: 'absolute',
-                              top: '100%',
-                              backgroundColor: 'white',
-                              padding: '.5rem',
-                              zIndex: '100',
-                            }}
-                          >
-                            {i.comment} &nbsp;&nbsp;&nbsp;
-                            <span
-                              onClick={() => this.setState({ expandedComment: '' })}
-                            >
-                              X
-                            </span>
-                          </div> :
-                          null
-                      }
-                    </div> :
-                    i.comment
-                }
-              </div>
-            ),
+            comment: this.getCommentComponent(i),
             status: this.getStatusCellComponent(i),
             order: k + 1,
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
@@ -174,6 +133,43 @@ class Items extends React.Component {
     });
 
     return items;
+  }
+
+  getCommentComponent(item) {
+    return (
+      <div className="table--cell--comment">
+        {
+          item.comment.length > 22 ?
+            <div className="table--cell--positionRelative flex space-between">
+              <p className="table--cell--text">
+                {item.comment}
+              </p>
+              <span
+                onClick={() => this.setState({ expandedComment: item._id })}
+                className="table--cell--arrowIcon"
+              >
+                <img alt="arrowDown" src={ArrowDown} />
+              </span>
+              {
+                this.state.expandedComment === item._id ?
+                  <div className="table--modal--expanded">
+                    <span
+                      onClick={() => this.setState({ expandedComment: '' })}
+                      className="flex-column end"
+                    >
+                      <img alt="X" src={XIcon} />
+                    </span>
+                    <p className="table--modal--text">
+                      {item.comment}
+                    </p>
+                  </div> :
+                  null
+              }
+            </div> :
+            item.comment
+        }
+      </div>
+    );
   }
 
   getStatusCellComponent(item) {
