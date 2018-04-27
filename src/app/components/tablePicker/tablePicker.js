@@ -7,6 +7,7 @@ import Button from './../../components/button/button';
 import WhiteCircle from './../../../assets/images/whiteCircle.png';
 import ArrowLeft from './../../../assets/images/arrow.png';
 import ArrowRight from './../../../assets/images/arrowRight.png';
+import Lupa from './../../../assets/images/lupa.png';
 
 import './tablePicker.styl';
 
@@ -46,11 +47,16 @@ class TablePicker extends React.Component {
     return (
       <div className="full-w flex space-between table-picker--wrapper">
         <TextInput
-          placeholder="buscar"
+          placeholder="Buscar"
           type="number"
           name="search"
           value={this.props.searchValue}
           onChange={this.props.onSearchChange}
+          icon={
+            <div className="flex stretch justify-center full-h div-icon">
+              <img alt="Lupa" src={Lupa} />
+            </div>
+          }
         />
         <div className="flex space-between table-picker--container">
           <div onClick={this.slide(false)} className="table-picker--arrows flex">
