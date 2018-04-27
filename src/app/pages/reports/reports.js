@@ -141,9 +141,11 @@ class Reports extends React.Component {
       } else {
         report.titlesKeys.push(`${c.name}TMFeito`, `${c.name}TMEntrega`, `${c.name}TMTot`);
         report.titlesValues.push('T.M. FAZER', 'T.M. ENTREGA', 'TOTAL');
-        report[`${c.name}TMFeito`] = moment.duration(0, 'seconds');
-        report[`${c.name}TMEntrega`] = moment.duration(0, 'seconds');
-        report[`${c.name}TMTot`] = moment.duration(0, 'seconds');
+        report[`${c.name}TMFeito`] = 0;
+        report[`${c.name}Feito`] = 0;
+        report[`${c.name}TMEntrega`] = 0;
+        report[`${c.name}Entrega`] = 0;
+        report[`${c.name}TMTot`] = 0;
       }
     });
     if (this.state.type !== 2) {
@@ -169,8 +171,8 @@ class Reports extends React.Component {
     this.props.menuCategories.data.forEach((c) => {
       let qty = 0;
       let subTotal = 0;
-      const TFeito = moment.duration(0, 'seconds');
-      const TEntrega = moment.duration(0, 'seconds');
+      let TFeito = 0;
+      let TEntrega = 0;
       const items = this.getBillItemsFromTableCategoryAndDate(row.table, c, row.date);
 
       items.forEach((item) => {
@@ -178,8 +180,10 @@ class Reports extends React.Component {
         if (this.state.type !== 2) {
           subTotal += this.getItem(item.menuItem).price;
         } else {
-          TFeito.add(moment.duration(moment(item.forwardedAt).diff(moment(item.createdAt))));
-          TEntrega.add(moment.duration(moment(item.deliveredAt).diff(moment(item.forwardedAt))));
+          TFeito += moment.duration(moment(item.forwardedAt)
+            .diff(moment(item.createdAt))).seconds();
+          TEntrega += moment.duration(moment(item.deliveredAt)
+            .diff(moment(item.forwardedAt))).seconds();
         }
       });
       row[`${c.name}Qty`] = qty;
@@ -191,8 +195,8 @@ class Reports extends React.Component {
       } else {
         row[`${c.name}Feito`] = TFeito;
         row[`${c.name}Entrega`] = TEntrega;
-        row[`${c.name}TMFeito`] = moment.duration(TFeito.seconds() / qty, 'seconds');
-        row[`${c.name}TMEntrega`] = moment.duration(TEntrega.seconds() / qty, 'seconds');
+        row[`${c.name}TMFeito`] = moment.duration(TFeito / qty, 'seconds');
+        row[`${c.name}TMEntrega`] = moment.duration(TEntrega / qty, 'seconds');
         row[`${c.name}TMTot`] = row[`${c.name}TMFeito`].clone().add(row[`${c.name}TMEntrega`]);
       }
     });
@@ -213,10 +217,10 @@ class Reports extends React.Component {
       if (this.state.type !== 2) {
         day[`${c.name}Subtotal`] = 0;
       } else {
-        day[`${c.name}TMFeito`] = moment.duration(0, 'seconds');
-        day[`${c.name}TMEntrega`] = moment.duration(0, 'seconds');
-        day[`${c.name}Feito`] = moment.duration(0, 'seconds');
-        day[`${c.name}Entrega`] = moment.duration(0, 'seconds');
+        day[`${c.name}TMFeito`] = 0;
+        day[`${c.name}TMEntrega`] = 0;
+        day[`${c.name}Feito`] = 0;
+        day[`${c.name}Entrega`] = 0;
       }
     });
 
@@ -230,10 +234,8 @@ class Reports extends React.Component {
           day.total += row[`${c.name}Subtotal`];
           day[`${c.name}Subtotal`] += row[`${c.name}Subtotal`];
         } else {
-          console.log(day[`${c.name}Feito`]);
-          day[`${c.name}Feito`].add(row[`${c.name}Feito`]);
-          console.log(day[`${c.name}Feito`]);
-          day[`${c.name}Entrega`].add(row[`${c.name}Entrega`]);
+          day[`${c.name}Feito`] += row[`${c.name}Feito`];
+          day[`${c.name}Entrega`] += row[`${c.name}Entrega`];
         }
       });
 
@@ -246,10 +248,10 @@ class Reports extends React.Component {
     });
     if (this.state.type === 2) {
       this.props.menuCategories.data.forEach((c) => {
-        day[`${c.name}TMFeito`] = moment.duration(day[`${c.name}Feito`]
-          .seconds() / day[`${c.name}Qty`], 'seconds');
-        day[`${c.name}TMEntrega`] = moment.duration(day[`${c.name}Entrega`]
-          .seconds() / day[`${c.name}Qty`], 'seconds');
+        day[`${c.name}TMFeito`] = moment
+          .duration(day[`${c.name}Feito`] / day[`${c.name}Qty`], 'seconds');
+        day[`${c.name}TMEntrega`] = moment
+          .duration(day[`${c.name}Entrega`] / day[`${c.name}Qty`], 'seconds');
         day[`${c.name}TMTot`] = day[`${c.name}TMFeito`].clone().add(day[`${c.name}TMEntrega`]);
       });
     }
@@ -305,8 +307,6 @@ class Reports extends React.Component {
     const report = this.getReportHeader();
 
     const j = this.state.endDate.clone();
-    const TFeito = moment.duration(0, 'seconds');
-    const TEntrega = moment.duration(0, 'seconds');
 
     for (const i = this.state.startDate.clone(); i <= j; i.add(1, 'days')) {
       const day = this.getDayData(i);
@@ -319,8 +319,8 @@ class Reports extends React.Component {
           report.total += day[`${c.name}Subtotal`];
           report[`${c.name}Subtotal`] += day[`${c.name}Subtotal`];
         } else {
-          TFeito.add(day[`${c.name}Feito`]);
-          TEntrega.add(day[`${c.name}Entrega`]);
+          report[`${c.name}Feito`] += day[`${c.name}Feito`];
+          report[`${c.name}Entrega`] += day[`${c.name}Entrega`];
         }
       });
 
@@ -328,15 +328,13 @@ class Reports extends React.Component {
     }
     if (this.state.type === 2) {
       this.props.menuCategories.data.forEach((c) => {
-        console.log(TFeito);
-        report[`${c.name}TMFeito`] = moment.duration(TFeito
-          .seconds() / report[`${c.name}Qty`], 'seconds');
-        report[`${c.name}TMEntrega`] = moment.duration(TEntrega
-          .seconds() / report[`${c.name}Qty`], 'seconds');
+        report[`${c.name}TMFeito`] = moment
+          .duration(report[`${c.name}Feito`] / report[`${c.name}Qty`], 'seconds');
+        report[`${c.name}TMEntrega`] = moment
+          .duration(report[`${c.name}Entrega`] / report[`${c.name}Qty`], 'seconds');
         report[`${c.name}TMTot`] = report[`${c.name}TMFeito`].clone().add(report[`${c.name}TMEntrega`]);
       });
     }
-    console.log(report);
     if (report.data.length) {
       this.setState({ data: report });
     } else {
