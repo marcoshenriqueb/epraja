@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import './report.styl';
 
 import Button from './../button/button';
@@ -32,15 +33,18 @@ const Report = ({
             [...day.data.map((row, m) => (
               <tr
                 className="report--row--striped"
-                key={`1-${m.toString()}${k.toString()}-${Math.random()}`}
+                key={`${m.toString()}${k.toString()}${Math.random()}`}
               >
                 {
                   report.titlesKeys.map((o, n) => {
                     if (row[o] === undefined) {
                       return null;
-                    } else if (o.includes('TM')) {
+                    } else if (moment.isDuration(row[o])) {
                       return (
-                        <td className="report--row--column" key={m.toString()}>
+                        <td
+                          className="report--row--column"
+                          key={`0${n.toString()}${Math.random()}`}
+                        >
                           <div className="flex-column justify-center report--row--cell">
                             { row[o].format('HH:mm:ss', { trim: false }) }
                           </div>
@@ -48,7 +52,10 @@ const Report = ({
                       );
                     }
                     return (
-                      <td className="report--row--column" key={n.toString()}>
+                      <td
+                        className="report--row--column"
+                        key={`0${n.toString()}${Math.random()}`}
+                      >
                         <div className="flex-column justify-center report--row--cell">
                           { o.includes('total') ? `R$ ${row[o]}` : row[o] }
                         </div>
@@ -62,10 +69,18 @@ const Report = ({
                 {
                   report.titlesKeys.map((o, m) => {
                     if (day[o] === undefined) {
-                      return <td key={m.toString()} className="report--row--column" />;
-                    } else if (o.includes('TM')) {
                       return (
-                        <td className="report--row--column" key={m.toString()}>
+                        <td
+                          key={`1${m.toString()}${Math.random()}`}
+                          className="report--row--column"
+                        />
+                      );
+                    } else if (moment.isDuration(day[o])) {
+                      return (
+                        <td
+                          className="report--row--column"
+                          key={`1${m.toString()}${Math.random()}`}
+                        >
                           <div className="flex-column justify-center report--row--cell">
                             { day[o].format('HH:mm:ss', { trim: false }) }
                           </div>
@@ -73,7 +88,10 @@ const Report = ({
                       );
                     }
                     return (
-                      <td className="report--row--column" key={m.toString()}>
+                      <td
+                        className="report--row--column"
+                        key={`1${m.toString()}${Math.random()}`}
+                      >
                         <div className="flex-column justify-center report--row--cell">
                           { o.includes('total') ? `R$ ${day[o]}` : day[o] }
                         </div>
@@ -100,7 +118,7 @@ const Report = ({
                     </div>
                   </td>
                 );
-              } else if (o.includes('TM')) {
+              } else if (moment.isDuration(report[o])) {
                 return (
                   <td className="report--row--column" key={m.toString()}>
                     <div className="flex-column justify-center report--row--cell">
