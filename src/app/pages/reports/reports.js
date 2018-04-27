@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { DateRangePicker } from 'react-dates';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 import './reports.styl';
@@ -368,13 +369,15 @@ class Reports extends React.Component {
     if (this.state.data === null) {
       return (
         <div className="full-w flex-column start wrap reports-container">
-          <div
-            className="flex justify-center center div-back"
-            onClick={() => this.props.history.goBack()}
-          >
-            <img src={arrowImg} alt="Voltar" />
-            <h3 className="button-back">Voltar</h3>
-          </div>
+          <Link to="/" key="1">
+            <div
+              className="flex justify-center center div-back"
+              onClick={() => this.props.history.goBack()}
+            >
+              <img src={arrowImg} alt="Voltar" />
+              <h3 className="button-back">Voltar</h3>
+            </div>
+          </Link>
           <div className="flex reports-header full-w space-between">
             <h1>Relatórios</h1>
             <DateRangePicker
