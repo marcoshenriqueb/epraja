@@ -370,10 +370,7 @@ class Reports extends React.Component {
       return (
         <div className="full-w flex-column start wrap reports-container">
           <Link to="/" key="1">
-            <div
-              className="flex justify-center center div-back"
-              onClick={() => this.props.history.goBack()}
-            >
+            <div className="flex justify-center center div-back">
               <img src={arrowImg} alt="Voltar" />
               <h3 className="button-back">Voltar</h3>
             </div>
@@ -597,9 +594,6 @@ Reports.propTypes = {
   }).isRequired,
   billStatuses: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
-  }).isRequired,
-  history: PropTypes.shape({
-    goBack: PropTypes.func.isRequired,
   }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
