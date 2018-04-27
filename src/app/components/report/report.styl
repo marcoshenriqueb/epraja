@@ -1,0 +1,50 @@
+@import './../../../assets/stylus/_settings'
+
+.report-container
+    padding 3% 10%
+
+.reports-header
+    text-transform Capitalize
+
+.report
+    border-spacing 0
+    border-collapse collapse
+
+.report--header
+    background-color background-medium
+    color white
+
+.report--header--item
+    padding .5rem
+
+.report--body
+    background-color background-light-secondary
+
+.report--row--column
+    padding 0
+    border-left 1px solid rgba(0, 0, 0, 0.2)
+    &:first-of-type
+        border-left none
+
+.report--row--striped
+    &:nth-child(2n + 1)
+        background-color background-light
+
+.report--row--subtotal
+    background-color background-medium
+    color black
+
+.report--row--total
+    background-color secondary-color
+    color black
+
+.report--row--period
+    background-color primary-color
+    color white
+
+.report--row--cell
+    height 1.6rem
+    padding .5rem
+
+.print--button
+    padding-top .8rem

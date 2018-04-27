@@ -10,7 +10,7 @@ const {
   fetchBills: fetchBillsAction,
   resetBills: resetBillsAction,
   fetchMenuItems: fetchMenuItemsAction,
-  removeBillItem: removeBillItemAction,
+  updateBillItemCancellation: updateBillItemCancellationAction,
 } = actions;
 
 class Cancellation extends React.Component {
@@ -18,7 +18,7 @@ class Cancellation extends React.Component {
     super(props);
 
     this.state = {
-      owner: 'cliente',
+      owner: 'Cliente',
     };
   }
 
@@ -37,8 +37,18 @@ class Cancellation extends React.Component {
     return result.length ? result[0] : {};
   }
 
-  getItem(id) {
-    const result = this.props.menuItems.data.filter(i => i._id === id);
+  getComment() {
+    const bill = this.props.bills.data.filter(b => b._id === this.props.match.params.bill);
+    if (bill.length) {
+      const result = bill[0].menuItems.filter(i => i._id === this.props.match.params.id);
+
+      return result.length ? result[0] : {};
+    }
+    return {};
+  }
+
+  getItem() {
+    const result = this.props.menuItems.data.filter(i => i._id === this.props.match.params.item);
 
     return result.length ? result[0] : {};
   }
@@ -48,9 +58,10 @@ class Cancellation extends React.Component {
   }
 
   cancelItem() {
-    this.props.removeBillItem(this.props.match.params.bill, this.props.match.params.id).then(() => {
-      this.props.history.goBack();
-    });
+    this.props.updateBillItemCancellation(this.props.match.params.id, this.state.owner)
+      .then(() => {
+        this.props.history.goBack();
+      });
   }
 
   render() {
@@ -63,35 +74,51 @@ class Cancellation extends React.Component {
           <table className="modal-table full-w">
             <thead>
               <tr className="modal-table--head">
-                <th>Mesa</th>
-                <th>Nome</th>
-                <th>Comentário</th>
+                <th>
+                  <div className="font-padding">
+                    Mesa
+                  </div>
+                </th>
+                <th>
+                  <div className="font-padding">
+                    Nome
+                  </div>
+                </th>
+                <th>
+                  <div className="font-padding">
+                    Comentário
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr className="modal-table--itemRow">
-                <td className="modal-table--item">{this.getTable().table}</td>
                 <td className="modal-table--item">
-                  {this.getItem(this.props.match.params.item).name}
+                  <div className="font-padding">{this.getTable().table}</div>
                 </td>
-                <td className="modal-table--item">-</td>
+                <td className="modal-table--item">
+                  <div className="font-padding">{this.getItem().name}</div>
+                </td>
+                <td className="modal-table--item">
+                  <div className="font-padding">{this.getComment().comment}</div>
+                </td>
               </tr>
             </tbody>
           </table>
           <div className="modal-footer flex-column space-around">
             <div className="modal-footer--item flex space-around full-w">
-              <h4>Quem solicitou o cancelamento?</h4>
+              <h4 className="modal-footer--label">Quem solicitou o cancelamento?</h4>
               <div>
                 <Button
                   text="Cliente"
-                  type={this.getButtonType('cliente')}
-                  onClick={() => this.setState({ owner: 'cliente' })}
+                  type={this.getButtonType('Cliente')}
+                  onClick={() => this.setState({ owner: 'Cliente' })}
                 />
                 <span />
                 <Button
                   text="O Local"
-                  type={this.getButtonType('local')}
-                  onClick={() => this.setState({ owner: 'local' })}
+                  type={this.getButtonType('Estabelecimento')}
+                  onClick={() => this.setState({ owner: 'Estabelecimento' })}
                 />
               </div>
             </div>
@@ -136,7 +163,7 @@ Cancellation.propTypes = {
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
-  removeBillItem: PropTypes.func.isRequired,
+  updateBillItemCancellation: PropTypes.func.isRequired,
 };
 
 const CancellationConnector = connect(state => (
@@ -155,8 +182,8 @@ const CancellationConnector = connect(state => (
     fetchMenuItems: () => (
       dispatch(fetchMenuItemsAction())
     ),
-    removeBillItem: (bill, id) => (
-      dispatch(removeBillItemAction(bill, id))
+    updateBillItemCancellation: (id, owner) => (
+      dispatch(updateBillItemCancellationAction(id, owner))
     ),
   }
 ))(Cancellation);

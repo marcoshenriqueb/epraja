@@ -11,7 +11,7 @@ const ItemsFilters = ({
   changeFilter,
   getFilterClass,
 }) => (
-  <div className="full-w flex space-between">
+  <div className="full-w flex space-between padding-bottom">
     <div className="flex">
       {
         statuses.map(s => (
@@ -21,6 +21,7 @@ const ItemsFilters = ({
             key={s}
             text={s}
             classes="capitalize"
+            size="big"
           />
         ))
       }
@@ -34,6 +35,7 @@ const ItemsFilters = ({
             key={c}
             text={c}
             classes="capitalize"
+            size="big"
           />
         ))
       }
@@ -41,6 +43,7 @@ const ItemsFilters = ({
         type={getFilterClass('aberta')}
         onClick={() => changeFilter('aberta')}
         text="Caixa"
+        size="big"
       />
     </div>
   </div>

@@ -33,7 +33,7 @@ class Table extends React.Component {
   }
 
   getTable() {
-    const result = this.props.bills.data.filter(b => b._id === this.props.match.params.id);
+    const result = this.props.bills.data.filter(b => (b._id === this.props.match.params.id));
 
     return result.length ? result[0] : {};
   }
@@ -55,7 +55,7 @@ class Table extends React.Component {
     let total = 0;
     const items = this.getTable().menuItems;
     items.forEach((i) => {
-      total += (this.getItem(i.menuItem).price);
+      if (!i.canceled) total += (this.getItem(i.menuItem).price);
     });
     return total;
   }
@@ -67,35 +67,49 @@ class Table extends React.Component {
     const tableItems = [...this.getTable().menuItems];
 
     if (this.state.filter === 'detalhada') {
-      tableItems.forEach((i, k) => {
-        items.push(Object.assign({}, i, {
-          ordered: k + 1,
-          menuItem: this.getItem(i.menuItem).name,
-          price: this.getItem(i.menuItem).price,
-          quantity: 1,
-          totalPrice: '-',
-        }));
+      tableItems.forEach((i) => {
+        if (!i.canceled) {
+          items.push(Object.assign({}, i, {
+            ordered: (
+              <div className="flex space-between">
+                <text>
+                  {moment(i.createdAt).format('HH:mm')}
+                </text>
+                <div className="table--cell--whiteSpace" />
+                <text>
+                  {moment(i.deliveredAt).format('HH:mm')}
+                </text>
+              </div>
+            ),
+            menuItem: this.getItem(i.menuItem).name,
+            price: `R$ ${this.getItem(i.menuItem).price}`,
+            quantity: 1,
+            totalPrice: '-',
+          }));
+        }
       });
     } else {
       const itemsType = [];
       const itemsQty = [];
 
       tableItems.forEach((i) => {
-        if (!itemsType.includes(this.getItem(i.menuItem)._id)) {
-          itemsType.push(i.menuItem);
-          itemsQty.push(1);
-        } else {
-          itemsQty[itemsType.indexOf(i.menuItem)] += 1;
+        if (!i.canceled) {
+          if (!itemsType.includes(this.getItem(i.menuItem)._id)) {
+            itemsType.push(i.menuItem);
+            itemsQty.push(1);
+          } else {
+            itemsQty[itemsType.indexOf(i.menuItem)] += 1;
+          }
         }
       });
 
       itemsType.forEach((i, k) => {
         items.push(Object.assign({}, i, {
-          ordered: k + 1,
+          ordered: '-  -',
           menuItem: this.getItem(i).name,
-          price: this.getItem(i).price,
+          price: `R$ ${this.getItem(i).price}`,
           quantity: itemsQty[k],
-          totalPrice: itemsQty[k] * this.getItem(i).price,
+          totalPrice: `R$ ${itemsQty[k] * this.getItem(i).price}`,
         }));
       });
     }
@@ -116,18 +130,20 @@ class Table extends React.Component {
             classes="margin-bottom"
             type={`${this.getButtonType('agrupada')}`}
             onClick={() => this.setState({ filter: 'agrupada' })}
+            size="big"
           />
           <div />
           <Button
             text="Detalhada"
             type={`${this.getButtonType('detalhada')}`}
             onClick={() => this.setState({ filter: 'detalhada' })}
+            size="big"
           />
         </div>
         <div className="flex-column table-details end">
           <div className="flex-column stretch">
             <div className="flex start table-details--header space-between">
-              <h2 className="table-details--title">Fechamento de conta { moment().format('HH:mm') }</h2>
+              <h2 className="table-details--title">Fechamento de conta</h2>
               <div className="table-details--number flex-column justify-center">
                 <h2 className="table-details--numbertext">Mesa</h2>
                 <h2 className="table-details--numbertext">{ this.getTable().table }</h2>

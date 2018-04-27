@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import './auth.styl';
 
+import Logo from './../../../assets/images/logo.png';
 import routeComponents from './../../router';
 import Login from './../../pages/login/login';
 import Items from './../../pages/items/items';
 import Table from './../../pages/table/table';
 import Cancellation from './../../pages/cancellation/cancellation';
 import Button from './../../components/button/button';
-import ReportsConnector from './../../pages/reports/reports';
+import Reports from './../../pages/reports/reports';
 
 import actions from './../../store/actions';
 
@@ -81,11 +82,11 @@ class Auth extends React.Component {
         key={3}
         exact
         path="/relatorios"
-        component={ReportsConnector}
+        component={Reports}
         isAuthenticated={this.props.authenticated}
       />,
       <GuestRoute
-        key={4}
+        key={5}
         path="/login"
         component={Login}
         isAuthenticated={this.props.authenticated}
@@ -104,7 +105,7 @@ class Auth extends React.Component {
         <div className="full-w flex-column">
           <div className="full-w flex header space-between">
             <span>&nbsp;</span>
-            <span>É pra já</span>
+            <img src={Logo} alt="logo" className="logo" />
             <div className="flex navs">
               {navs}
             </div>

@@ -53,6 +53,7 @@ class Login extends React.Component {
           <TextInput
             placeholder="Email"
             name="email"
+            size="big"
             value={this.state.email}
             onChange={this.handleChange}
           />
@@ -60,9 +61,11 @@ class Login extends React.Component {
             type="password"
             placeholder="Senha"
             name="password"
+            size="big"
             value={this.state.password}
             onChange={this.handleChange}
           />
+          <div className="login-container-space" />
           <Button
             text="Entrar"
             type="primary"

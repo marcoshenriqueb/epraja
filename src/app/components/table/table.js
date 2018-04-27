@@ -14,26 +14,40 @@ const Table = ({
       <thead className="table--header">
         <tr>
           {
-            titlesValues.map(t => (
-              <th className="table--header--item" key={t}>
-                <div className="flex start">
-                  {t}
-                </div>
-              </th>
-            ))
+            titlesValues.map((t) => {
+              if (t === null) {
+                return <th className="table--header--blank-item" key={t} />;
+              }
+
+              return (
+                <th className="table--header--item" key={t}>
+                  <div className="flex start font-padding">
+                    {t}
+                  </div>
+                </th>
+              );
+            })
           }
         </tr>
       </thead>
       <tbody>
         {
           data.map((i, k) => (
-            <tr className={blankRows ? 'table--row--blank' : 'table--row--striped'} key={i._id + k.toString()}>
+            <tr
+              className={blankRows ? 'table--row--blank' : 'table--row--striped'}
+              key={i._id + k.toString()}
+            >
               {
                 titlesKeys.map((o) => {
                   if (i[o] === undefined) return null;
                   return (
                     <td className="table--row--column" key={`${i._id}_${o}`}>
-                      <div className="flex-column start justify-center table--row--cell">
+                      <div
+                        className={
+                          `flex justify-center
+                          ${o === 'status' ? 'table--row--status' : 'table--row--cell'}`
+                        }
+                      >
                         {i[o]}
                       </div>
                       <div className="table--row--blank--item" />

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from './../../components/button/button';
+import Button from './../button/button';
 
 import './checkbox.styl';
 
@@ -19,7 +19,10 @@ const Checkbox = ({
 );
 
 Checkbox.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]).isRequired,
   onChange: PropTypes.func,
   checked: PropTypes.bool,
 };

@@ -92,11 +92,16 @@ const updateBillItemStatus = (id, statusId) => (
   )
 );
 
-const removeBillItem = (bill, id) => (
+const updateBillItemCancellation = (id, owner) => (
   dispatch => (
-    api.bills.patch(bill, {
-      $pull: { menuItems: { _id: id } },
-    }, {}).then((response) => {
+    api.bills.patch(null, {
+      'menuItems.$.canceled': true,
+      'menuItems.$.canceledOwner': owner,
+    }, {
+      query: {
+        'menuItems._id': id,
+      },
+    }).then((response) => {
       dispatch(updateBill(response[0] || {}));
       return response;
     }, error => error)
@@ -124,5 +129,5 @@ export default {
   fetchBills,
   resetBills,
   updateBillItemStatus,
-  removeBillItem,
+  updateBillItemCancellation,
 };

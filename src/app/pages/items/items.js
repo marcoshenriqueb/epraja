@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
@@ -9,6 +10,11 @@ import RadioButton from './../../components/radioButton/radioButton';
 import ItemsFilters from './../../components/itemsFilters/itemsFilters';
 import Table from './../../components/table/table';
 import actions from './../../store/actions';
+import TrashIcon from './../../../assets/images/trashIcon.png';
+import BillOpenIcon from './../../../assets/images/billOpen.png';
+import BillClosedIcon from './../../../assets/images/billClosed.png';
+import XIcon from './../../../assets/images/x.png';
+import ArrowDown from './../../../assets/images/arrowDown.png';
 
 const {
   fetchBills: fetchBillsAction,
@@ -28,6 +34,7 @@ class Items extends React.Component {
       activeFilters: [],
       searchValue: '',
       activeBills: [],
+      expandedComment: '',
     };
 
     this.getFilterClass = this.getFilterClass.bind(this);
@@ -90,7 +97,6 @@ class Items extends React.Component {
 
   getItems() {
     if (!this.props.bills.data.length) return [];
-    console.log(this.props.bills);
     const items = [];
     this.props.bills.data.forEach((b) => {
       b.menuItems.forEach((i, k) => {
@@ -105,17 +111,37 @@ class Items extends React.Component {
           this.state.activeFilters.includes(billStatus)
           &&
           this.state.activeBills.includes(b.table)
+          &&
+          i.canceled === false
         ) {
           items.push(Object.assign({}, i, {
-            menuItem: this.getItem(i.menuItem).name,
-            table: b.table,
-            status: this.getStatusCellComponent(i),
-            order: (
+            delete: (
               <Link
                 to={`/cancelamento/${b._id}/${i.menuItem}/${i._id}`}
               >
-                {k + 1}
+                <img src={TrashIcon} alt="Trash" />
               </Link>
+            ),
+            menuItem: this.getItem(i.menuItem).name,
+            table: b.table,
+            comment: this.getCommentComponent(i),
+            status: this.getStatusCellComponent(i),
+            order: (
+              <div className="flex space-between">
+                <p>
+                  {k + 1}
+                </p>
+                <div className="table--cell--whiteSpace" />
+                <p>
+                  {
+                    this.getStatusName(i.deliveredAt) === undefined ?
+                      moment.duration(moment().diff(moment(i.createdAt)))
+                        .format('HH:mm', { trim: false }) :
+                    moment.duration(moment(i.deliveredAt).diff(moment(i.createdAt)))
+                      .format('HH:mm', { trim: false })
+                  }
+                </p>
+              </div>
             ),
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
           }));
@@ -124,6 +150,43 @@ class Items extends React.Component {
     });
 
     return items;
+  }
+
+  getCommentComponent(item) {
+    return (
+      <div className="table--cell--comment">
+        {
+          item.comment.length > 22 ?
+            <div className="table--cell--positionRelative flex space-between">
+              <p className="table--cell--text">
+                {item.comment}
+              </p>
+              <span
+                onClick={() => this.setState({ expandedComment: item._id })}
+                className="table--cell--arrowIcon"
+              >
+                <img alt="arrowDown" src={ArrowDown} />
+              </span>
+              {
+                this.state.expandedComment === item._id ?
+                  <div className="table--modal--expanded">
+                    <span
+                      onClick={() => this.setState({ expandedComment: '' })}
+                      className="flex-column end"
+                    >
+                      <img alt="X" src={XIcon} />
+                    </span>
+                    <p className="table--modal--text">
+                      {item.comment}
+                    </p>
+                  </div> :
+                  null
+              }
+            </div> :
+            item.comment
+        }
+      </div>
+    );
   }
 
   getStatusCellComponent(item) {
@@ -136,25 +199,25 @@ class Items extends React.Component {
       }
     });
     return (
-      <div className="flex items--table--statuses">
-        <RadioButton
-          options={this.props.menuItemStatuses.data}
-          checked={classes}
-          updateBillItemStatus={(selected) => {
-            this.props.updateBillItemStatus(item._id, selected);
-          }}
-          item={item._id}
-        />
-      </div>
+      <RadioButton
+        options={this.props.menuItemStatuses.data}
+        checked={classes}
+        updateBillItemStatus={(selected) => {
+          this.props.updateBillItemStatus(item._id, selected);
+        }}
+        item={item._id}
+      />
     );
   }
 
   getBillStatusComponent(status, id) {
+    if (this.getStatusName(status) === 'aberta') return <img src={BillOpenIcon} alt="BillOpen" />;
     return (
       <Link
         to={`/caixa/${id}`}
+        className="table--billStatus--cell"
       >
-        {this.getStatusName(status)}
+        <img src={BillClosedIcon} alt="BillClosed" />
       </Link>
     );
   }
@@ -239,8 +302,8 @@ class Items extends React.Component {
   }
 
   render() {
-    const titlesKeys = ['order', 'table', 'menuItem', 'status', 'billStatus'];
-    const titlesValues = ['Ordem/Hora', 'Mesa', 'Nome do Prato', 'Status', 'Conta'];
+    const titlesKeys = ['delete', 'order', 'table', 'menuItem', 'comment', 'status', 'billStatus'];
+    const titlesValues = [null, 'Ordem/Hora', 'Mesa', 'Nome do Prato', 'Comentário', 'Status', 'Conta'];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker
