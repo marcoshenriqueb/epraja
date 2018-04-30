@@ -33,11 +33,11 @@ const resetUser = () => (
   }
 );
 
-const fetchUser = () => (
+const fetchUser = email => (
   (dispatch) => {
     dispatch(requestUser());
 
-    return api.users.find({ email: 'marcos@gmail.com' })
+    return api.users.find({ email })
       .then((response) => {
         dispatch(receiveUser(response.data[0]));
         return response;
@@ -73,7 +73,7 @@ const login = credentials => (
       strategy: 'local',
       ...credentials,
     }).then((response) => {
-      fetchUser()(dispatch).then(() => {
+      fetchUser(credentials.email)(dispatch).then(() => {
         dispatch(receiveToken(response.accessToken, true));
       });
       return response;
