@@ -6,6 +6,7 @@ import moment from 'moment';
 import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
+import Timer from './../../components/timer/timer';
 import RadioButton from './../../components/radioButton/radioButton';
 import ItemsFilters from './../../components/itemsFilters/itemsFilters';
 import Table from './../../components/table/table';
@@ -35,6 +36,7 @@ class Items extends React.Component {
       searchValue: '',
       activeBills: [],
       expandedComment: '',
+      sort: '',
     };
 
     this.getFilterClass = this.getFilterClass.bind(this);
@@ -42,6 +44,7 @@ class Items extends React.Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.toggleAllBills = this.toggleAllBills.bind(this);
     this.toggleBill = this.toggleBill.bind(this);
+    this.sortItems = this.sortItems.bind(this);
   }
 
   componentDidMount() {
@@ -98,7 +101,9 @@ class Items extends React.Component {
   getItems() {
     if (!this.props.bills.data.length) return [];
     const items = [];
-    this.props.bills.data.forEach((b) => {
+    this.props.bills.data.sort((a, b) => {
+
+    }).forEach((b) => {
       b.menuItems.forEach((i, k) => {
         const itemStatus = this.getItemStatusName(i.itemStatus);
         const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
@@ -132,15 +137,18 @@ class Items extends React.Component {
                   {k + 1}
                 </p>
                 <div className="table--cell--whiteSpace" />
-                <p>
-                  {
-                    this.getStatusName(i.deliveredAt) === undefined ?
-                      moment.duration(moment().diff(moment(i.createdAt)))
-                        .format('HH:mm', { trim: false }) :
-                    moment.duration(moment(i.deliveredAt).diff(moment(i.createdAt)))
-                      .format('HH:mm', { trim: false })
-                  }
-                </p>
+                {
+                  i.deliveredAt !== undefined ?
+                    <p>
+                      {
+                        moment.duration(moment(i.deliveredAt).diff(moment(i.createdAt)))
+                        .format('HH:mm', { trim: false })
+                      }
+                    </p> :
+                    <Timer
+                      date={i.createdAt}
+                    />
+                }
               </div>
             ),
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
@@ -249,6 +257,10 @@ class Items extends React.Component {
     return activeBills;
   }
 
+  sortItems(filter) {
+    this.setState({ sort: filter });
+  }
+
   populateActiveBills() {
     this.setState({
       activeBills: this.getAllAvailableTables().sort(),
@@ -325,6 +337,7 @@ class Items extends React.Component {
           titlesKeys={titlesKeys}
           titlesValues={titlesValues}
           data={this.getItems()}
+          sort={this.sortItems}
           blankRows
         />
       </div>

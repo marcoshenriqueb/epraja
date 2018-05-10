@@ -8,6 +8,7 @@ const Table = ({
   titlesValues,
   data,
   blankRows,
+  sort,
 }) => (
   <div className="full-w flex-column">
     <table className="table">
@@ -21,7 +22,7 @@ const Table = ({
 
               return (
                 <th className="table--header--item" key={t}>
-                  <div className="flex start font-padding">
+                  <div className="flex start font-padding" onClick={() => sort(t)}>
                     {t}
                   </div>
                 </th>
@@ -68,10 +69,12 @@ Table.propTypes = {
   titlesValues: PropTypes.arrayOf(PropTypes.string).isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   blankRows: PropTypes.bool,
+  sort: PropTypes.func,
 };
 
 Table.defaultProps = {
   blankRows: false,
+  sort: () => {},
 };
 
 export default Table;

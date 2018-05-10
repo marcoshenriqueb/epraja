@@ -29,12 +29,12 @@ class Reports extends React.Component {
       itemFilters: [],
       tables: [],
       type: 0,
-      startDate: null,
-      endDate: null,
+      startDate: moment(),
+      endDate: moment(),
       focusedInput: null,
       data: null,
       emptyFilters: [],
-      reportName: '',
+      reportName: 'Faturado',
     };
     this.toggleItemFilters = this.toggleItemFilters.bind(this);
     this.toggleTables = this.toggleTables.bind(this);
@@ -181,10 +181,14 @@ class Reports extends React.Component {
         if (this.state.type !== 2) {
           subTotal += this.getItem(item.menuItem).price;
         } else {
-          TFeito += moment.duration(moment(item.forwardedAt)
-            .diff(moment(item.createdAt))).seconds();
-          TEntrega += moment.duration(moment(item.deliveredAt)
-            .diff(moment(item.forwardedAt))).seconds();
+          if (item.forwardedAt !== undefined) {
+            TFeito += moment.duration(moment(item.forwardedAt)
+              .diff(moment(item.createdAt))).seconds();
+          }
+          if (item.deliveredAt !== undefined) {
+            TEntrega += moment.duration(moment(item.deliveredAt)
+              .diff(moment(item.createdAt))).seconds();
+          }
         }
       });
       row[`${c.name}Qty`] = qty;
