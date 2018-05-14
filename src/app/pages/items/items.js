@@ -6,6 +6,7 @@ import moment from 'moment';
 import './items.styl';
 
 import TablePicker from './../../components/tablePicker/tablePicker';
+import Cancellation from './../../components/cancellation/cancellation';
 import Timer from './../../components/timer/timer';
 import RadioButton from './../../components/radioButton/radioButton';
 import ItemsFilters from './../../components/itemsFilters/itemsFilters';
@@ -25,6 +26,7 @@ const {
   fetchMenuItemStatuses: fetchMenuItemStatusesAction,
   fetchMenuCategories: fetchMenuCategoriesAction,
   updateBillItemStatus: updateBillItemStatusAction,
+  updateBillItemCancellation: updateBillItemCancellationAction,
 } = actions;
 
 class Items extends React.Component {
@@ -37,6 +39,13 @@ class Items extends React.Component {
       activeBills: [],
       expandedComment: '',
       sort: '',
+      sortDesc: false,
+      cancellation: false,
+      cancellationItem: '',
+      cancellationBill: '',
+      cancellationName: '',
+      cancellationComment: '',
+      owner: 'Cliente',
     };
 
     this.getFilterClass = this.getFilterClass.bind(this);
@@ -45,6 +54,9 @@ class Items extends React.Component {
     this.toggleAllBills = this.toggleAllBills.bind(this);
     this.toggleBill = this.toggleBill.bind(this);
     this.sortItems = this.sortItems.bind(this);
+    this.getSortComponent = this.getSortComponent.bind(this);
+    this.changeOwner = this.changeOwner.bind(this);
+    this.closeCancellation = this.closeCancellation.bind(this);
   }
 
   componentDidMount() {
@@ -74,10 +86,35 @@ class Items extends React.Component {
     });
   }
 
+  getComment(billID, id) {
+    const bill = this.props.bills.data.filter(b => b._id === billID);
+    if (bill.length) {
+      const result = bill[0].menuItems.filter(i => i._id === id);
+
+      return result.length ? result[0].comment : '';
+    }
+    return '';
+  }
+
+  getTableName(id) {
+    const result = this.props.bills.data.filter(b => b._id === id);
+
+    return result.length ? result[0].table : '';
+  }
+
   getItemStatusName(id) {
     const result = this.props.menuItemStatuses.data.filter(s => s._id === id);
 
     return result.length ? result[0].name.toLowerCase() : '';
+  }
+
+  getStatusOrder(id) {
+    let result = 0;
+    this.props.menuItemStatuses.data.forEach((s, k) => {
+      if (s._id === id) result += k;
+    });
+
+    return result;
   }
 
   getStatusName(id) {
@@ -101,9 +138,7 @@ class Items extends React.Component {
   getItems() {
     if (!this.props.bills.data.length) return [];
     const items = [];
-    this.props.bills.data.sort((a, b) => {
-
-    }).forEach((b) => {
+    this.props.bills.data.forEach((b) => {
       b.menuItems.forEach((i, k) => {
         const itemStatus = this.getItemStatusName(i.itemStatus);
         const itemCategory = this.getCategory(this.getItem(i.menuItem).menuCategory);
@@ -121,43 +156,45 @@ class Items extends React.Component {
         ) {
           items.push(Object.assign({}, i, {
             delete: (
-              <Link
-                to={`/cancelamento/${b._id}/${i.menuItem}/${i._id}`}
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  this.setState({
+                    cancellationBill: b._id,
+                    cancellationItem: i._id,
+                    cancellationName: this.getItem(i.menuItem).name,
+                    cancellationComment: this.getComment(b._id, i._id),
+                    cancellation: true,
+                  });
+                }}
               >
                 <img src={TrashIcon} alt="Trash" />
-              </Link>
+              </div>
             ),
             menuItem: this.getItem(i.menuItem).name,
             table: b.table,
             comment: this.getCommentComponent(i),
-            status: this.getStatusCellComponent(i),
-            order: (
-              <div className="flex space-between">
+            status: this.getStatusCellComponent(i, this.getStatusName(b.billStatus)),
+            timer: (
+              i.deliveredAt !== undefined ?
                 <p>
-                  {k + 1}
-                </p>
-                <div className="table--cell--whiteSpace" />
-                {
-                  i.deliveredAt !== undefined ?
-                    <p>
-                      {
-                        moment.duration(moment(i.deliveredAt).diff(moment(i.createdAt)))
-                        .format('HH:mm', { trim: false })
-                      }
-                    </p> :
-                    <Timer
-                      date={i.createdAt}
-                    />
-                }
-              </div>
+                  {
+                    moment.duration(moment(i.deliveredAt).diff(moment(i.createdAt)))
+                    .format('HH:mm', { trim: false })
+                  }
+                </p> :
+                <Timer
+                  date={i.createdAt}
+                />
             ),
+            order: <p>{k + 1}</p>,
             billStatus: this.getBillStatusComponent(b.billStatus, b._id),
           }));
         }
       });
     });
 
-    return items;
+    return this.sorting(items);
   }
 
   getCommentComponent(item) {
@@ -197,7 +234,7 @@ class Items extends React.Component {
     );
   }
 
-  getStatusCellComponent(item) {
+  getStatusCellComponent(item, billStatus) {
     const classes = [];
     this.props.menuItemStatuses.data.map(s => (item.itemStatus === s._id)).forEach((i) => {
       if (i) {
@@ -211,7 +248,9 @@ class Items extends React.Component {
         options={this.props.menuItemStatuses.data}
         checked={classes}
         updateBillItemStatus={(selected) => {
-          this.props.updateBillItemStatus(item._id, selected);
+          if (billStatus === 'Aberta') {
+            this.props.updateBillItemStatus(item._id, selected);
+          }
         }}
         item={item._id}
       />
@@ -244,7 +283,7 @@ class Items extends React.Component {
     } else if (f === 'aberta' && this.state.activeFilters.indexOf(f) < 0) {
       return 'secondary';
     }
-    return '';
+    return 'quaternary';
   }
 
   getAllAvailableTables() {
@@ -257,8 +296,65 @@ class Items extends React.Component {
     return activeBills;
   }
 
+  getSortComponent(key, value) {
+    if (this.state.sort === key) {
+      return this.state.sortDesc ? <div>{value} &#8595;</div> : <div>{value} &#8593;</div>;
+    }
+    return value;
+  }
+
+  sorting(items) {
+    return items.sort((a, b) => {
+      if (this.state.sort === '') return 0;
+      if (this.state.sort === 'table') {
+        return this.state.sortDesc ? b.table - a.table : a.table - b.table;
+      }
+      if (this.state.sort === 'order') {
+        return this.state.sortDesc ?
+          b.order.props.children - a.order.props.children :
+          a.order.props.children - b.order.props.children;
+      }
+      if (this.state.sort === 'timer') {
+        if (a.timer.props.children < b.timer.props.children) return this.state.sortDesc ? 1 : -1;
+        if (a.timer.props.children > b.timer.props.children) return this.state.sortDesc ? -1 : 1;
+        return 0;
+      }
+      if (this.state.sort === 'menuItem') {
+        return this.state.sortDesc ?
+          b.menuItem.localeCompare(a.menuItem) :
+          a.menuItem.localeCompare(b.menuItem);
+      }
+      if (this.state.sort === 'comment') {
+        if (a.comment.props.children < b.comment.props.children) {
+          return this.state.sortDesc ? 1 : -1;
+        }
+        if (a.comment.props.children > b.comment.props.children) {
+          return this.state.sortDesc ? -1 : 1;
+        }
+        return 0;
+      }
+      if (this.state.sort === 'status') {
+        return this.state.sortDesc ?
+          this.getStatusOrder(b.itemStatus) - this.getStatusOrder(a.itemStatus) :
+          this.getStatusOrder(a.itemStatus) - this.getStatusOrder(b.itemStatus);
+      }
+      if (this.state.sort === 'billStatus') {
+        return this.state.sortDesc ?
+          b.billStatus.props.children.props.alt
+            .localeCompare(a.billStatus.props.children.props.alt) :
+          a.billStatus.props.children.props.alt
+            .localeCompare(b.billStatus.props.children.props.alt);
+      }
+      return 0;
+    });
+  }
+
   sortItems(filter) {
-    this.setState({ sort: filter });
+    if (this.state.sort === filter) {
+      this.setState({ sortDesc: !this.state.sortDesc });
+    } else {
+      this.setState({ sort: filter, sortDesc: false });
+    }
   }
 
   populateActiveBills() {
@@ -295,6 +391,14 @@ class Items extends React.Component {
     }
   }
 
+  changeOwner(owner) {
+    this.setState({ owner });
+  }
+
+  closeCancellation() {
+    this.setState({ cancellation: false });
+  }
+
   toggleBill(table) {
     return () => {
       const index = this.state.activeBills.indexOf(table);
@@ -314,14 +418,38 @@ class Items extends React.Component {
   }
 
   render() {
-    const titlesKeys = ['delete', 'order', 'table', 'menuItem', 'comment', 'status', 'billStatus'];
-    const titlesValues = [null, 'Ordem/Hora', 'Mesa', 'Nome do Prato', 'Comentário', 'Status', 'Conta'];
+    if (this.state.cancellation) {
+      return (
+        <Cancellation
+          table={this.getTableName(this.state.cancellationBill)}
+          name={this.state.cancellationName}
+          comment={this.state.cancellationComment}
+          owner={this.state.owner}
+          changeOwner={this.changeOwner}
+          cancelItem={() => {
+            this.props.updateBillItemCancellation(this.state.cancellationItem, this.state.owner)
+              .then(() => {
+                this.setState({
+                  cancellation: false,
+                  cancellationBill: '',
+                  cancellationName: '',
+                  cancellationComment: '',
+                  cancellationItem: '',
+                });
+              });
+          }}
+          close={this.closeCancellation}
+        />
+      );
+    }
+    const titlesKeys = ['delete', 'order', 'timer', 'table', 'menuItem', 'comment', 'status', 'billStatus'];
+    const titlesValues = [null, 'Ordem', 'Tempo', 'Mesa', 'Nome do Prato', 'Comentário', 'Status', 'Conta'];
     return (
       <div className="full-w flex-column start items-container">
         <TablePicker
           searchValue={this.state.searchValue}
           onSearchChange={this.onSearchChange}
-          bills={this.props.bills.data}
+          bills={this.props.bills.data.sort((a, b) => a.table > b.table)}
           activeBills={this.state.activeBills}
           toggleAllBills={this.toggleAllBills}
           toggleBill={this.toggleBill}
@@ -338,7 +466,9 @@ class Items extends React.Component {
           titlesValues={titlesValues}
           data={this.getItems()}
           sort={this.sortItems}
+          getSortComponent={this.getSortComponent}
           blankRows
+          hasSorting
         />
       </div>
     );
@@ -370,6 +500,7 @@ Items.propTypes = {
   fetchMenuItemStatuses: PropTypes.func.isRequired,
   fetchMenuCategories: PropTypes.func.isRequired,
   updateBillItemStatus: PropTypes.func.isRequired,
+  updateBillItemCancellation: PropTypes.func.isRequired,
 };
 
 const ItemsConnector = connect(state => (
@@ -402,6 +533,9 @@ const ItemsConnector = connect(state => (
     ),
     updateBillItemStatus: (id, statusId) => (
       dispatch(updateBillItemStatusAction(id, statusId))
+    ),
+    updateBillItemCancellation: (id, owner) => (
+      dispatch(updateBillItemCancellationAction(id, owner))
     ),
   }
 ))(Items);

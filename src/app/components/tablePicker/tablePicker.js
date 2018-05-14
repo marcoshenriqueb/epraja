@@ -24,7 +24,7 @@ class TablePicker extends React.Component {
   }
 
   getTableClass(table) {
-    return this.props.activeBills.indexOf(table) < 0 ? 'terciary' : 'primary';
+    return this.props.activeBills.indexOf(table) < 0 ? 'terciary' : 'secondary';
   }
 
   slide(right = true) {
