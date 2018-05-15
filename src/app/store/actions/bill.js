@@ -92,6 +92,21 @@ const updateBillItemStatus = (id, statusId) => (
   )
 );
 
+const updateBillStatus = (id, statusId) => (
+  dispatch => (
+    api.bills.patch(null, {
+      billStatus: statusId,
+    }, {
+      query: {
+        _id: id,
+      },
+    }).then((response) => {
+      dispatch(updateBill(response[0] || {}));
+      return response;
+    }, error => error)
+  )
+);
+
 const updateBillItemCancellation = (id, owner) => (
   dispatch => (
     api.bills.patch(null, {
@@ -130,4 +145,5 @@ export default {
   resetBills,
   updateBillItemStatus,
   updateBillItemCancellation,
+  updateBillStatus,
 };

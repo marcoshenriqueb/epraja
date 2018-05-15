@@ -123,6 +123,12 @@ class Items extends React.Component {
     return result.length ? result[0].name.toLowerCase() : '';
   }
 
+  getBillStatus(name) {
+    const result = this.props.billStatuses.data.filter(s => s.name === name);
+
+    return result.length ? result[0] : {};
+  }
+
   getCategory(id) {
     const result = this.props.menuCategories.data.filter(c => c._id === id);
 
@@ -449,7 +455,11 @@ class Items extends React.Component {
         <TablePicker
           searchValue={this.state.searchValue}
           onSearchChange={this.onSearchChange}
-          bills={this.props.bills.data.sort((a, b) => a.table > b.table)}
+          bills={
+            this.props.bills.data
+              .filter(a => a.billStatus !== this.getBillStatus('Encerrada')._id)
+              .sort((a, b) => a.table > b.table)
+          }
           activeBills={this.state.activeBills}
           toggleAllBills={this.toggleAllBills}
           toggleBill={this.toggleBill}

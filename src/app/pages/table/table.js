@@ -12,6 +12,7 @@ const {
   fetchBills: fetchBillsAction,
   resetBills: resetBillsAction,
   fetchMenuItems: fetchMenuItemsAction,
+  updateBillStatus: updateBillStatusAction,
 } = actions;
 
 class Table extends React.Component {
@@ -20,6 +21,7 @@ class Table extends React.Component {
 
     this.state = {
       filter: 'detalhada',
+      disabled: true,
     };
   }
 
@@ -40,6 +42,12 @@ class Table extends React.Component {
 
   getItem(id) {
     const result = this.props.menuItems.data.filter(i => i._id === id);
+
+    return result.length ? result[0] : {};
+  }
+
+  getBillStatus(name) {
+    const result = this.props.billStatuses.data.filter(i => i.name === name);
 
     return result.length ? result[0] : {};
   }
@@ -162,6 +170,33 @@ class Table extends React.Component {
             <span> R$ {this.getTotal()}</span>
           </div>
         </div>
+        <div
+          className="table-filter flex-column"
+        >
+          <Button
+            text="Imprimir"
+            type="secondary"
+            classes="margin-bottom"
+            onClick={() => {
+              window.print(); // eslint-disable-line
+              this.setState({ disabled: false });
+            }}
+            size="big"
+          />
+          <div />
+          <Button
+            text="Encerrar"
+            type={this.state.disabled ? '' : 'secondary'}
+            onClick={() => {
+              if (!this.state.disabled) {
+                const id = this.getBillStatus('Encerrada')._id;
+                this.props.updateBillStatus(this.props.match.params.id, id);
+                this.props.history.goBack();
+              }
+            }}
+            size="big"
+          />
+        </div>
       </div>
     );
   }
@@ -171,6 +206,7 @@ Table.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({ id: PropTypes.string.isRequired }).isRequired,
   }).isRequired,
+  history: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
   bills: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({
       menuItems: PropTypes.arrayOf(PropTypes.shape({})),
@@ -179,15 +215,20 @@ Table.propTypes = {
   menuItems: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
   }).isRequired,
+  billStatuses: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape({}).isRequired).isRequired,
+  }).isRequired,
   fetchBills: PropTypes.func.isRequired,
   resetBills: PropTypes.func.isRequired,
   fetchMenuItems: PropTypes.func.isRequired,
+  updateBillStatus: PropTypes.func.isRequired,
 };
 
 const TableConnector = connect(state => (
   {
     bills: state.bill.bills,
     menuItems: state.menuItem.menuItems,
+    billStatuses: state.billStatus.billStatuses,
   }
 ), dispatch => (
   {
@@ -199,6 +240,9 @@ const TableConnector = connect(state => (
     ),
     fetchMenuItems: () => (
       dispatch(fetchMenuItemsAction())
+    ),
+    updateBillStatus: (id, statusId) => (
+      dispatch(updateBillStatusAction(id, statusId))
     ),
   }
 ))(Table);
