@@ -37,7 +37,6 @@ class Login extends React.Component {
       password: this.state.password,
     }).then((response) => {
       if (response.message && response.code.toString().startsWith('4')) {
-        console.log(response.message);
         this.setState({
           error: 'Credenciais inválidas',
         });

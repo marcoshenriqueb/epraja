@@ -21,7 +21,7 @@ class Timer extends Component {
 
   tick() {
     const counter = moment.duration(moment().diff(moment(this.props.date)))
-      .format('HH:mm', { trim: true });
+      .format('HH:mm', { trim: false });
     this.setState({ counter });
   }
 

@@ -98,7 +98,7 @@ class Reports extends React.Component {
       &&
       b.table === table
       &&
-      this.getBillStatusName(b.billStatus) === 'fechada'
+      this.getBillStatusName(b.billStatus) === 'encerrada'
     )).forEach((bill) => {
       const canceled = this.state.type === 1;
       result = [...bill.menuItems.filter((item) => {

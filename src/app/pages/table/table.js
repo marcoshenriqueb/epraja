@@ -186,7 +186,7 @@ class Table extends React.Component {
           <div />
           <Button
             text="Encerrar"
-            type={this.state.disabled ? '' : 'secondary'}
+            type={this.state.disabled ? 'disabled' : 'secondary'}
             onClick={() => {
               if (!this.state.disabled) {
                 const id = this.getBillStatus('Encerrada')._id;

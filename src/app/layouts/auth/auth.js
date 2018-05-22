@@ -30,7 +30,6 @@ class Auth extends React.Component {
 
   componentDidMount() {
     if (!this.props.token.length) {
-      console.log('No token');
       return;
     }
 

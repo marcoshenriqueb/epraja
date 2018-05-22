@@ -254,7 +254,7 @@ class Items extends React.Component {
         options={this.props.menuItemStatuses.data}
         checked={classes}
         updateBillItemStatus={(selected) => {
-          if (billStatus === 'Aberta') {
+          if (billStatus === 'aberta') {
             this.props.updateBillItemStatus(item._id, selected);
           }
         }}
@@ -264,11 +264,14 @@ class Items extends React.Component {
   }
 
   getBillStatusComponent(status, id) {
-    if (this.getStatusName(status) === 'aberta') return <img src={BillOpenIcon} alt="BillOpen" />;
+    if (this.getStatusName(status) === 'aberta') {
+      return <img id="1" src={BillOpenIcon} alt="BillOpen" />;
+    }
     return (
       <Link
         to={`/caixa/${id}`}
         className="table--billStatus--cell"
+        id="0"
       >
         <img src={BillClosedIcon} alt="BillClosed" />
       </Link>
@@ -346,10 +349,8 @@ class Items extends React.Component {
       }
       if (this.state.sort === 'billStatus') {
         return this.state.sortDesc ?
-          b.billStatus.props.children.props.alt
-            .localeCompare(a.billStatus.props.children.props.alt) :
-          a.billStatus.props.children.props.alt
-            .localeCompare(b.billStatus.props.children.props.alt);
+          b.billStatus.props.id.localeCompare(a.billStatus.props.id) :
+          a.billStatus.props.id.localeCompare(b.billStatus.props.id);
       }
       return 0;
     });
