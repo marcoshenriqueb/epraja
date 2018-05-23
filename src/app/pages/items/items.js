@@ -96,10 +96,10 @@ class Items extends React.Component {
     return '';
   }
 
-  getTableName(id) {
+  getTableNumber(id) {
     const result = this.props.bills.data.filter(b => b._id === id);
 
-    return result.length ? result[0].table : '';
+    return result.length ? result[0].table.toString() : '';
   }
 
   getItemStatusName(id) {
@@ -324,8 +324,24 @@ class Items extends React.Component {
           a.order.props.children - b.order.props.children;
       }
       if (this.state.sort === 'timer') {
-        if (a.timer.props.children < b.timer.props.children) return this.state.sortDesc ? 1 : -1;
-        if (a.timer.props.children > b.timer.props.children) return this.state.sortDesc ? -1 : 1;
+        if (a.timer.props.children && b.timer.props.children) {
+          if (a.timer.props.children < b.timer.props.children) return this.state.sortDesc ? 1 : -1;
+          if (a.timer.props.children > b.timer.props.children) return this.state.sortDesc ? -1 : 1;
+        } else if (a.timer.props.children && b.timer.props.date) {
+          const newB = moment.duration(moment().diff(moment(b.timer.props.date)))
+            .format('HH:mm', { trim: false });
+          if (a.timer.props.children < newB) return this.state.sortDesc ? 1 : -1;
+          if (a.timer.props.children > newB) return this.state.sortDesc ? -1 : 1;
+        } else if (a.timer.props.date && b.timer.props.children) {
+          const newA = moment.duration(moment().diff(moment(a.timer.props.date)))
+            .format('HH:mm', { trim: false });
+          if (newA < b.timer.props.children) return this.state.sortDesc ? 1 : -1;
+          if (newA > b.timer.props.children) return this.state.sortDesc ? -1 : 1;
+        } else if (a.timer.props.date && b.timer.props.date) {
+          if (a.timer.props.date < b.timer.props.date) return this.state.sortDesc ? 1 : -1;
+          if (a.timer.props.date > b.timer.props.date) return this.state.sortDesc ? -1 : 1;
+        }
+
         return 0;
       }
       if (this.state.sort === 'menuItem') {
@@ -428,7 +444,7 @@ class Items extends React.Component {
     if (this.state.cancellation) {
       return (
         <Cancellation
-          table={this.getTableName(this.state.cancellationBill)}
+          table={this.getTableNumber(this.state.cancellationBill)}
           name={this.state.cancellationName}
           comment={this.state.cancellationComment}
           owner={this.state.owner}
