@@ -370,6 +370,7 @@ class Reports extends React.Component {
   }
 
   render() {
+    const tables = [];
     if (this.state.data === null) {
       return (
         <div className="full-w flex-column start wrap reports-container">
@@ -427,7 +428,15 @@ class Reports extends React.Component {
                     </td>
                   </tr>
                   {
-                    this.props.bills.data.map(i => (
+                    this.props.bills.data.filter((b) => {
+                      if (
+                        this.getBillStatusName(b.table) === 'encerrada'
+                        ||
+                        tables.includes(b.table)
+                      ) return false;
+                      tables.push(b.table);
+                      return true;
+                    }).map(i => (
                       <tr className="table-row" key={`${i.table}_${i._id}`}>
                         <td className="table-cell table--cell-equalWidth table--cell-tableNumber">
                           <div className="font-padding">{i.table}</div>
