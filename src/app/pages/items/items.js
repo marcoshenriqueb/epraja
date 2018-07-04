@@ -480,6 +480,10 @@ class Items extends React.Component {
           activeBills={this.state.activeBills}
           toggleAllBills={this.toggleAllBills}
           toggleBill={this.toggleBill}
+          allBillsToggled={
+            this.state.activeBills.length === this.props.bills.data
+              .filter(a => a.billStatus !== this.getBillStatus('Encerrada')._id).length
+          }
         />
         <ItemsFilters
           getFilterClass={this.getFilterClass}

@@ -24,7 +24,7 @@ class TablePicker extends React.Component {
   }
 
   getTableClass(table) {
-    return this.props.activeBills.indexOf(table) < 0 ? 'terciary' : 'secondary';
+    return this.props.activeBills.indexOf(table) < 0 ? 'quaternary' : 'secondary';
   }
 
   slide(right = true) {
@@ -64,7 +64,13 @@ class TablePicker extends React.Component {
           </div>
           <div className="flex table-picker--content">
             <div
-              className="table-picker table-picker--first flex justify-center"
+              className={`
+                table-picker 
+                ${this.props.allBillsToggled ? 'secondary' : 'quaternary'} 
+                table-picker--first 
+                flex 
+                justify-center`
+              }
               ref={(picker) => { this.picker = picker; }}
               onClick={this.props.toggleAllBills}
             >
@@ -113,6 +119,7 @@ TablePicker.propTypes = {
   activeBills: PropTypes.arrayOf(PropTypes.number).isRequired,
   toggleAllBills: PropTypes.func.isRequired,
   toggleBill: PropTypes.func.isRequired,
+  allBillsToggled: PropTypes.bool.isRequired,
 };
 
 export default TablePicker;
