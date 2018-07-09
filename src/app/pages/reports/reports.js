@@ -182,12 +182,10 @@ class Reports extends React.Component {
           subTotal += this.getItem(item.menuItem).price;
         } else {
           if (item.forwardedAt !== undefined) {
-            TFeito += moment.duration(moment(item.forwardedAt)
-              .diff(moment(item.createdAt))).seconds();
+            TFeito += moment(item.forwardedAt).diff(moment(item.createdAt)) / 1000;
           }
           if (item.deliveredAt !== undefined) {
-            TEntrega += moment.duration(moment(item.deliveredAt)
-              .diff(moment(item.createdAt))).seconds();
+            TEntrega += moment(item.deliveredAt).diff(moment(item.createdAt)) / 1000;
           }
         }
       });
@@ -482,21 +480,22 @@ class Reports extends React.Component {
                         </td>
                       </tr>
                       {
-                        this.props.menuItems.data.filter(o => o.menuCategory === c._id).map(i => (
-                          <tr className="table-row" key={i.name}>
-                            <td className="table-cell table--cell-75Width">
-                              <div className="font-padding">
-                                {this.getItem(i._id).name}
-                              </div>
-                            </td>
-                            <td className="table-cell table--cell-25Width">
-                              <Checkbox
-                                label={i._id}
-                                onChange={this.toggleItemFilters}
-                                checked={this.state.itemFilters.includes(i._id)}
-                              />
-                            </td>
-                          </tr>
+                        this.props.menuItems.data.filter(o => o.menuCategory === c._id)
+                          .map((i, k) => (
+                            <tr className="table-row" key={`${i.name} ${k.toString()}`}>
+                              <td className="table-cell table--cell-75Width">
+                                <div className="font-padding">
+                                  {this.getItem(i._id).name}
+                                </div>
+                              </td>
+                              <td className="table-cell table--cell-25Width">
+                                <Checkbox
+                                  label={i._id}
+                                  onChange={this.toggleItemFilters}
+                                  checked={this.state.itemFilters.includes(i._id)}
+                                />
+                              </td>
+                            </tr>
                         ))
                       }
                     </tbody>

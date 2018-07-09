@@ -298,7 +298,9 @@ class Items extends React.Component {
   getAllAvailableTables() {
     const activeBills = [];
     this.props.bills.data.forEach((b) => {
-      if (activeBills.indexOf(b.table) < 0) {
+      if (activeBills.indexOf(b.table) < 0
+        &&
+        b.billStatus !== this.getBillStatus('Encerrada')._id) {
         activeBills.push(b.table);
       }
     });

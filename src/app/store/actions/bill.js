@@ -53,6 +53,17 @@ const removedCallback = (message) => {
   store.dispatch(removeBill(message));
 };
 
+const handleBillsPagination = (refetched) => {
+  api.bills.find({ query: { skip: refetched * 1000 } })
+    .then((response) => {
+      if (response.total >= response.limit) {
+        const data = [...handleBillsPagination(refetched + 1), ...response.data];
+        return data;
+      }
+      return response.data;
+    }, () => null);
+};
+
 const fetchBills = (query = {}) => (
   (dispatch) => {
     dispatch(requestBills());
@@ -68,6 +79,11 @@ const fetchBills = (query = {}) => (
         ...query,
       },
     }).then((response) => {
+      if (response.total >= response.limit) {
+        const data = [...handleBillsPagination(1), ...response.data];
+        dispatch(receiveBills(data));
+        return response;
+      }
       dispatch(receiveBills(response.data));
       return response;
     }, (error) => {
